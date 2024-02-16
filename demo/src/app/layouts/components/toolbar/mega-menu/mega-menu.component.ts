@@ -1,9 +1,9 @@
+import { NgFor } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { VexPopoverRef } from '@vex/components/vex-popover/vex-popover-ref';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { NgFor } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
+import { VexPopoverRef } from '@vex/components/vex-popover/vex-popover-ref';
 
 export interface MegaMenuFeature {
   icon: string;
@@ -46,7 +46,7 @@ export class MegaMenuComponent implements OnInit {
     },
     {
       icon: 'mat:assessment',
-      label: 'Scrumboard',
+      label: 'Phrase Shape Game',
       route: '/apps/scrumboard/1'
     },
     {
@@ -94,7 +94,7 @@ export class MegaMenuComponent implements OnInit {
       route: '/apps/help-center'
     },
     {
-      label: 'Scrumboard',
+      label: 'Phrase Shape Game',
       route: '/apps/scrumboard'
     }
   ];

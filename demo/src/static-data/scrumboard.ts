@@ -1,9 +1,9 @@
-import { ScrumboardUser } from '../app/pages/apps/scrumboard/interfaces/scrumboard-user.interface';
-import { ScrumboardLabel } from '../app/pages/apps/scrumboard/interfaces/scrumboard-label.interface';
-import { Scrumboard } from '../app/pages/apps/scrumboard/interfaces/scrumboard.interface';
 import { DateTime } from 'luxon';
 import { ScrumboardAttachment } from '../app/pages/apps/scrumboard/interfaces/scrumboard-attachment.interface';
 import { ScrumboardComment } from '../app/pages/apps/scrumboard/interfaces/scrumboard-comment.interface';
+import { ScrumboardLabel } from '../app/pages/apps/scrumboard/interfaces/scrumboard-label.interface';
+import { ScrumboardUser } from '../app/pages/apps/scrumboard/interfaces/scrumboard-user.interface';
+import { Scrumboard } from '../app/pages/apps/scrumboard/interfaces/scrumboard.interface';
 
 export const scrumboardAttachments: ScrumboardAttachment[] = [
   {
@@ -159,7 +159,7 @@ export const scrumboardLabels: ScrumboardLabel[] = [
 export const scrumboards: Scrumboard[] = [
   {
     id: 1,
-    label: 'Tech Startup Board',
+    label: 'Phrase Shape Game',
     children: [
       {
         id: 1,

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { VexLayoutService } from '@vex/services/vex-layout.service';
-import { NavigationItem } from './navigation-item.interface';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { NavigationItem } from './navigation-item.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -141,7 +141,7 @@ export class NavigationLoaderService {
           },
           {
             type: 'link',
-            label: 'Scrumboard',
+            label: 'Phrase Shape Game',
             route: '/apps/scrumboard',
             icon: 'mat:assessment',
             badge: {
