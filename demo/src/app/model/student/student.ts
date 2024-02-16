@@ -1,4 +1,6 @@
 import { ObjectId } from 'mongodb';
+import { StatusStudent } from '../enum/status-student';
+import { StatusOnline } from '../enum/stautus-online';
 export interface Student {
   _id?: string;
   name: string;
@@ -7,8 +9,8 @@ export interface Student {
   personal_ident_number: string;
   login: string;
   password: string;
-  status?: Status;
-  online?: Online;
+  status?: StatusStudent;
+  online?: StatusOnline;
   course?: ObjectId[];
   lesson_done?: ObjectId[];
   scheduled_lessons?: ObjectId[];
@@ -30,13 +32,4 @@ export interface Student {
   bitcoin?: ObjectId[];
 }
 
-export enum Status {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  PENDING = 'PENDING'
-}
 
-export enum Online {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE'
-}
