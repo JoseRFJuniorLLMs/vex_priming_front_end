@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { first } from 'rxjs';
-import { PrimeTargetCollection } from '../model/prime/prime-target-collection';
+import { PrimeTargetCollection } from '../model/prime/prime';
 
 @Injectable({
   providedIn: 'root'
