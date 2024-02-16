@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { first, of, tap } from 'rxjs';
 
-import { AppConfig } from 'src/app/app-config';
+import { AppConfig } from "../app-config_url";
 import { Student } from '../model/student/student';
 import { StudentPage } from '../model/student/student-page';
 
