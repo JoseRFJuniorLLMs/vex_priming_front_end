@@ -14,7 +14,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { VexScrollbarComponent } from '@vex/components/vex-scrollbar/vex-scrollbar.component';
 
-import { CdkDrag } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop } from '@angular/cdk/drag-drop';
+
 
 /**
  * @title Drag&Drop position opened and boundary
@@ -54,8 +55,26 @@ import { CdkDrag } from '@angular/cdk/drag-drop';
 })
 
 export class PuzzleBlockComponent implements OnInit {
-
+  
+  dropped = false; 
+    
   constructor() {}
 
   ngOnInit() {}
+
+
+  handleDrop(event: CdkDragDrop<string[]>) {
+    const container = event.container.element.nativeElement;
+
+    if (container.classList.contains('drop-zone1') || container.id === 'drop-zone1') {
+      // Acesso direto ao elemento que está sendo arrastado:
+      if (event.item.data.name === 'love' || container.id === 'love') {
+        event.item.element.nativeElement.remove(); // Remove o elemento do DOM
+        this.dropped = true;
+      }
+
+
+  }
 }
+}
+
