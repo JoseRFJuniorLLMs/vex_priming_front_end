@@ -1,5 +1,5 @@
-import { LayoutComponent } from './layouts/layout/layout.component';
 import { VexRoutes } from '@vex/interfaces/vex-route.interface';
+import { LayoutComponent } from './layouts/layout/layout.component';
 
 export const appRoutes: VexRoutes = [
   {
@@ -80,6 +80,16 @@ export const appRoutes: VexRoutes = [
             }
           },
           {
+            path: 'puzzle-block',
+            loadComponent: () =>
+              import('./pages/apps/puzzle-block/puzzle-block.component').then(
+                (m) => m.PuzzleBlockComponent
+              ),
+            data: {
+              toolbarShadowEnabled: false
+            }
+          },
+          {
             path: 'aio-table',
             loadComponent: () =>
               import('./pages/apps/aio-table/aio-table.component').then(
@@ -104,6 +114,7 @@ export const appRoutes: VexRoutes = [
             loadComponent: () =>
               import('./pages/apps/editor/editor.component').then(
                 (m) => m.EditorComponent
+                //(m) => m.PuzzleBlockComponent
               ),
             data: {
               scrollDisabled: true

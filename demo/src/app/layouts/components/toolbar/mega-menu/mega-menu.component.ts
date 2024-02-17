@@ -31,6 +31,11 @@ export class MegaMenuComponent implements OnInit {
     },
     {
       icon: 'mat:assignment',
+      label: 'Games',
+      route: '/apps/puzzle-block'
+    },
+    {
+      icon: 'mat:games',
       label: 'AIO-Table',
       route: '/apps/aio-table'
     },
@@ -57,6 +62,10 @@ export class MegaMenuComponent implements OnInit {
   ];
 
   pages: MegaMenuPage[] = [
+    {
+      label: 'Games',
+      route: '/apps/puzzle-block'
+    },
     {
       label: 'All-In-One Table',
       route: '/apps/aio-table'

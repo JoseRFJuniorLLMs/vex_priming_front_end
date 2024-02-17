@@ -39,6 +39,12 @@ export class NavigationLoaderService {
         children: [
           {
             type: 'link',
+            label: 'Games',
+            route: '/apps/puzzle-block',
+            icon: 'mat:games'
+          },
+          {
+            type: 'link',
             label: 'All-In-One Table',
             route: '/apps/aio-table',
             icon: 'mat:assignment'
