@@ -63,18 +63,28 @@ export class PuzzleBlockComponent implements OnInit {
   ngOnInit() {}
 
 
-  handleDrop(event: CdkDragDrop<string[]>) {
-    const container = event.container.element.nativeElement;
-
-    if (container.classList.contains('drop-zone1') || container.id === 'drop-zone1') {
-      // Acesso direto ao elemento que está sendo arrastado:
-      if (event.item.data.name === 'love' || container.id === 'love') {
-        event.item.element.nativeElement.remove(); // Remove o elemento do DOM
-        this.dropped = true;
+    handleDrop(event: CdkDragDrop<string[]>) {
+      console.log('Drop event triggered:', event);
+      const containerId = event.container.element.nativeElement.id;
+      console.log('Container ID:', containerId);
+    
+      if (containerId === 'drop-zone1') {
+        const draggedElementName = event.item.element.nativeElement.getAttribute('name');
+        console.log('Dragged Element Name:', draggedElementName);
+    
+        if (draggedElementName === 'love') {
+          console.log('Removing element with name "love"');
+          event.item.element.nativeElement.remove(); // Remove o elemento do DOM
+          this.dropped = true;
+        } else {
+          console.log('Element does not have name "love", not removing.');
+        }
+      } else {
+        console.log('Not dropping into "drop-zone1", ignoring.');
       }
-
+    }
 
   }
-}
-}
+
+
 

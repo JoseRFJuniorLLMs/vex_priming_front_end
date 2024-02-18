@@ -76,3 +76,27 @@
   }
 }
 
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.draggable {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px;
+  width: 100px;
+  text-align: center;
+}
+
+.drop-zone {
+  border: 1px dashed #ccc;
+  padding: 20px;
+  width: 200px;
+  text-align: center;
+}
+
