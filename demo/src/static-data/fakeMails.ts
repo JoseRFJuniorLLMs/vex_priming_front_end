@@ -1,4 +1,3 @@
-import { Mail } from '../app/pages/apps/mail/interfaces/mail.interface';
 import {
   randBoolean,
   randEmail,
@@ -10,8 +9,9 @@ import {
   randRecentDate,
   randSentence
 } from '@ngneat/falso';
-import { MailLabel } from '../app/pages/apps/mail/interfaces/mail-label.interface';
 import { MailAttachment } from '../app/pages/apps/mail/interfaces/mail-attachment.interface';
+import { MailLabel } from '../app/pages/apps/mail/interfaces/mail-label.interface';
+import { Mail } from '../app/pages/apps/mail/interfaces/mail.interface';
 
 const fakeMailLabels: MailLabel[] = [
   {

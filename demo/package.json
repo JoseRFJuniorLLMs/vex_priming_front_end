@@ -1,7 +1,7 @@
 {
   "name": "vex",
   "version": "17.0.0",
-  "description": "Vex - Angular Admin Dashboard Template",
+  "description": "Priming",
   "author": "https://themeforest.net/user/visurel",
   "license": "https://themeforest.net/licenses/standard",
   "private": true,
@@ -33,7 +33,9 @@
     "date-fns": "~2.30.0",
     "highlight.js": "~11.9.0",
     "luxon": "~3.4.3",
+    "ng2-pdf-viewer": "^10.0.0",
     "ngx-quill": "~24.0.0",
+    "pdfjs-dist": "4.0.379",
     "quill": "~1.3.7",
     "rxjs": "^7.4.0",
     "showdown": "^2.1.0",

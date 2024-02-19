@@ -45,6 +45,12 @@ export class NavigationLoaderService {
           },
           {
             type: 'link',
+            label: 'Book',
+            route: '/apps/boo',
+            icon: 'mat:menu_book'
+          },
+          {
+            type: 'link',
             label: 'All-In-One Table',
             route: '/apps/aio-table',
             icon: 'mat:assignment'

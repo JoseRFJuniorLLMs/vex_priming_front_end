@@ -90,6 +90,16 @@ export const appRoutes: VexRoutes = [
             }
           },
           {
+            path: 'book',
+            loadComponent: () =>
+              import('./pages/apps/book/book.component').then(
+                (m) => m.BookComponent
+              ),
+            data: {
+              toolbarShadowEnabled: false
+            }
+          },
+          {
             path: 'aio-table',
             loadComponent: () =>
               import('./pages/apps/aio-table/aio-table.component').then(

@@ -1,21 +1,22 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { appRoutes } from './app.routes';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   provideHttpClient,
   withInterceptorsFromDi
 } from '@angular/common/http';
-import { provideRouter, withInMemoryScrolling } from '@angular/router';
-import { MatDialogModule } from '@angular/material/dialog';
+import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
+import { BrowserModule } from '@angular/platform-browser';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import { vexConfigs } from '@vex/config/vex-configs';
+import { provideVex } from '@vex/vex.provider';
+import { provideQuillConfig } from 'ngx-quill';
+import { appRoutes } from './app.routes';
 import { provideIcons } from './core/icons/icons.provider';
 import { provideLuxon } from './core/luxon/luxon.provider';
-import { provideVex } from '@vex/vex.provider';
 import { provideNavigation } from './core/navigation/navigation.provider';
-import { vexConfigs } from '@vex/config/vex-configs';
-import { provideQuillConfig } from 'ngx-quill';
+
 
 export const appConfig: ApplicationConfig = {
   providers: [

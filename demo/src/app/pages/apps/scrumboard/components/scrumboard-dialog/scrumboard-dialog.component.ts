@@ -1,10 +1,6 @@
+import { TextFieldModule } from '@angular/cdk/text-field';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef
-} from '@angular/material/dialog';
-import { ScrumboardCard } from '../../interfaces/scrumboard-card.interface';
 import {
   FormBuilder,
   FormControl,
@@ -12,29 +8,33 @@ import {
   UntypedFormArray,
   UntypedFormControl
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef
+} from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { VexDateFormatRelativePipe } from '@vex/pipes/vex-date-format-relative/vex-date-format-relative.pipe';
+import { DateTime } from 'luxon';
 import {
   scrumboardLabels,
   scrumboardUsers
 } from '../../../../../../static-data/scrumboard';
-import { ScrumboardList } from '../../interfaces/scrumboard-list.interface';
-import { Scrumboard } from '../../interfaces/scrumboard.interface';
 import { ScrumboardAttachment } from '../../interfaces/scrumboard-attachment.interface';
-import { DateTime } from 'luxon';
+import { ScrumboardCard } from '../../interfaces/scrumboard-card.interface';
 import { ScrumboardComment } from '../../interfaces/scrumboard-comment.interface';
-import { ScrumboardUser } from '../../interfaces/scrumboard-user.interface';
 import { ScrumboardLabel } from '../../interfaces/scrumboard-label.interface';
-import { VexDateFormatRelativePipe } from '@vex/pipes/vex-date-format-relative/vex-date-format-relative.pipe';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatInputModule } from '@angular/material/input';
-import { TextFieldModule } from '@angular/cdk/text-field';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { NgClass, NgFor, NgIf } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { ScrumboardList } from '../../interfaces/scrumboard-list.interface';
+import { ScrumboardUser } from '../../interfaces/scrumboard-user.interface';
+import { Scrumboard } from '../../interfaces/scrumboard.interface';
 
 @Component({
   selector: 'vex-scrumboard-dialog',
