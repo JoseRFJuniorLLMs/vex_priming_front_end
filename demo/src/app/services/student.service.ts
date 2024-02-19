@@ -11,14 +11,14 @@ import { StudentPage } from '../model/student/student-page';
 })
 export class StudentService {
   private readonly API = AppConfig.urlAlunoInfo2;
-  
+
   private cache: Student[] = [];
 
   constructor(private http: HttpClient) { }
 
   list(page = 0, pageSize = 10) {
     return this.http.get<StudentPage>(this.API, { params: { page, pageSize } }).pipe(
-      tap(data => console.log('Data from API:', data)), // Aqui você imprime o valor que vem da API
+      tap(data => console.log('Data from API:', data)),
       first(),
       tap(data => (this.cache = data.students))
     );
