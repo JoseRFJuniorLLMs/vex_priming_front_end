@@ -11,12 +11,12 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { vexConfigs } from '@vex/config/vex-configs';
 import { provideVex } from '@vex/vex.provider';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { provideQuillConfig } from 'ngx-quill';
 import { appRoutes } from './app.routes';
 import { provideIcons } from './core/icons/icons.provider';
 import { provideLuxon } from './core/luxon/luxon.provider';
 import { provideNavigation } from './core/navigation/navigation.provider';
-
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,7 +24,8 @@ export const appConfig: ApplicationConfig = {
       BrowserModule,
       MatDialogModule,
       MatBottomSheetModule,
-      MatNativeDateModule
+      MatNativeDateModule,
+      PdfViewerModule
     ),
     provideRouter(
       appRoutes,
