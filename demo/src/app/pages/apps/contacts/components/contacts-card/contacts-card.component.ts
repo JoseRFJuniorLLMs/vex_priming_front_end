@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Contact } from '../../interfaces/contact.interface';
 import { NgIf } from '@angular/common';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
+import { Contact } from '../../interfaces/contact.interface';
 
 @Component({
   selector: 'vex-contacts-card',

@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
 import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
+import ePub from 'epubjs';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 @Component({
@@ -14,13 +16,42 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     VexSecondaryToolbarComponent,
     VexBreadcrumbsComponent,
     ReactiveFormsModule,
-    PdfViewerModule
+    PdfViewerModule,
+    MatButtonModule
   ]
 })
 export class BookComponent implements OnInit {
-  pdfSrc = "../../assets/file.pdf";
+  book: any;
+  rendition: any;
+  //pdfSrc = "../../assets/file.pdf";
 
   constructor() {}
 
-  ngOnInit() {}
+  async ngOnInit() {
+    try {
+      this.book = ePub("../../assets/file.epub");
+      await this.book.ready;
+      this.rendition = this.book.renderTo("area-de-exibicao");
+      const displayed = this.rendition.display();
+      console.log(displayed);
+    } catch (error) {
+      console.error("Error loading or rendering book: ", error);
+    }
+  }
+
+  nextPage() {
+    this.rendition.next();
+  }
+
+  prevPage() {
+    this.rendition.prev();
+  }
+
+  zoomIn() {
+    this.rendition.themes.fontSize('120%');
+  }
+
+  zoomOut() {
+    this.rendition.themes.fontSize('100%');
+  }
 }
