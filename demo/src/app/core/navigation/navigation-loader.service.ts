@@ -45,7 +45,7 @@ export class NavigationLoaderService {
           },
           {
             type: 'link',
-            label: 'Book',
+            label: 'Books',
             route: '/apps/book',
             icon: 'mat:menu_book'
           },
