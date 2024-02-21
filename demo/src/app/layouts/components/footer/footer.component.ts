@@ -126,5 +126,13 @@ continueTimer(): void {
   this.paused = false;
 }
 
+progress: number = 0;
+
+stopProgressBar(): void {
+  clearInterval(this.timer);
+  this.paused = true;
+  this.progress = 0;
+}
+
 
 }
