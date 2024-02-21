@@ -1,8 +1,36 @@
 <button
-  (click)="openConfig.emit()"
+  (click)="openBothConfigs()"
   class="config-panel-toggle"
   color="primary"
   mat-fab
   type="button">
-  <mat-icon svgIcon="mat:settings"></mat-icon>
+  <mat-icon svgIcon="mat:swipe_vertical"></mat-icon>
 </button>
+
+<button
+  (click)="openBothConfigs2()"
+  class="config-panel-toggle2"
+  color="primary"
+  mat-fab
+  type="button">
+  <mat-icon svgIcon="mat:lightbulb"></mat-icon>
+</button>
+
+<button
+  (click)="openBothConfigs2()"
+  class="config-panel-toggle3"
+  color="primary"
+  mat-fab
+  type="button">
+  <mat-icon svgIcon="mat:menu_book"></mat-icon>
+</button>
+
+<button
+  (click)="openBothConfigs2()"
+  class="config-panel-toggle4"
+  color="primary"
+  mat-fab
+  type="button">
+  <mat-icon svgIcon="mat:self_improvement"></mat-icon>
+</button>
+

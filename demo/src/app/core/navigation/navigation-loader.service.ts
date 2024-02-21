@@ -26,9 +26,9 @@ export class NavigationLoaderService {
         children: [
           {
             type: 'link',
-            label: 'Analytics',
+            label: 'Start',
             route: '/',
-            icon: 'mat:insights',
+            icon: 'mat:rocket_launch',
             routerLinkActiveOptions: { exact: true }
           }
         ]
@@ -563,7 +563,7 @@ export class NavigationLoaderService {
         type: 'link',
         label: 'Configuration',
         route: () => this.layoutService.openConfigpanel(),
-        icon: 'mat:settings'
+        icon: 'mat:live-help'
       }
     ]);
   }

@@ -1,3 +1,4 @@
+import { NgClass, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,19 +6,18 @@ import {
   OnInit
 } from '@angular/core';
 import {
+  MatBottomSheet,
+  MatBottomSheetModule
+} from '@angular/material/bottom-sheet';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { scaleInOutAnimation } from '@vex/animations/scale-in-out.animation';
+import {
   ApexOptions,
   VexChartComponent
 } from '@vex/components/vex-chart/vex-chart.component';
 import { defaultChartOptions } from '@vex/utils/default-chart-options';
-import {
-  MatBottomSheet,
-  MatBottomSheetModule
-} from '@angular/material/bottom-sheet';
 import { ShareBottomSheetComponent } from '../../share-bottom-sheet/share-bottom-sheet.component';
-import { scaleInOutAnimation } from '@vex/animations/scale-in-out.animation';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { NgClass, NgIf } from '@angular/common';
 
 @Component({
   selector: 'vex-widget-quick-line-chart',
