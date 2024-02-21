@@ -563,7 +563,7 @@ export class NavigationLoaderService {
         type: 'link',
         label: 'Configuration',
         route: () => this.layoutService.openConfigpanel(),
-        icon: 'mat:live-help'
+        icon: 'mat:book'
       }
     ]);
   }

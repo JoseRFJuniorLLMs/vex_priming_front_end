@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatRippleModule } from '@angular/material/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
@@ -12,9 +12,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
 import { VexScrollbarComponent } from '@vex/components/vex-scrollbar/vex-scrollbar.component';
+import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
 
-import { CdkDrag, CdkDragDrop } from '@angular/cdk/drag-drop';
+
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDropList,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
 
 
 /**
@@ -50,41 +59,39 @@ import { CdkDrag, CdkDragDrop } from '@angular/cdk/drag-drop';
     AsyncPipe,
     MatButtonModule,
     MatDividerModule,
-    MatInputModule
+    MatInputModule,
+    CdkDropList,
+    VexBreadcrumbsComponent,
+    VexSecondaryToolbarComponent
   ],
 })
 
-export class PuzzleBlockComponent implements OnInit {
-  
-  dropped = false; 
-    
-  constructor() {}
+export class PuzzleBlockComponent {
 
-  ngOnInit() {}
+  colors = [
+    {name: 'Vermelho', imageUrl: 'assets/images/vermelho.jpg'},
+    {name: 'Azul', imageUrl: 'https://www.exemplourls.com/imagens/azul.png'},
+    {name: 'Verde', imageUrl: 'assets/images/verde.jpg'},
+    {name: 'Amarelo', imageUrl: 'https://www.outroexemplo.com/amarelo.gif'},
+    {name: 'Preto', imageUrl: 'assets/images/preto.jpg'},
+    {name: 'Branco', imageUrl: 'assets/images/branco.jpg'}
+  ];
+  matchedColors = [];
 
-
-    handleDrop(event: CdkDragDrop<string[]>) {
-      console.log('Drop event triggered:', event);
-      const containerId = event.container.element.nativeElement.id;
-      console.log('Container ID:', containerId);
-    
-      if (containerId === 'drop-zone1') {
-        const draggedElementName = event.item.element.nativeElement.getAttribute('name');
-        console.log('Dragged Element Name:', draggedElementName);
-    
-        if (draggedElementName === 'love') {
-          console.log('Removing element with name "love"');
-          event.item.element.nativeElement.remove(); // Remove o elemento do DOM
-          this.dropped = true;
-        } else {
-          console.log('Element does not have name "love", not removing.');
-        }
-      } else {
-        console.log('Not dropping into "drop-zone1", ignoring.');
-      }
+  drop(event: CdkDragDrop<{name: string, imageUrl: string}[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
     }
-
   }
 
+
+}
 
 
