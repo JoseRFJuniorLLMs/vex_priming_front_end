@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink, RouterOutlet } from '@angular/router';
@@ -20,7 +21,8 @@ import { RouterLink, RouterOutlet } from '@angular/router';
     RouterLink,
     RouterOutlet,
     MatChipsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSlideToggleModule
   ]
 })
 export class FooterComponent implements OnInit, OnDestroy {
@@ -29,7 +31,24 @@ export class FooterComponent implements OnInit, OnDestroy {
   timer: any;
   durationInSeconds: number = 5;
 
+  selected = 'get-vex1';
+
   constructor() {}
+
+  icon1 = 'mat:30fps';
+  icon2 = 'mat:60fps';
+
+  onToggleChange(id: string) {
+    this.selected = id;
+
+    if (id === 'get-vex1') {
+      this.icon1 = 'mat:30fps_select';
+      this.icon2 = 'mat:60fps';
+    } else if (id === 'get-vex2') {
+      this.icon1 = 'mat:30fps';
+      this.icon2 = 'mat:60fps_select';
+    }
+  }
 
   ngOnInit(): void {
     this.startTimer();
@@ -94,6 +113,5 @@ continueTimer(): void {
   this.startTimer();
   this.paused = false;
 }
-
 
 }

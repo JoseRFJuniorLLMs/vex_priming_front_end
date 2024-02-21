@@ -1,15 +1,13 @@
 <div class="flex-auto flex items-center container">
-  <a
-    class="action flex-none"
-    color="primary"
-    href="https://priming-ing.web.app/apps/book"
-    id="get-vex"
-    mat-flat-button>
-    <mat-icon
-      class="icon-sm ltr:mr-2 rtl:ml-2"
-      svgIcon="mat:shopping_bag"></mat-icon>
-    <span>Priming</span>
+  <a class="action flex-none" matTooltip="Pomodoro 30" color="primary" id="get-vex1" mat-flat-button>
+    <mat-slide-toggle color="warn" [checked]="selected === 'get-vex1'" (change)="onToggleChange('get-vex1')"></mat-slide-toggle>
+    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" svgIcon="mat:alarm_on"></mat-icon>
+    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" [svgIcon]="icon1"></mat-icon>
   </a>
-  <div class="font-medium ltr:ml-4 rtl:mr-4 hidden sm:block">
 
+  <a class="action flex-none" matTooltip="Pomodoro 60" color="primary" id="get-vex2" mat-flat-button>
+    <mat-slide-toggle color="warn" [checked]="selected === 'get-vex2'" (change)="onToggleChange('get-vex2')"></mat-slide-toggle>
+    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" svgIcon="mat:alarm_on"></mat-icon>
+    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" [svgIcon]="icon2"></mat-icon>
+  </a>
 </div>
