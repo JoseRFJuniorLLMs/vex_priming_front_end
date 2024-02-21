@@ -24,6 +24,7 @@
   [matTooltip]="selected === 'get-vex3' ? 'Exclusive Mode' : 'Exclusive Mode'"
   color="primary" id="get-vex3" mat-flat-button>
   <mat-slide-toggle color="warn"
+                   (click)="openBothConfigs()"
                     [checked]="selected === 'get-vex3'"
                     (change)="onToggleChange('get-vex3')">
  </mat-slide-toggle>
