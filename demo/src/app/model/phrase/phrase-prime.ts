@@ -1,6 +1,6 @@
-export interface PhaasePrime {
+export interface PhrasePrime {
   _id: string;
-  prime: string; 
+  prime: string;
   target: string;
   phrase: string[];
   url: string[];

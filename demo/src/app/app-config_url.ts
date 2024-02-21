@@ -1,4 +1,4 @@
-export class AppConfig {
+export class AppConfigurl {
   public static readonly urlPrimeTarget = 'http://localhost:8080/api/prime/target/CHEAT';
   public static readonly urlPrimeFrase = 'http://localhost:8080/api/phrase/CHEAT';
   public static readonly urlText = 'http://localhost:8080/api/text/CHEAT';

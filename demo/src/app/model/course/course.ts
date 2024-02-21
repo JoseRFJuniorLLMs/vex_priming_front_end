@@ -4,7 +4,7 @@ export interface Course {
   _id: string;
   name: string;
   objective: string;
-  content?: Lesson[]; // TODO: remove, e atualizar(ContentCollection)
+  content?: Lesson[];
   lessons?: Lesson[];
   category: string;
 }

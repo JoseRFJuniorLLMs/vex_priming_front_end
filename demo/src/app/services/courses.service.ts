@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { first, of, tap } from 'rxjs';
+import { AppConfigurl } from 'src/app/app-config_url';
 
-import { AppConfig } from 'src/app/app-config';
 import { Course } from '../model/course/course';
 import { CoursePage } from '../model/course/course-page';
 
@@ -10,8 +10,8 @@ import { CoursePage } from '../model/course/course-page';
   providedIn: 'root'
 })
 export class CoursesService {
-  
-  private readonly API = AppConfig.urlCourse2;
+
+  private readonly API = AppConfigurl.urlCourse2;
 
   private cache: Course[] = [];
 
