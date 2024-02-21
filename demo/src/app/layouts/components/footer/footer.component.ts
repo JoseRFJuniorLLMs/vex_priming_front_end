@@ -1,13 +1,16 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink, RouterOutlet } from '@angular/router';
 
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'vex-footer',
@@ -22,34 +25,45 @@ import { RouterLink, RouterOutlet } from '@angular/router';
     RouterOutlet,
     MatChipsModule,
     MatTooltipModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatBadgeModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule
   ]
 })
 export class FooterComponent implements OnInit, OnDestroy {
+
+  constructor(private cdr: ChangeDetectorRef) { }
 
   displayTime: string = '25:00';
   timer: any;
   durationInSeconds: number = 5;
 
-  selected = 'get-vex1';
+  selected: string | null = null;
+  icon1: string = 'some-icon1'; // Replace with your actual icons
+  icon2: string = 'some-icon2';
 
-  constructor() {}
+  icon60fps: string = 'mat:60fps';
+  icon30fps: string = 'mat:30fps';
 
-  icon1 = 'mat:30fps';
-  icon2 = 'mat:60fps';
+changeIcons(): void {
+  this.icon60fps = 'mat:60fps_select';
+  this.icon30fps = 'mat:30fps_select';
+}
 
-  onToggleChange(id: string) {
-    this.selected = id;
-
-    if (id === 'get-vex1') {
-      this.icon1 = 'mat:30fps_select';
-      this.icon2 = 'mat:60fps';
-    } else if (id === 'get-vex2') {
-      this.icon1 = 'mat:30fps';
-      this.icon2 = 'mat:60fps_select';
+  onToggleChange(selection: string) {
+    if (selection === 'get-vex3') {
+      // Exclusive mode - Deselect others
+      if (this.selected !== 'get-vex3') {
+        this.selected = 'get-vex3';
+      } else {
+        this.selected = null;
+      }
+    } else {
+      // If another toggle is selected, clear 'get-vex3'
+      this.selected = selection;
     }
   }
-
   ngOnInit(): void {
     this.startTimer();
   }
@@ -68,6 +82,8 @@ startTimer(): void {
       const minutes = Math.floor(this.remainingSeconds / 60);
       const seconds = this.remainingSeconds % 60;
       this.displayTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      //this.displayTime = `${minutes}`;
+      this.cdr.detectChanges();  // Adicione esta linha
 
       if (this.remainingSeconds === 0) {
         this.stopTimer();
@@ -86,13 +102,9 @@ startTimer(): void {
       const minutes = Math.floor(this.remainingSeconds / 60);
       const seconds = this.remainingSeconds % 60;
       this.displayTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
-      if (this.remainingSeconds === 0) {
-        this.stopTimer();
-        //this.openDialog();
-      } else {
-        this.remainingSeconds--;
-      }
+      //this.displayTime = `${minutes}`;
+      this.cdr.detectChanges();  // Adicione esta linha
+      this.remainingSeconds--;
     }, 1000);
   }
 }
@@ -113,5 +125,6 @@ continueTimer(): void {
   this.startTimer();
   this.paused = false;
 }
+
 
 }

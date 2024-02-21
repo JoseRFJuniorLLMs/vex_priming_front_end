@@ -1,13 +1,35 @@
+
+<div class="flex-auto flex items-center container" style="color: rgb(0, 0, 0); font-size: large;">
+  {{ displayTime }}
+  <mat-progress-bar mode="query"></mat-progress-bar>
+</div>
+
+
+
 <div class="flex-auto flex items-center container">
-  <a class="action flex-none" matTooltip="Pomodoro 30" color="primary" id="get-vex1" mat-flat-button>
+
+
+  <a class="action flex-none" matTooltip="Pomodoro 30: {{ displayTime }}" color="primary" id="get-vex1" mat-flat-button>
     <mat-slide-toggle color="warn" [checked]="selected === 'get-vex1'" (change)="onToggleChange('get-vex1')"></mat-slide-toggle>
     <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" svgIcon="mat:alarm_on"></mat-icon>
-    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" [svgIcon]="icon1"></mat-icon>
+    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" [svgIcon]="selected === 'get-vex1' ? 'mat:30fps_select' : 'mat:30fps'"></mat-icon>
   </a>
 
-  <a class="action flex-none" matTooltip="Pomodoro 60" color="primary" id="get-vex2" mat-flat-button>
+  <a class="action flex-none" matTooltip="Pomodoro 60: {{ displayTime }}" color="primary" id="get-vex2" mat-flat-button>
     <mat-slide-toggle color="warn" [checked]="selected === 'get-vex2'" (change)="onToggleChange('get-vex2')"></mat-slide-toggle>
     <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" svgIcon="mat:alarm_on"></mat-icon>
-    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" [svgIcon]="icon2"></mat-icon>
+    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" [svgIcon]="selected === 'get-vex2' ? 'mat:60fps_select' : 'mat:60fps'"></mat-icon>
   </a>
+
+  <a class="action flex-none"
+  [matTooltip]="selected === 'get-vex3' ? 'Exclusive Mode' : 'Exclusive Mode'"
+  color="primary" id="get-vex3" mat-flat-button>
+  <mat-slide-toggle color="warn"
+                    [checked]="selected === 'get-vex3'"
+                    (change)="onToggleChange('get-vex3')">
+ </mat-slide-toggle>
+ <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" svgIcon="mat:front_hand"></mat-icon>
+</a>
+
+
 </div>
