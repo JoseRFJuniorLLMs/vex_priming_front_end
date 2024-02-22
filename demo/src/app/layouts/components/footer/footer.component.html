@@ -1,8 +1,3 @@
-
-
-
-
-
 <div class="flex-auto flex items-center container">
 
   <a class="action flex-none" matTooltip="Pomodoro 30: {{ displayTime }}" color="primary" id="get-vex1" mat-flat-button>
@@ -27,7 +22,7 @@
  </mat-slide-toggle>
  <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" [svgIcon]="selected === 'get-vex3' ? 'mat:sentiment_dissatisfied' : 'mat:front_hand'"></mat-icon>
 </a>
-<div class="flex-auto flex items-center container" style="color: rgb(0, 0, 0); font-size: large;">
+<div class="flex-auto flex items-center container" style="color: rgb(0, 0, 0); font-size: small;">
   {{ displayTime }}
   <mat-progress-bar mode="buffer" [value]="progress"></mat-progress-bar>
 </div>
