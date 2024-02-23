@@ -1,12 +1,25 @@
 
 
-<div class="example-box" cdkDrag>
-  <mat-form-field fontSize="20">
-    <mat-label>Notes</mat-label>
-    <textarea matInput
-              cdkTextareaAutosize
-              #autosize="cdkTextareaAutosize"
-              cdkAutosizeMinRows="1"
-              cdkAutosizeMaxRows="20"></textarea>
-  </mat-form-field>
-</div>
+
+<!-- Cards with media area -->
+<mat-card class="example-card" cdkDrag>
+  <mat-card-header>
+    <mat-card-title-group>
+      <mat-card-title>Write</mat-card-title>
+      <div class="example-box">
+        <mat-form-field fontSize="20">
+          <mat-label>Notes</mat-label>
+          <textarea matInput
+                    cdkTextareaAutosize
+                    #autosize="cdkTextareaAutosize"
+                    cdkAutosizeMinRows="1"
+                    cdkAutosizeMaxRows="20"></textarea>
+        </mat-form-field>
+      </div>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+
+  </mat-card-content>
+</mat-card>
+
