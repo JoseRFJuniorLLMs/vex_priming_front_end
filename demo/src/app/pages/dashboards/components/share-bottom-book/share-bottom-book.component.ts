@@ -21,6 +21,7 @@ import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-tool
 
 import { CdkTextareaAutosize, TextFieldModule } from '@angular/cdk/text-field';
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -55,7 +56,8 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     TextFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatChipsModule
     ]
 })
 export class ShareBottomBookComponent implements OnInit {
