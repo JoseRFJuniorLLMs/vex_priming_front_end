@@ -5,8 +5,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { scaleInOutAnimation } from '@vex/animations/scale-in-out.animation';
 
+import { ShareBottomBookComponent } from '../../../../pages/dashboards/components/share-bottom-book/share-bottom-book.component';
 import { ShareBottomSheetComponent } from '../../../../pages/dashboards/components/share-bottom-sheet/share-bottom-sheet.component';
 import { ShareBottomWimHofComponent } from '../../../../pages/dashboards/components/share-bottom-wim-hof/share-bottom-wim-hof.component';
+
 
 @Component({
   selector: 'vex-config-panel-toggle',
@@ -37,4 +39,12 @@ export class ConfigPanelToggleComponent {
   openBothConfigs3() {
     this._bottomSheet.open(ShareBottomWimHofComponent);
   }
+  openBothConfigs4() {
+    this._bottomSheet.open(ShareBottomBookComponent);
+  }
+
+  openBothConfigs5() {
+  this._bottomSheet.open(ShareBottomBookComponent);
+  }
+
 }
