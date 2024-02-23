@@ -1,6 +1,12 @@
+import {
+  CdkDrag,
+  CdkDropList
+} from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
+import { stagger40ms } from '@vex/animations/stagger.animation';
 import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
 import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
 import ePub from 'epubjs';
@@ -11,13 +17,16 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
   templateUrl: 'book.html',
   styleUrls: ['book.scss'],
   encapsulation: ViewEncapsulation.None,
+  animations: [stagger40ms, fadeInUp400ms],
   standalone: true,
   imports: [
     VexSecondaryToolbarComponent,
     VexBreadcrumbsComponent,
     ReactiveFormsModule,
     PdfViewerModule,
-    MatButtonModule
+    MatButtonModule,
+    CdkDrag,
+    CdkDropList
   ]
 })
 export class BookComponent implements OnInit {

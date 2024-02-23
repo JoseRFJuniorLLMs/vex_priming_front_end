@@ -16,7 +16,6 @@ import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-bre
 import { VexScrollbarComponent } from '@vex/components/vex-scrollbar/vex-scrollbar.component';
 import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
 
-
 import {
   CdkDrag,
   CdkDragDrop,
