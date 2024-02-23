@@ -1,3 +1,4 @@
+import { DialogModule } from '@angular/cdk/dialog';
 import {
   CdkDrag,
   CdkDropList
@@ -5,6 +6,10 @@ import {
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
 import { stagger40ms } from '@vex/animations/stagger.animation';
 import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
@@ -26,7 +31,12 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     PdfViewerModule,
     MatButtonModule,
     CdkDrag,
-    CdkDropList
+    CdkDropList,
+    DialogModule,
+    MatIconModule,
+    MatCardModule,
+    MatToolbarModule,
+    MatTooltipModule
   ]
 })
 export class BookComponent implements OnInit {
