@@ -67,7 +67,7 @@ export class MegaMenuComponent implements OnInit {
       route: '/apps/puzzle-block'
     },
     {
-      label: 'All-In-One Table',
+      label: 'Rank Students',
       route: '/apps/aio-table'
     },
     {

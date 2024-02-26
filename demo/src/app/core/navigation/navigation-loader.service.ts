@@ -51,7 +51,7 @@ export class NavigationLoaderService {
           },
           {
             type: 'link',
-            label: 'All-In-One Table',
+            label: 'Student Rank',
             route: '/apps/aio-table',
             icon: 'mat:assignment'
           },
