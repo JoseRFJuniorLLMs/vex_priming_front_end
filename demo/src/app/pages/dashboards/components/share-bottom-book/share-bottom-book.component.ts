@@ -31,6 +31,9 @@ import ePub from 'epubjs';
 import hljs from 'highlight.js';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 
+import { CommonModule } from '@angular/common';
+import { Gpt4Service } from '../../../../services/Gpt4.service';
+
 @Component({
   selector: 'vex-share-bottom-book',
   templateUrl: './share-bottom-book.component.html',
@@ -57,7 +60,8 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     MatInputModule,
     MatSelectModule,
     MatFormFieldModule,
-    MatChipsModule
+    MatChipsModule,
+    CommonModule
     ]
 })
 export class ShareBottomBookComponent implements OnInit {
@@ -65,11 +69,23 @@ export class ShareBottomBookComponent implements OnInit {
   rendition: any;
   selectedText: string = '';
   highlighted: boolean = false;
+
+  title = 'gpt4-example';
+  response: any;
+
   constructor(
-    private _bottomSheetRef: MatBottomSheetRef<ShareBottomBookComponent>, private _ngZone: NgZone
+    private _bottomSheetRef: MatBottomSheetRef<ShareBottomBookComponent>,
+    private _ngZone: NgZone,
+    private gpt4Service: Gpt4Service
   ) {}
 
   @ViewChild('autosize') autosize!: CdkTextareaAutosize;
+
+  onSubmit(prompt: string) {
+    this.gpt4Service.getGpt4Response(prompt).subscribe(response => {
+      this.response = response;
+    });
+  }
 
   close() {
     this._bottomSheetRef.dismiss();

@@ -1,36 +1,62 @@
-<!-- Cards with media area -->
-<mat-card class="example-card" cdkDrag>
-  <mat-card-title>Write Note</mat-card-title>
-  <mat-card-header>
-    <mat-card-title-group>
-      <div class="example-box">
 
-        <mat-card class="example-card">
-          <mat-card-header>
-            <mat-card-title-group>
+<mat-toolbar color="primary">
+  <span>Notes</span>
+</mat-toolbar>
 
-              <img mat-card-sm-image src="../../../../../assets/img/demo/notes.jpg" >
+<div class="container">
+  <form (submit)="onSubmit(prompt.value)">
+    <img mat-card-sm-image src="../../../../../assets/img/demo/notes.jpg" >
 
-              <mat-form-field fontSize="25">
-                <textarea matInput cdkDrag
-                            cdkTextareaAutosize
-                            #autosize="cdkTextareaAutosize"
-                            cdkAutosizeMinRows="1"
-                            cdkAutosizeMaxRows="90"></textarea>
-                </mat-form-field>
+    <mat-form-field fontSize="25">
+      <mat-label>Notes</mat-label>
+      <textarea matInput
+                  cdkTextareaAutosize
+                  #autosize="cdkTextareaAutosize"
+                  cdkAutosizeMinRows="1"
+                  cdkAutosizeMaxRows="90"></textarea>
+      </mat-form-field>
+  </form>
 
-            </mat-card-title-group>
-          </mat-card-header>
-        </mat-card>
+  <div *ngIf="response">
+    <h2>Response:</h2>
+    <p>{{ response.choices[0].text }}</p>
+  </div>
+</div>
+
+<style>
+  .container {
+    margin:  20px;
+    padding:  20px;
+    border:  1px solid #ccc;
+    border-radius:  4px;
+  }
+</style>
 
 
+<mat-toolbar color="primary">
+  <span>GPT4</span>
+</mat-toolbar>
 
-        <mat-chip-option color="warn">Fish</mat-chip-option>
-      </div>
+<div class="container">
+  <form (submit)="onSubmit(prompt.value)">
+    <mat-form-field appearance="outline">
+      <mat-label>Prompt</mat-label>
+      <input matInput #prompt type="text" name="prompt">
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="submit">Submit</button>
+  </form>
 
+  <div *ngIf="response">
+    <h2>Response:</h2>
+    <p>{{ response.choices[0].text }}</p>
+  </div>
+</div>
 
-    </mat-card-title-group>
-  </mat-card-header>
-
-</mat-card>
-
+<style>
+  .container {
+    margin:  20px;
+    padding:  20px;
+    border:  1px solid #ccc;
+    border-radius:  4px;
+  }
+</style>
