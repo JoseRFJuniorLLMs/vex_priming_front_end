@@ -1,20 +1,21 @@
 import { Component } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
+import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
+import { TableColumn } from '@vex/interfaces/table-column.interface';
 import { defaultChartOptions } from '@vex/utils/default-chart-options';
 import {
   Order,
   tableSalesData
 } from '../../../../static-data/table-sales-data';
-import { TableColumn } from '@vex/interfaces/table-column.interface';
-import { WidgetTableComponent } from '../components/widgets/widget-table/widget-table.component';
+import { WidgetAssistantComponent } from '../components/widgets/widget-assistant/widget-assistant.component';
 import { WidgetLargeChartComponent } from '../components/widgets/widget-large-chart/widget-large-chart.component';
-import { WidgetQuickValueCenterComponent } from '../components/widgets/widget-quick-value-center/widget-quick-value-center.component';
 import { WidgetLargeGoalChartComponent } from '../components/widgets/widget-large-goal-chart/widget-large-goal-chart.component';
 import { WidgetQuickLineChartComponent } from '../components/widgets/widget-quick-line-chart/widget-quick-line-chart.component';
-import { WidgetAssistantComponent } from '../components/widgets/widget-assistant/widget-assistant.component';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
-import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
+import { WidgetQuickValueCenterComponent } from '../components/widgets/widget-quick-value-center/widget-quick-value-center.component';
+import { WidgetTableComponent } from '../components/widgets/widget-table/widget-table.component';
+
 
 @Component({
   selector: 'vex-dashboard-analytics',
