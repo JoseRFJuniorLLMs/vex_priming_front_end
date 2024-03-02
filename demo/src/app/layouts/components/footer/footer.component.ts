@@ -109,7 +109,7 @@ onToggleChange(selection: string) {
         const minutes = Math.floor(this.remainingSeconds / 60);
         const seconds = this.remainingSeconds % 60;
         this.displayTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        this.cdr.detectChanges();  // Adicione esta linha
+        this.cdr.detectChanges();
 
         if (this.remainingSeconds === 0) {
           this.stopTimer();

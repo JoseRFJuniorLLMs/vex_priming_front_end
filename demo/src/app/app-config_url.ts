@@ -1,14 +1,14 @@
 export class AppConfigurl {
-  public static readonly urlPrimeTarget = 'http://localhost:8080/api/prime/target/CHEAT';
-  public static readonly urlPrimeFrase = 'http://localhost:8080/api/phrase/CHEAT';
-  public static readonly urlText = 'http://localhost:8080/api/text/CHEAT';
-  public static readonly urlYoutube = 'http://localhost:8080/api/youtube/CHEAT';
-  public static readonly urlAlunoInfo1 = 'http://localhost:8080/api/aluno/info/CHEAT';
-  public static readonly urlAlunoInfo2 = 'http://localhost:8080/api/student';
-  public static readonly urlClassroomAluno1 = 'http://localhost:8080/api/aluno/info/65befce78e1080e0c7308781';
-  public static readonly urlClassroomAluno2 = 'http://localhost:8080/api/aluno/info/65befd9b8e1080e0c7308784';
-  public static readonly urlCourse = 'http://localhost:8080/api/course';
-  public static readonly urlCourse2 = 'http://localhost:8080/api/course';
-  public static readonly urlTextAll = 'http://localhost:8080/api/text';
-  public static readonly urlPhraseAll = 'http://localhost:8080/api/phrase';
+  public static readonly urlPrimeTarget = 'https://priming-1532995a3138.herokuapp.com/api/prime/target/CHEAT';
+  public static readonly urlPrimeFrase = 'https://priming-1532995a3138.herokuapp.com/api/phrase/CHEAT';
+  public static readonly urlText = 'https://priming-1532995a3138.herokuapp.com/api/text/CHEAT';
+  public static readonly urlYoutube = 'https://priming-1532995a3138.herokuapp.com/api/youtube/CHEAT';
+  public static readonly urlAlunoInfo1 = 'https://priming-1532995a3138.herokuapp.com/students';
+  public static readonly urlAlunoInfo2 = 'https://priming-1532995a3138.herokuapp.com/student';
+  public static readonly urlClassroomAluno1 = 'https://priming-1532995a3138.herokuapp.com/api/aluno/info/65befce78e1080e0c7308781';
+  public static readonly urlClassroomAluno2 = 'https://priming-1532995a3138.herokuapp.com/api/aluno/info/65befd9b8e1080e0c7308784';
+  public static readonly urlCourse = 'https://priming-1532995a3138.herokuapp.com/api/course';
+  public static readonly urlCourse2 = 'https://priming-1532995a3138.herokuapp.com/api/course';
+  public static readonly urlTextAll = 'https://priming-1532995a3138.herokuapp.com/api/text';
+  public static readonly urlPhraseAll = 'https://priming-1532995a3138.herokuapp.com/api/phrase';
 }

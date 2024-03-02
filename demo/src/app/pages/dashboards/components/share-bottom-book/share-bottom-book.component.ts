@@ -32,7 +32,6 @@ import hljs from 'highlight.js';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 import { CommonModule } from '@angular/common';
-import { Gpt4Service } from '../../../../services/Gpt4.service';
 
 @Component({
   selector: 'vex-share-bottom-book',
@@ -76,16 +75,11 @@ export class ShareBottomBookComponent implements OnInit {
   constructor(
     private _bottomSheetRef: MatBottomSheetRef<ShareBottomBookComponent>,
     private _ngZone: NgZone,
-    private gpt4Service: Gpt4Service
+
   ) {}
 
   @ViewChild('autosize') autosize!: CdkTextareaAutosize;
 
-  onSubmit(prompt: string) {
-    this.gpt4Service.getGpt4Response(prompt).subscribe(response => {
-      this.response = response;
-    });
-  }
 
   close() {
     this._bottomSheetRef.dismiss();

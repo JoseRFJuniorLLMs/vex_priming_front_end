@@ -3,11 +3,14 @@ import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-s
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { scaleInOutAnimation } from '@vex/animations/scale-in-out.animation';
 
 import { ShareBottomBookComponent } from '../../../../pages/dashboards/components/share-bottom-book/share-bottom-book.component';
+import { ShareBottomGpt4Component } from '../../../../pages/dashboards/components/share-bottom-gpt4/share-bottom-gpt4.component';
 import { ShareBottomSheetComponent } from '../../../../pages/dashboards/components/share-bottom-sheet/share-bottom-sheet.component';
 import { ShareBottomWimHofComponent } from '../../../../pages/dashboards/components/share-bottom-wim-hof/share-bottom-wim-hof.component';
+
 
 
 @Component({
@@ -17,11 +20,11 @@ import { ShareBottomWimHofComponent } from '../../../../pages/dashboards/compone
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [scaleInOutAnimation],
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, MatBottomSheetModule,]
+  imports: [MatButtonModule, MatIconModule, MatBottomSheetModule,MatTooltipModule,]
 })
 export class ConfigPanelToggleComponent {
   @Output() openConfig = new EventEmitter();
-  @Output() openBottomConfig = new EventEmitter(); // Novo evento para o painel inferior
+  @Output() openBottomConfig = new EventEmitter();
 
   showButton: boolean = false;
   result?: string;
@@ -32,19 +35,19 @@ export class ConfigPanelToggleComponent {
     this.openConfig.emit();
     this.openBottomConfig.emit();
   }
-  openBothConfigs2() {
-    this._bottomSheet.open(ShareBottomSheetComponent);
-  }
-
-  openBothConfigs3() {
+  openBothConfigsWimHof() {
     this._bottomSheet.open(ShareBottomWimHofComponent);
   }
-  openBothConfigs4() {
+
+  openBothConfigsBottomSheet() {
+    this._bottomSheet.open(ShareBottomSheetComponent);
+  }
+  openBothConfigsBooks() {
     this._bottomSheet.open(ShareBottomBookComponent);
   }
 
-  openBothConfigs5() {
-  this._bottomSheet.open(ShareBottomBookComponent);
+  openBothConfigsGpt4() {
+  this._bottomSheet.open(ShareBottomGpt4Component);
   }
 
 }
