@@ -17,13 +17,24 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
+import {
+  MatSnackBar,
+  MatSnackBarHorizontalPosition,
+  MatSnackBarVerticalPosition
+} from '@angular/material/snack-bar';
+
+import { MatTooltipModule } from '@angular/material/tooltip';
 import screenfull from 'screenfull';
+
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 // Interface para descrever a estrutura da resposta da API
 interface ResponseData {
   choices?: { message: { content: string } }[];
 }
-
 @Component({
   selector: 'vex-share-bottom-gpt4',
   templateUrl: './share-bottom-gpt4.component.html',
@@ -34,14 +45,23 @@ interface ResponseData {
     VexBreadcrumbsComponent,
     MatButtonModule,
     MatIconModule,
-     MatTabsModule,
+    MatTabsModule,
     VexPageLayoutContentDirective,
     VexPageLayoutHeaderDirective,
     VexPageLayoutComponent,
-    MatCardModule
+    MatCardModule,
+    MatTooltipModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatToolbarModule
+
   ]
 })
 export class ShareBottomGpt4Component implements OnInit {
+
+  durationInSeconds = 130;
+  horizontalPosition: MatSnackBarHorizontalPosition = 'end';
+  verticalPosition: MatSnackBarVerticalPosition = 'bottom';
 
   questionAnswerList: any[] = [];
   questionText: any = '';
@@ -52,8 +72,17 @@ export class ShareBottomGpt4Component implements OnInit {
 
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private _snackBar: MatSnackBar
   ) {}
+
+  openSnackBar(message: string) {
+    this._snackBar.open(message, 'Save Notes', {
+      horizontalPosition: this.horizontalPosition,
+      verticalPosition: this.verticalPosition,
+      duration: this.durationInSeconds * 1000,
+    });
+  }
 
   ngOnInit(): void {
     if (screenfull.isEnabled) {
@@ -76,21 +105,23 @@ export class ShareBottomGpt4Component implements OnInit {
       model: "gpt-4",
     }, { headers }).toPromise();
 
-    // Verificando se a resposta é indefinida
-    if (response === undefined) {
-      throw new Error("Resposta indefinida.");
-    }
+         // Verificando se a resposta é indefinida
+         if (response === undefined) {
+          throw new Error("Resposta indefinida.");
+        }
 
-    // Verificando se a propriedade 'choices' está presente na resposta
-    if (response.choices && response.choices.length > 0) {
-      this.chatMessage = response.choices[0].message.content;
-    } else {
-      throw new Error("Resposta inválida.");
+        // Verificando se a propriedade 'choices' está presente na resposta
+        if (response.choices && response.choices.length > 0) {
+          this.chatMessage = response.choices[0].message.content;
+          // Chamando a função para exibir o Snackbar com a mensagem processada
+          this.openSnackBar(this.chatMessage);
+        } else {
+          throw new Error("Resposta inválida.");
+        }
+      } catch (error) {
+        this.errorText = (error as any).error.message;
+      } finally {
+        this.isLoading = false;
+      }
     }
-  } catch (error) {
-    this.errorText = (error as any).error.message;
-  } finally {
-    this.isLoading = false;
   }
-}
-}

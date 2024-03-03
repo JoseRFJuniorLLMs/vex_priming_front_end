@@ -21,3 +21,7 @@
   max-height: 300px; /* Altura máxima para a área de histórico de conversação */
   overflow-y: auto; /* Adicionar barra de rolagem vertical quando necessário */
 }
+
+mat-form-field {
+  margin-right: 12px;
+}

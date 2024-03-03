@@ -45,11 +45,11 @@
 
                 <div class="container p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                       <div class="question-form">
-                      <textarea matTooltip="GPT" (keyup.enter)="questionToOpenAI(questionText)" cols="100" rows="15" type="text" [(ngModel)]="questionText" placeholder="What is your doubt ?"></textarea>
+                      <textarea matTooltip="GPT" (paste)="questionToOpenAI(questionText)" (keyup.enter)="questionToOpenAI(questionText)" cols="100" rows="15" type="text" [(ngModel)]="questionText" placeholder="What is your doubt ?"></textarea>
                     </div>
 
                   <div class="loading-indicator" *ngIf="isLoading">
-                    <p>Loading...</p>
+                    <p>Loading...</p> <!-- trocar por um loadin -->
                   </div>
 
                   <div class="error-message" *ngIf="errorText">
@@ -57,10 +57,9 @@
                   </div>
                 </div>
               </div>
-
-
           </div>
         </mat-tab>
+
         <mat-tab label="Priming Lesson">
           <div class="p-6">
             <vex-page-layout-demo></vex-page-layout-demo>
