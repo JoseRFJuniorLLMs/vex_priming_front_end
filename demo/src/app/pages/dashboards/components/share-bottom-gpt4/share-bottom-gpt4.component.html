@@ -1,28 +1,35 @@
-<mat-nav-list class="mat-nav-list">
-  <div class="panel">
-    <h1>Converse com a IA</h1>
 
-    <div class="container">
-      <div class="conversation-history">
-        <mat-card *ngFor="let item of questionAnswerList" [ngClass]="{'user-message': item.role === 'user', 'assistant-message': item.role === 'assistant'}">
 
-            <p>{{ item.message.content }}</p> <!-- Alteração aqui para acessar o conteúdo da mensagem -->
+<vex-page-layout mode="card">
 
-        </mat-card>
-      </div>
+  <vex-page-layout-content class="container">
+    <div class="card">
 
-      <div class="question-form">
-          <input matInput type="text" [(ngModel)]="questionText" placeholder="Digite sua pergunta aqui..." />
-          <button mat-raised-button color="primary" (click)="questionToOpenAI(questionText)">Enviar</button>
-      </div>
+          <div class="p-6">
 
-      <div class="loading-indicator" *ngIf="isLoading">
-        <p>Carregando...</p>
-      </div>
+              <div class="panel">
+                <h1>{{ chatMessage }}</h1>
 
-      <div class="error-message" *ngIf="errorText">
-        <p>{{ errorText }}</p>
-      </div>
+                <div class="container p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+
+                      <div class="question-form">
+                      <textarea [(ngModel)]="questionText" placeholder="Digite sua pergunta aqui..."></textarea>
+                      <button mat-raised-button color="primary" (click)="questionToOpenAI(questionText)">Ask GPT</button>
+                      </div>
+
+
+                  <div class="loading-indicator" *ngIf="isLoading">
+                    <p>Loading...</p>
+                  </div>
+
+                  <div class="error-message" *ngIf="errorText">
+                    <p>{{ errorText }}</p>
+                  </div>
+                </div>
+              </div>
+
+
+          </div>
     </div>
-  </div>
-</mat-nav-list>
+  </vex-page-layout-content>
+</vex-page-layout>

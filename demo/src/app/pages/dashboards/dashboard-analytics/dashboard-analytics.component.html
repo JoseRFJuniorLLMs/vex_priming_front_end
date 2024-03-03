@@ -41,38 +41,15 @@
           <div class="p-6">
 
               <div class="panel">
-                <h1>Converse com a IA {{ chatMessage }}</h1>
+               <!--  <h1>{{ chatMessage }}</h1> -->
 
                 <div class="container p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-
-   <!--                <div class="conversation-history">
-                    <mat-card *ngFor="let item of questionAnswerList"
-                    [ngClass]="{'user-message': item.role === 'user', 'assistant-message': item.role === 'assistant'}">
-
-                        <p>{{ item.message.content }}</p>
-
-                    </mat-card>
-                  </div> -->
-
-                  <mat-card class="conversation-history">
-                    <mat-list>
-                      <mat-list-item *ngFor="let item of questionAnswerList">
-                        <div matLine>
-                          {{ item.message.content }}
-                        </div>
-                      </mat-list-item>
-                    </mat-list>
-                  </mat-card>
-
-
-
-                  <div class="question-form">
-                      <input matInput type="text" [(ngModel)]="questionText" placeholder="Digite sua pergunta aqui..." />
-                      <button mat-raised-button color="primary" (click)="questionToOpenAI(questionText)">Enviar</button>
-                  </div>
+                      <div class="question-form">
+                      <textarea matTooltip="GPT" (keyup.enter)="questionToOpenAI(questionText)" cols="100" rows="15" type="text" [(ngModel)]="questionText" placeholder="What is your doubt ?"></textarea>
+                    </div>
 
                   <div class="loading-indicator" *ngIf="isLoading">
-                    <p>Carregando...</p>
+                    <p>Loading...</p>
                   </div>
 
                   <div class="error-message" *ngIf="errorText">
