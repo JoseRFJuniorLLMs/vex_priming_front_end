@@ -1,5 +1,28 @@
 <mat-nav-list class="mat-nav-list">
   <div class="panel">
+    <h1>Converse com a IA</h1>
 
-   </div>
- </mat-nav-list>
+    <div class="container">
+      <div class="conversation-history">
+        <mat-card *ngFor="let item of questionAnswerList" [ngClass]="{'user-message': item.role === 'user', 'assistant-message': item.role === 'assistant'}">
+
+            <p>{{ item.message.content }}</p> <!-- Alteração aqui para acessar o conteúdo da mensagem -->
+
+        </mat-card>
+      </div>
+
+      <div class="question-form">
+          <input matInput type="text" [(ngModel)]="questionText" placeholder="Digite sua pergunta aqui..." />
+          <button mat-raised-button color="primary" (click)="questionToOpenAI(questionText)">Enviar</button>
+      </div>
+
+      <div class="loading-indicator" *ngIf="isLoading">
+        <p>Carregando...</p>
+      </div>
+
+      <div class="error-message" *ngIf="errorText">
+        <p>{{ errorText }}</p>
+      </div>
+    </div>
+  </div>
+</mat-nav-list>

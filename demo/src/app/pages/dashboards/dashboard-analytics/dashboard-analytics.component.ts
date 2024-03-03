@@ -16,6 +16,15 @@ import { VexPageLayoutHeaderDirective } from '@vex/components/vex-page-layout/ve
 import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page-layout.component';
 import { PageLayoutDemoComponent } from '../../ui/page-layouts/page-layout-demo/page-layout-demo.component';
 
+import { CommonModule } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatListModule } from '@angular/material/list';
+
+const gptUrl = "https://api.openai.com/v1/chat/completions";
+const gptApiKey = "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";
+
 import screenfull from 'screenfull';
 
 @Component({
@@ -23,7 +32,7 @@ import screenfull from 'screenfull';
   templateUrl: './dashboard-analytics.component.html',
   styleUrls: ['./dashboard-analytics.component.scss'],
   standalone: true,
-  imports: [
+  imports: [CommonModule,FormsModule, MatBottomSheetModule, MatListModule,
     VexSecondaryToolbarComponent,
     VexBreadcrumbsComponent,
     MatButtonModule,
@@ -42,12 +51,46 @@ import screenfull from 'screenfull';
   ]
 })
 export class DashboardAnalyticsComponent implements OnInit {
-  constructor() {}
+
+  questionAnswerList: any[] = [];
+  questionText: any = '';
+  chatMessage: any;
+  isLoading = false;
+  errorText = '';
+
+  constructor(
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
     if (screenfull.isEnabled) {
       screenfull.request();
     }
  }
+
+ async questionToOpenAI(question: string) {
+  this.isLoading = true;
+  try {
+    const headers = new HttpHeaders({
+      "Authorization": `Bearer ${gptApiKey}`,
+      "Content-Type": "application/json"
+    });
+
+    const response = await this.http.post(gptUrl, {
+      messages: [{ role: 'user', content: question }],
+      temperature: 0.5,
+      max_tokens: 4000,
+      model: "gpt-4",
+    }, { headers }).toPromise();
+
+    this.chatMessage = response;
+
+  } catch (error) {
+    this.errorText = (error as any).error.message;
+  } finally {
+    this.isLoading = false;
+  }
+}
+
 
 }

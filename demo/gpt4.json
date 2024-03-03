@@ -1,3 +1,4 @@
 {
-  "gpt4ApiKey": "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"
+  "gptApiKey": "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",
+  "gptUrl"   : "https://api.openai.com/v1/chat/completions"
 }

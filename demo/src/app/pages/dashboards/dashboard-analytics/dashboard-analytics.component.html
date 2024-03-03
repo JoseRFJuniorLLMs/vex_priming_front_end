@@ -40,7 +40,36 @@
       <mat-tab-group>
         <mat-tab label="Priming Course">
           <div class="p-6">
-            <vex-page-layout-demo></vex-page-layout-demo>
+
+              <div class="panel">
+                <h1>Converse com a IA {{ chatMessage }}</h1>
+
+                <div class="container">
+                  <div class="conversation-history">
+                    <mat-card *ngFor="let item of questionAnswerList"
+                    [ngClass]="{'user-message': item.role === 'user', 'assistant-message': item.role === 'assistant'}">
+
+                        <p>{{ item.message.content }}</p>
+
+                    </mat-card>
+                  </div>
+
+                  <div class="question-form">
+                      <input matInput type="text" [(ngModel)]="questionText" placeholder="Digite sua pergunta aqui..." />
+                      <button mat-raised-button color="primary" (click)="questionToOpenAI(questionText)">Enviar</button>
+                  </div>
+
+                  <div class="loading-indicator" *ngIf="isLoading">
+                    <p>Carregando...</p>
+                  </div>
+
+                  <div class="error-message" *ngIf="errorText">
+                    <p>{{ errorText }}</p>
+                  </div>
+                </div>
+              </div>
+
+
           </div>
         </mat-tab>
         <mat-tab label="Priming Lesson">

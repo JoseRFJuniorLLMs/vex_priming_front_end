@@ -2,3 +2,61 @@
   width: 100%;
   height: 100%;
 }
+
+.container {
+  width: 800px;
+  margin: 20px auto;
+}
+
+.conversation-history {
+  border: 1px solid #0fb723;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.message {
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+
+  &.user {
+    background-color: #be0f0f;
+    float: left;
+    clear: both;
+  }
+
+  &.ai {
+    background-color: #15d552;
+    float: right;
+    clear: both;
+  }
+}
+
+.question-form {
+  margin-top: 20px;
+
+  input {
+    width: 700px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: lightblue; //Adicionei uma cor a o botão
+    color: #fff; // Cor do texto em branco
+    cursor: pointer; // Cursor de 'mãozinha'
+  }
+}
+
+.loading-indicator {
+  // Add styles for loading indicator
+}
+
+.error-message {
+  // Add styles for error message
+}
