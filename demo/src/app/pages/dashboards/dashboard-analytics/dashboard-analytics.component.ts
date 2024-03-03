@@ -27,6 +27,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
+
 import {
   MatSnackBar,
   MatSnackBarHorizontalPosition,
@@ -72,7 +73,12 @@ interface ResponseData {
 
   ]
 })
+
+
 export class DashboardAnalyticsComponent implements OnInit {
+
+    // Defina as vozes disponíveis
+    voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
 
   speechRecognition: any;
 
@@ -98,6 +104,12 @@ export class DashboardAnalyticsComponent implements OnInit {
     private http: HttpClient,
     private _snackBar: MatSnackBar
   ) {}
+
+    // Função para selecionar uma voz aleatória
+    getRandomVoice(): string {
+      const randomIndex = Math.floor(Math.random() * this.voices.length);
+      return this.voices[randomIndex];
+    }
 
   openSnackBar(message: string) {
     this._snackBar.open(message, 'Save Notes', {
@@ -173,8 +185,8 @@ export class DashboardAnalyticsComponent implements OnInit {
 
       const body = {
         model: "tts-1",
-        voice: "alloy",
-        input: this.chatMessage // Use chatMessage as input
+        voice: this.getRandomVoice(),
+        input: this.chatMessage
       };
 
       const headers = new HttpHeaders({
