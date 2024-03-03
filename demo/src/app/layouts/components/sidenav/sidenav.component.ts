@@ -17,6 +17,8 @@ import { SearchModalComponent } from './search-modal/search-modal.component';
 import { SidenavItemComponent } from './sidenav-item/sidenav-item.component';
 import { SidenavUserMenuComponent } from './sidenav-user-menu/sidenav-user-menu.component';
 
+import screenfull from 'screenfull';
+
 @Component({
   selector: 'vex-sidenav',
   templateUrl: './sidenav.component.html',
@@ -65,7 +67,12 @@ export class SidenavComponent implements OnInit {
     private readonly dialog: MatDialog
   ) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {
+    if (screenfull.isEnabled) {
+      screenfull.request();
+    }
+ }
+
 
   collapseOpenSidenav() {
     this.layoutService.collapseOpenSidenav();
