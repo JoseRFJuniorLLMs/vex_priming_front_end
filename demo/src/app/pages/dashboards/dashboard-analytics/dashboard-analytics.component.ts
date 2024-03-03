@@ -36,6 +36,7 @@ import {
 import { MatTooltipModule } from '@angular/material/tooltip';
 import screenfull from 'screenfull';
 
+
 // Interface para descrever a estrutura da resposta da API
 interface ResponseData {
   choices?: { message: { content: string } }[];
@@ -71,6 +72,10 @@ interface ResponseData {
 })
 export class DashboardAnalyticsComponent implements OnInit {
 
+  textToSpeech!: string;
+  audioBlob!: Blob;
+  audioUrl!: string;
+
   durationInSeconds = 130;
   horizontalPosition: MatSnackBarHorizontalPosition = 'end';
   verticalPosition: MatSnackBarVerticalPosition = 'bottom';
@@ -83,7 +88,6 @@ export class DashboardAnalyticsComponent implements OnInit {
   selectedText: string = '';
   data: any;
 
-
   constructor(
     private http: HttpClient,
     private _snackBar: MatSnackBar
@@ -95,9 +99,11 @@ export class DashboardAnalyticsComponent implements OnInit {
       verticalPosition: this.verticalPosition,
       duration: this.durationInSeconds * 1000,
     });
+    this.generateAudio();
   }
 
   ngOnInit(): void {
+    this.textToSpeech = "Olá, mundo! Que dia maravilhoso para construir algo que as pessoas adoram!";
     if (screenfull.isEnabled) {
       screenfull.request();
     }
@@ -146,4 +152,39 @@ export class DashboardAnalyticsComponent implements OnInit {
         this.questionToOpenAI(this.selectedText);
       }
     }
+
+    generateAudio(): void {
+      if (!this.chatMessage) {
+        // Handle case where chatMessage is empty or undefined
+        console.error('No chatMessage to generate audio from.');
+        return;
+      }
+
+      const openAIKey = gpt4.gptApiKey;
+      const url = "https://api.openai.com/v1/audio/speech";
+
+      const body = {
+        model: "tts-1",
+        voice: "alloy",
+        input: this.chatMessage // Use chatMessage as input
+      };
+
+      const headers = new HttpHeaders({
+        "Authorization": `Bearer ${openAIKey}`
+      });
+
+      this.http.post(url, body, { headers, responseType: "blob"})
+        .subscribe(response => {
+          this.audioBlob = new Blob([response], { type: 'audio/mpeg' }); // Adjust type if needed
+          this.audioUrl = URL.createObjectURL(this.audioBlob);
+          const audio = new Audio(this.audioUrl);
+          audio.play();
+        });
+    }
+
   }
+
+  interface ResponseData {
+    choices?: { message: { content: string; }; }[];
+  }
+
