@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
@@ -80,6 +80,7 @@ export class DashboardAnalyticsComponent implements OnInit {
   chatMessage: any;
   isLoading = false;
   errorText = '';
+  selectedText: string = '';
   data: any;
 
 
@@ -134,6 +135,15 @@ export class DashboardAnalyticsComponent implements OnInit {
         this.errorText = (error as any).error.message;
       } finally {
         this.isLoading = false;
+      }
+    }
+
+    @HostListener('document:mouseup', ['$event'])
+    handleMouseUp(event: MouseEvent) {
+      const selection = window.getSelection();
+      if (selection && selection.toString().trim() !== '') {
+        this.selectedText = selection.toString();
+        this.questionToOpenAI(this.selectedText);
       }
     }
   }
