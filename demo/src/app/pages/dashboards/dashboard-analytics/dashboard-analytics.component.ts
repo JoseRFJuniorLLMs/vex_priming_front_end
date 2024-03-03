@@ -18,7 +18,7 @@ import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page
 import { PageLayoutDemoComponent } from '../../ui/page-layouts/page-layout-demo/page-layout-demo.component';
 
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatCardModule } from '@angular/material/card';
@@ -36,6 +36,7 @@ import {
 import { MatTooltipModule } from '@angular/material/tooltip';
 import screenfull from 'screenfull';
 
+/* import * as Annyang from 'annyang'; */
 
 // Interface para descrever a estrutura da resposta da API
 interface ResponseData {
@@ -66,11 +67,16 @@ interface ResponseData {
     MatCardModule,
     MatTooltipModule,
     MatInputModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    HttpClientModule
 
   ]
 })
 export class DashboardAnalyticsComponent implements OnInit {
+
+  speechRecognition: any;
+
+  isTranscribing = false;
 
   textToSpeech!: string;
   audioBlob!: Blob;
@@ -103,10 +109,12 @@ export class DashboardAnalyticsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.textToSpeech = "Olá, mundo! Que dia maravilhoso para construir algo que as pessoas adoram!";
-    if (screenfull.isEnabled) {
+     if (screenfull.isEnabled) {
       screenfull.request();
     }
+
+   /*  Annyang.start({ autoRestart: true }); */
+    this.speechRecognition.continuous = true;
  }
 
  async questionToOpenAI(question: string) {
@@ -181,6 +189,61 @@ export class DashboardAnalyticsComponent implements OnInit {
           audio.play();
         });
     }
+
+    async transcribeAudio(audioBlob: Blob) {
+      const formData = new FormData();
+      formData.append('file', audioBlob);
+
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${gpt4.gptApiKey}`
+      });
+
+      try {
+        const transcription = await this.http.post<any>(
+          'https://api.openai.com/v1/audio/transcribe',
+          formData,
+          { headers }
+        ).toPromise();
+        console.log(transcription.text);
+      } catch (error) {
+        console.error('Error transcribing audio:', error);
+      }
+    }
+
+    onFileSelected(event: any) {
+      const file: File = event.target.files[0];
+      this.transcribeAudio(file);
+    }
+
+    async startSpeechRecognition() {
+      try {
+        if (!this.speechRecognition || this.isTranscribing) {
+          return;
+        }
+
+        this.isTranscribing = true;
+
+        this.speechRecognition.start();
+
+        this.speechRecognition.onresult = (event: { results: { transcript: any; }[]; }) => {
+          const transcript = event.results[0].transcript;
+          this.questionText = transcript;
+        };
+
+        this.speechRecognition.onerror = (error: any) => {
+          console.error('Erro no reconhecimento de voz:', error);
+          this._snackBar.open('Erro ao transcrever áudio.', 'Ok', { duration: 2000 });
+        };
+
+      } catch (error) {
+        this.isTranscribing = false;
+        console.error('Erro ao iniciar reconhecimento de voz:', error);
+        // Exibir erro adequado
+      }
+    }
+
+
+
 
   }
 
