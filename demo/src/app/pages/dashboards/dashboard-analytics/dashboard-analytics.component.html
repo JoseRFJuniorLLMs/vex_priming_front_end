@@ -33,7 +33,6 @@
 
 
  <vex-page-layout mode="card">
-<!--   <vex-page-layout-header class="h-6"></vex-page-layout-header> -->
 
   <vex-page-layout-content class="container">
     <div class="card">
@@ -44,15 +43,28 @@
               <div class="panel">
                 <h1>Converse com a IA {{ chatMessage }}</h1>
 
-                <div class="container">
-                  <div class="conversation-history">
+                <div class="container p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+
+   <!--                <div class="conversation-history">
                     <mat-card *ngFor="let item of questionAnswerList"
                     [ngClass]="{'user-message': item.role === 'user', 'assistant-message': item.role === 'assistant'}">
 
                         <p>{{ item.message.content }}</p>
 
                     </mat-card>
-                  </div>
+                  </div> -->
+
+                  <mat-card class="conversation-history">
+                    <mat-list>
+                      <mat-list-item *ngFor="let item of questionAnswerList">
+                        <div matLine>
+                          {{ item.message.content }}
+                        </div>
+                      </mat-list-item>
+                    </mat-list>
+                  </mat-card>
+
+
 
                   <div class="question-form">
                       <input matInput type="text" [(ngModel)]="questionText" placeholder="Digite sua pergunta aqui..." />
