@@ -13,20 +13,14 @@
       <h2 class="vex-sidenav-toolbar__headline flex-auto">
         {{ title$ | async }}
       </h2>
-      <button
+      <button matTooltip="By clicking you decrease and increase the size of the side menu !!"
         (click)="toggleCollapse()"
         *ngIf="showCollapsePin$ | async"
         class="vex-sidenav-toolbar__collapse-toggle -mr-4 leading-none flex-none hidden lg:block"
         mat-icon-button
         type="button">
-        <mat-icon
-          *ngIf="!collapsed"
-          class="icon-xs"
-          svgIcon="mat:radio_button_checked"></mat-icon>
-        <mat-icon
-          *ngIf="collapsed"
-          class="icon-xs"
-          svgIcon="mat:radio_button_unchecked"></mat-icon>
+          <i  *ngIf="!collapsed" class="icon-xs" class="fa fa-align-justify" style="font-size: 24px;"></i>
+          <i  *ngIf="collapsed" class="icon-xs" class="fa fa-cat" style="font-size: 24px;"></i>
       </button>
     </div>
 

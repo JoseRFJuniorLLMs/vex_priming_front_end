@@ -1,20 +1,21 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { NavigationService } from '../../../core/navigation/navigation.service';
-import { VexLayoutService } from '@vex/services/vex-layout.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatRippleModule } from '@angular/material/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { VexPopoverService } from '@vex/components/vex-popover/vex-popover.service';
+import { VexScrollbarComponent } from '@vex/components/vex-scrollbar/vex-scrollbar.component';
 import { VexConfigService } from '@vex/config/vex-config.service';
+import { VexLayoutService } from '@vex/services/vex-layout.service';
+import { Observable, of } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 import { NavigationItem } from '../../../core/navigation/navigation-item.interface';
-import { VexPopoverService } from '@vex/components/vex-popover/vex-popover.service';
-import { Observable, of } from 'rxjs';
-import { SidenavUserMenuComponent } from './sidenav-user-menu/sidenav-user-menu.component';
-import { MatDialog } from '@angular/material/dialog';
+import { NavigationService } from '../../../core/navigation/navigation.service';
 import { SearchModalComponent } from './search-modal/search-modal.component';
 import { SidenavItemComponent } from './sidenav-item/sidenav-item.component';
-import { VexScrollbarComponent } from '@vex/components/vex-scrollbar/vex-scrollbar.component';
-import { MatRippleModule } from '@angular/material/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { SidenavUserMenuComponent } from './sidenav-user-menu/sidenav-user-menu.component';
 
 @Component({
   selector: 'vex-sidenav',
@@ -29,7 +30,8 @@ import { AsyncPipe, NgFor, NgIf } from '@angular/common';
     VexScrollbarComponent,
     NgFor,
     SidenavItemComponent,
-    AsyncPipe
+    AsyncPipe,
+    MatTooltipModule
   ]
 })
 export class SidenavComponent implements OnInit {

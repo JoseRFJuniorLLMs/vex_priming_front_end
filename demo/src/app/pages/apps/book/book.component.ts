@@ -8,12 +8,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
 import { stagger40ms } from '@vex/animations/stagger.animation';
-import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
-import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
 
 import ePub from 'epubjs';
 import hljs from 'highlight.js';
@@ -27,8 +24,6 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
   animations: [stagger40ms, fadeInUp400ms],
   standalone: true,
   imports: [
-    VexSecondaryToolbarComponent,
-    VexBreadcrumbsComponent,
     ReactiveFormsModule,
     PdfViewerModule,
     MatButtonModule,
@@ -37,7 +32,6 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     DialogModule,
     MatIconModule,
     MatCardModule,
-    MatToolbarModule,
     MatTooltipModule
   ]
 })
