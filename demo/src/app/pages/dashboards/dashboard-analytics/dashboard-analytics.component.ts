@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
@@ -36,6 +36,8 @@ import {
 
 import { MatTooltipModule } from '@angular/material/tooltip';
 import screenfull from 'screenfull';
+
+import WaveSurfer from 'wavesurfer.js';
 
 /* import * as Annyang from 'annyang'; */
 
@@ -75,10 +77,78 @@ interface ResponseData {
 })
 
 
-export class DashboardAnalyticsComponent implements OnInit {
+export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
+
+  @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
+  private waveform!: WaveSurfer;
+  public isPlaying: boolean = false;
+
+  ngAfterViewInit(): void {
+
+    this.isPlaying = false;
+
+    this.waveform = WaveSurfer.create({
+
+      container: this.waveformEl.nativeElement,
+     /*  url: 'https://storage.googleapis.com/priming_text_wav/ABOVE.wav', */
+
+      url: '../../assets/audio/ADVANCE.wav',
+/*       waveColor: '#d3d3d3',
+      progressColor: '#000000', */
+      waveColor: 'rgb(200, 0, 200)',
+      progressColor: '#000000',
+      cursorColor: '#000000',
+      cursorWidth: 5,
+
+      minPxPerSec: 50,
+
+      barWidth: 10,
+      barRadius: 2,
+      barGap: 2,
+
+      autoScroll: true,
+      autoCenter: true,
+      interact: true,
+      dragToSeek: true,
+      mediaControls: true,
+      autoplay: false,
+      fillParent: true
+
+    });
+
+    this.events();
+  }
+
+  events() {
+
+    this.waveform.once('interaction', () => {
+      this.waveform.play();
+    })
+
+    this.waveform.on('play', () => {
+      this.isPlaying = true;
+    })
+
+    this.waveform.on('pause', () => {
+      this.isPlaying = false;
+    })
+  }
+
+  playAudio() {
+    this.waveform.play();
+  }
+
+  pauseAudio() {
+    this.waveform.pause();
+  }
+
+  stopAudio() {
+    this.waveform.stop();
+  }
+
 
     // Defina as vozes disponíveis
-    voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+  voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
 
   speechRecognition: any;
 
@@ -139,16 +209,14 @@ export class DashboardAnalyticsComponent implements OnInit {
 
     const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
       messages: [{ role: 'user', content: question }],
-      temperature: 0.5,
-      max_tokens: 4000,
+      temperature: 0.0,//0.5
+      max_tokens: 100,//4000
       model: "gpt-4",
     }, { headers }).toPromise();
-
          // Verificando se a resposta é indefinida
          if (response === undefined) {
           throw new Error("Resposta indefinida.");
         }
-
         // Verificando se a propriedade 'choices' está presente na resposta
         if (response.choices && response.choices.length > 0) {
           this.chatMessage = response.choices[0].message.content;
