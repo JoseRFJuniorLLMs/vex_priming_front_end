@@ -45,7 +45,7 @@ export class BookComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      this.book = ePub("../../assets/file.epub");
+      this.book = ePub("../../assets/epub/TheLittlePrince.epub");
       await this.book.ready;
       this.rendition = this.book.renderTo("area-de-exibicao");
       this.rendition.display();

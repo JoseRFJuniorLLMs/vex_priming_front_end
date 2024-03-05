@@ -49,8 +49,9 @@ export class FooterComponent implements OnInit, OnDestroy {
   constructor(private cdr: ChangeDetectorRef, private _bottomSheet: MatBottomSheet, private dialog: MatDialog) { }
 
   displayTime: string = '30:00';
+  displayTimeMin: string = '30';
   timer: any;
-  durationInSeconds: number = 30;
+  durationInSeconds: number = 1800;
 
   selected: string | null = null;
   icon1: string = 'some-icon1'; // Replace with your actual icons
@@ -102,45 +103,49 @@ onToggleChange(selection: string) {
   }
 }
 
-  startTimer(): void {
-    if (this.paused) {
-      // Se estiver pausado, continue de onde parou
-      this.timer = setInterval(() => {
-        const minutes = Math.floor(this.remainingSeconds / 60);
-        const seconds = this.remainingSeconds % 60;
-        this.displayTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        this.cdr.detectChanges();
+startTimer(): void {
+  if (this.paused) {
+    // Se estiver pausado, continue de onde parou
+    this.timer = setInterval(() => {
+      const minutes = Math.floor(this.remainingSeconds / 60);
+      const seconds = this.remainingSeconds % 60;
+      this.displayTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      this.displayTimeMin = `${minutes}`; // Atualiza displayTimeMin com os minutos
+      this.cdr.detectChanges();
 
-        if (this.remainingSeconds === 0) {
-          this.stopTimer();
-          //this.openDialog();
-          this.openBothConfigs();
-        } else {
-          this.remainingSeconds--;
-        }
-      }, 1000);
-    } else {
-      // Se não estiver pausado, inicie um novo timer
-      this.stopTimer(); // Certifique-se de parar o temporizador antes de iniciar um novo
-      this.remainingSeconds = this.durationInSeconds;  // Altere esta linha
-
-      this.timer = setInterval(() => {
-        const minutes = Math.floor(this.remainingSeconds / 60);
-        const seconds = this.remainingSeconds % 60;
-        this.displayTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        this.cdr.detectChanges();
+      if (this.remainingSeconds === 0) {
+        this.stopTimer();
+        //this.openDialog();
+        this.openBothConfigs();
+      } else {
         this.remainingSeconds--;
-      }, 1000);
-    }
+      }
+    }, 1000);
+  } else {
+    // Se não estiver pausado, inicie um novo timer
+    this.stopTimer(); // Certifique-se de parar o temporizador antes de iniciar um novo
+    this.remainingSeconds = this.durationInSeconds;  // Altere esta linha
+
+    this.timer = setInterval(() => {
+      const minutes = Math.floor(this.remainingSeconds / 60);
+      const seconds = this.remainingSeconds % 60;
+      this.displayTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      this.displayTimeMin = `${minutes}`; // Atualiza displayTimeMin com os minutos
+      this.cdr.detectChanges();
+      this.remainingSeconds--;
+    }, 1000);
   }
+}
 
 stopTimer(): void {
   clearInterval(this.timer);
+  this.openBothConfigs();
 }
 
 pauseTimer(): void {
   clearInterval(this.timer);
   this.paused = true;
+  this.openBothConfigs();
 }
 
 continueTimer(): void {
@@ -158,5 +163,4 @@ stopProgressBar(): void {
 openBothConfigs() {
   this._bottomSheet.open(ShareBottomWimHofComponent);
 }
-
 }

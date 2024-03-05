@@ -1,30 +1,51 @@
 <div class="flex-auto flex items-center container">
 
-  <a class="action flex-none" matTooltip="Pomodoro Technique is a time management method developed by Francesco Cirillo. It’s designed to enhance productivity and focus by breaking work into manageable intervals.»»»»Pomodoro 30: {{ displayTime }}" color="primary" id="get-vex1" mat-flat-button>
-    <mat-slide-toggle color="warn" [checked]="selected === 'get-vex1'" (change)="onToggleChange('get-vex1')"></mat-slide-toggle>
+  <div>
+    <button mat-raised-button color="primary" matTooltip="Pomodoro Times: {{ displayTime }}"
+      matBadge="{{ displayTimeMin }}" matBadgeSize="large" matBadgePosition="before" matBadgeColor="warn">
+      Pomodoro {{ displayTime }}
+    </button>
+  </div>
+
+  <a class="action flex-none"
+    matTooltip="Pomodoro Technique is a time management method developed by Francesco Cirillo. It’s designed to enhance productivity and focus by breaking work into manageable intervals.»»»»Pomodoro 30: {{ displayTime }}"
+    color="primary" id="get-vex1" mat-flat-button>
+    <mat-slide-toggle color="warn" [checked]="selected === 'get-vex1'" (change)="onToggleChange('get-vex1')">
+    </mat-slide-toggle>
     <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" svgIcon="mat:alarm_on"></mat-icon>
-    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" [svgIcon]="selected === 'get-vex1' ? 'mat:30fps_select' : 'mat:30fps'"></mat-icon>
+    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2"
+      [svgIcon]="selected === 'get-vex1' ? 'mat:30fps_select' : 'mat:30fps'"></mat-icon>
   </a>
 
-  <a class="action flex-none" matTooltip="Pomodoro Technique is a time management method developed by Francesco Cirillo. It’s designed to enhance productivity and focus by breaking work into manageable intervals.»»»»Pomodoro 60: {{ displayTime }}" color="primary" id="get-vex2" mat-flat-button>
-    <mat-slide-toggle color="warn" [checked]="selected === 'get-vex2'" (change)="onToggleChange('get-vex2')"></mat-slide-toggle>
+  <a class="action flex-none"
+    matTooltip="Pomodoro Technique is a time management method developed by Francesco Cirillo. It’s designed to enhance productivity and focus by breaking work into manageable intervals.»»»»Pomodoro 60: {{ displayTime }}"
+    color="primary" id="get-vex2" mat-flat-button>
+    <mat-slide-toggle color="warn" [checked]="selected === 'get-vex2'"
+      (change)="onToggleChange('get-vex2')"></mat-slide-toggle>
     <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" svgIcon="mat:alarm_on"></mat-icon>
-    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" [svgIcon]="selected === 'get-vex2' ? 'mat:60fps_select' : 'mat:60fps'"></mat-icon>
+    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2"
+      [svgIcon]="selected === 'get-vex2' ? 'mat:60fps_select' : 'mat:60fps'"></mat-icon>
   </a>
 
-  <a class="action flex-none" (click)="stopProgressBar()"
-  [matTooltip]="selected === 'get-vex3' ? 'Pause' : 'Pause'"
-  color="primary" id="get-vex3" mat-flat-button>
-  <mat-slide-toggle color="warn"
-                   (click)="openBothConfigs()"
-                    [checked]="selected === 'get-vex3'"
-                    (change)="onToggleChange('get-vex3')">
- </mat-slide-toggle>
- <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" [svgIcon]="selected === 'get-vex3' ? 'mat:sentiment_dissatisfied' : 'mat:front_hand'"></mat-icon>
-</a>
-<div class="flex-auto flex items-center container" style="color: rgb(0, 0, 0); font-size: small;">
-  {{ displayTime }}
-  <mat-progress-bar mode="buffer" [value]="progress"></mat-progress-bar>
-</div>
-</div>
+  <a class="action flex-none" disabled
+    matTooltip="Pomodoro Technique is a time management method developed by Francesco Cirillo. It’s designed to enhance productivity and focus by breaking work into manageable intervals.»»»»Pomodoro 90: {{ displayTime }}"
+    color="primary" id="get-vex2" mat-flat-button>
+    <mat-slide-toggle color="warn" [checked]="selected === 'get-vex2'"
+      (change)="onToggleChange('get-vex2')"></mat-slide-toggle>
+    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" svgIcon="mat:alarm_on"></mat-icon>
+    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2"
+      [svgIcon]="selected === 'get-vex2' ? 'mat:military_tech' : 'mat:settings_accessibility'"></mat-icon>
+  </a>
 
+  <a class="action flex-none" (click)="stopProgressBar()" [matTooltip]="selected === 'get-vex3' ? 'Pause' : 'Pause'"
+    color="primary" id="get-vex3" mat-flat-button>
+    <mat-slide-toggle color="warn" (click)="openBothConfigs()" [checked]="selected === 'get-vex3'"
+      (change)="onToggleChange('get-vex3')">
+    </mat-slide-toggle>
+    <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2"
+      [svgIcon]="selected === 'get-vex3' ? 'mat:sentiment_dissatisfied' : 'mat:front_hand'"></mat-icon>
+  </a>
+  <div class="flex-auto flex items-center container" style="color: rgb(0, 0, 0); font-size: small;">
+    <mat-progress-bar mode="buffer" value="{{ displayTimeMin }}"></mat-progress-bar>
+  </div>
+</div>
