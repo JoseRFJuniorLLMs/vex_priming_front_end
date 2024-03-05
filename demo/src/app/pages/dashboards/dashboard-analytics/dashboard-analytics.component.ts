@@ -27,7 +27,6 @@ import { MatListModule } from '@angular/material/list';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-
 import {
   MatSnackBar,
   MatSnackBarHorizontalPosition,
@@ -39,6 +38,7 @@ import screenfull from 'screenfull';
 
 import WaveSurfer from 'wavesurfer.js';
 
+import { interval, Subscription } from 'rxjs';
 /* import * as Annyang from 'annyang'; */
 
 // Interface para descrever a estrutura da resposta da API
@@ -76,12 +76,85 @@ interface ResponseData {
   ]
 })
 
-
 export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
 
+  audioUrlRT = 'https://storage.googleapis.com/priming_text_wav/ABOVE.wav';
+  audioUrlAssets = '.../../../.../assets/../audio/PRIMING.wav';
+
   @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
+
+  // VARIAVEIS
+
+  //voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+  voices: string[] = ['alloy', 'echo'];
+
+  speechRecognition: any;
+
+  isTranscribing = false;
+
+  textToSpeech!: string;
+  audioBlob!: Blob;
+  audioUrl!: string;
+
+  durationInSeconds = 130;
+  horizontalPosition: MatSnackBarHorizontalPosition = 'end';
+  verticalPosition: MatSnackBarVerticalPosition = 'bottom';
+
+  questionAnswerList: any[] = [];
+  questionText: any = '';
+  chatMessage: any;
+  isLoading = false;
+  errorText = '';
+  selectedText: string = '';
+  data: any;
+
+  currentTime!: string;
+
   private waveform!: WaveSurfer;
   public isPlaying: boolean = false;
+  private subscription: Subscription = new Subscription;
+  progressPercentage: number = 0;
+
+  constructor(
+    private http: HttpClient,
+    private _snackBar: MatSnackBar
+  ) {}
+
+  playAudioDownRealTime() {
+    const headers = new HttpHeaders({
+      'Authorization': 'Basic ' + btoa('service-495734453317@gs-project-accounts.iam.gserviceaccount.com:9EolRyUNmJExsxCi3Fq9N1IV8lY2M/TPT07u1SnQ')
+    });
+
+    this.http.get(this.audioUrlRT, { headers, responseType: 'blob' }).subscribe(response => {
+      const audioBlob = new Blob([response], { type: 'audio/wav' });
+      const audioUrl = URL.createObjectURL(audioBlob);
+      // Carregar o áudio gerado no WaveSurfer
+      this.waveform.load(audioUrl);
+      // Reproduzir o áudio
+      const audio = new Audio(audioUrl);
+      console.log(audio);
+    });
+  }
+
+
+  ngOnInit(): void {
+    this.waveform.play();
+
+  // Inicia um intervalo que chama getCurrentTime() a cada segundo
+    this.subscription = interval(1000).subscribe(() => {
+  this.getCurrentTime();
+    });
+
+    if (screenfull.isEnabled) {
+      screenfull.request();
+    }
+    this.speechRecognition.continuous = true;
+  }
+
+  ngOnDestroy(): void {
+    // Certifique-se de cancelar a inscrição para evitar vazamentos de memória
+    this.subscription.unsubscribe();
+  }
 
   ngAfterViewInit(): void {
 
@@ -92,11 +165,11 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
       container: this.waveformEl.nativeElement,
      /*  url: 'https://storage.googleapis.com/priming_text_wav/ABOVE.wav', */
 
-      url: '../../assets/audio/ADVANCE.wav',
-/*       waveColor: '#d3d3d3',
-      progressColor: '#000000', */
-      waveColor: 'rgb(200, 0, 200)',
+      url: '../../assets/audio/PRIMING.wav',
+      waveColor: '#d3d3d3',
       progressColor: '#000000',
+/*       waveColor: 'rgb(200, 0, 200)',
+      progressColor: '#000000', */
       cursorColor: '#000000',
       cursorWidth: 5,
 
@@ -111,16 +184,21 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
       interact: true,
       dragToSeek: true,
       mediaControls: true,
-      autoplay: false,
-      fillParent: true
-
+      autoplay: true,
+      fillParent: true,
     });
+      // Adicionando um listener para o evento 'audioprocess' para atualizar o tempo corrente
+  this.waveform.on('audioprocess', () => {
+    this.getCurrentTime();
+    this.calculateProgressPercentage();
+
+  });
 
     this.events();
   }
 
-  events() {
 
+  events() {
     this.waveform.once('interaction', () => {
       this.waveform.play();
     })
@@ -146,37 +224,21 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
     this.waveform.stop();
   }
 
+  getCurrentTime(): void {
+    const currentTime = this.waveform.getCurrentTime();
+    const minutes = Math.floor(currentTime / 60);
+    const seconds = Math.floor(currentTime % 60);
+    this.currentTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  }
 
-    // Defina as vozes disponíveis
-  voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+  calculateProgressPercentage(): void {
+    const duration = this.waveform.getDuration();
+    const currentTime = this.waveform.getCurrentTime();
+    this.progressPercentage = (currentTime / duration) * 100;
+  }
 
-  speechRecognition: any;
-
-  isTranscribing = false;
-
-  textToSpeech!: string;
-  audioBlob!: Blob;
-  audioUrl!: string;
-
-  durationInSeconds = 130;
-  horizontalPosition: MatSnackBarHorizontalPosition = 'end';
-  verticalPosition: MatSnackBarVerticalPosition = 'bottom';
-
-  questionAnswerList: any[] = [];
-  questionText: any = '';
-  chatMessage: any;
-  isLoading = false;
-  errorText = '';
-  selectedText: string = '';
-  data: any;
-
-  constructor(
-    private http: HttpClient,
-    private _snackBar: MatSnackBar
-  ) {}
-
-    // Função para selecionar uma voz aleatória
-    getRandomVoice(): string {
+  // Função para selecionar uma voz aleatória
+  getRandomVoice(): string {
       const randomIndex = Math.floor(Math.random() * this.voices.length);
       return this.voices[randomIndex];
     }
@@ -189,15 +251,6 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
     });
     this.generateAudio();
   }
-
-  ngOnInit(): void {
-     if (screenfull.isEnabled) {
-      screenfull.request();
-    }
-
-   /*  Annyang.start({ autoRestart: true }); */
-    this.speechRecognition.continuous = true;
- }
 
  async questionToOpenAI(question: string) {
   this.isLoading = true;
@@ -243,8 +296,7 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
 
     generateAudio(): void {
       if (!this.chatMessage) {
-        // Handle case where chatMessage is empty or undefined
-        console.error('No chatMessage to generate audio from.');
+         console.error('No chatMessage to generate audio from.');
         return;
       }
 
@@ -261,12 +313,16 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
         "Authorization": `Bearer ${openAIKey}`
       });
 
-      this.http.post(url, body, { headers, responseType: "blob"})
-        .subscribe(response => {
-          this.audioBlob = new Blob([response], { type: 'audio/mpeg' }); // Adjust type if needed
-          this.audioUrl = URL.createObjectURL(this.audioBlob);
-          const audio = new Audio(this.audioUrl);
-          audio.play();
+      this.http.post(url, body, { headers, responseType: "blob"}).subscribe(response => {
+          const audioBlob = new Blob([response], { type: 'audio/wav' });
+          const audioUrl = URL.createObjectURL(audioBlob);
+
+       // Carregar o áudio gerado no WaveSurfer
+      this.waveform.load(audioUrl);
+
+      // Reproduzir o áudio gerado pelo GPT-4 usando o objeto Audio
+      const audio = new Audio(audioUrl);
+
         });
     }
 
@@ -321,8 +377,6 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
         // Exibir erro adequado
       }
     }
-
-
 
 
   }
