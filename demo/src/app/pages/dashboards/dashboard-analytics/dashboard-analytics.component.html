@@ -16,80 +16,87 @@
 </div>-->
 
 
-<vex-page-layout mode="card">
+<vex-page-layout mode="card" >
 
   <vex-page-layout-content class="container">
 
     <div class="card">
-      <mat-tab-group>
-        <mat-tab label="Priming Course">
-          <div class="p-6">
 
-              <div class="panel">
-                <div class="container p-2
+      <mat-tab-group>
+
+        <mat-tab label="Priming Course">
+          <div class="p-4">
+            <div class="panel">
+              <div class="container p-2
                 grid grid-cols-1
                 sm:grid-cols-1
                 md:grid-cols-2
                 gap-2">
-                  <vex-widget-assistant class="sm:col-span-2">
 
-                  </vex-widget-assistant>
+                <vex-widget-assistant class="sm:col-span-1">
+                </vex-widget-assistant>
 
 
+                <!-- Waveform -->
 
-                  <!-- Waveform -->
-
-                  <div #waveform
+                <div #waveform autoplay
                   matTooltip="Time Current: {{currentTime}}"
-                  style="cursor: pointer;" [style.left]="progressPercentage + '%'">
-                    <div class="time-indicator" [style.left]="progressPercentage + '%'">
-                      {{ currentTime }}
-                    </div>
-                    <button style="cursor: pointer;">
-                      <mat-icon svgIcon="mat:heart_check"></mat-icon>
-                    </button>
-                    <button mat-icon-button matTooltip="Carregar e Reproduzir Áudio para Waveform {{currentTime}} "
+                  style="cursor: pointer;"
+                  [style.left]="progressPercentage + '%'">
+                  <div class="time-indicator" [style.left]="progressPercentage + '%'">
+                    {{ currentTime }}
+                  </div>
+                  <button style="cursor: pointer;">
+                    <mat-icon svgIcon="mat:heart_check"></mat-icon>
+                  </button>
+                  <button mat-icon-button matTooltip="Play Waveform {{currentTime}} "
                     (click)="playAudio()">
-                     <mat-icon svgIcon="mat:play_arrow"></mat-icon>
-                    </button>
-                    <button mat-icon-button
-                    (click)="stopAudio()">
-                     <mat-icon svgIcon="mat:stop"></mat-icon>
-                    </button>
+                    <mat-icon svgIcon="mat:play_arrow"></mat-icon>
+                  </button>
+                  <button mat-icon-button  matTooltip="Stop Waveform {{currentTime}} "
+                  (click)="stopAudio()">
+                    <mat-icon svgIcon="mat:stop"></mat-icon>
+                  </button>
 
-                    <button mat-icon-button
-                    (click)="pauseAudio()">
-                     <mat-icon svgIcon="mat:pause_circle"></mat-icon>
-                    </button>
+                  <button mat-icon-button matTooltip="Pause Waveform {{currentTime}} "
+                   (click)="pauseAudio()">
+                    <mat-icon svgIcon="mat:pause_circle"></mat-icon>
+                  </button>
 
-                    </div>
-
-                 <!-- Quick Line Chart -->
-                  <vex-widget-quick-line-chart
-                    icon="mat:pageview"
-                    iconClass="text-primary-600 bg-primary-600/10"
-                    label="Priming"
-                    value="{{ chatMessage }}">
-                  </vex-widget-quick-line-chart>
-
-                  <!-- Text Area for Question Input -->
-                  <div class="question-form">
-                    <textarea matTooltip="Priming GPT Help Text Area" (paste)="questionToOpenAI(questionText)" (keyup.enter)="questionToOpenAI(questionText)" cols="100" rows="15" type="text" [(ngModel)]="questionText" placeholder="What is your doubt ?"></textarea>
-                  </div>
+                  <button mat-icon-button matTooltip="Download file Waveform {{currentTime}} "
+                  (click)="toggleMediaControls()">
+                    <mat-icon *ngIf="mediaControlIcon === 'mat:sports_esports'" svgIcon="mat:sports_esports"></mat-icon>
+                    <mat-icon *ngIf="mediaControlIcon === 'mat:cloud_download'" svgIcon="mat:cloud_download"></mat-icon>
+                  </button>
 
                 </div>
-                <div>
-                </div>
-                <div class="container p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                 <div class="loading-indicator" *ngIf="isLoading">
-                    <p>Loading...</p> <!-- trocar por um loadin -->
-                  </div>
 
-                  <div class="error-message" *ngIf="errorText">
-                    <p>{{ errorText }}</p>
-                  </div>
+
+                <!-- Quick Line Chart -->
+                <vex-widget-quick-line-chart icon="mat:pageview" iconClass="text-primary-600 bg-primary-600/10"
+                  label="Priming" value="{{ chatMessage }}">
+                </vex-widget-quick-line-chart>
+
+                <!-- Text Area for Question Input -->
+                <div class="question-form">
+                  <textarea matTooltip="Priming GPT Help Text Area" (paste)="questionToOpenAI(questionText)"
+                    (keyup.enter)="questionToOpenAI(questionText)" cols="100" rows="15" type="text"
+                    (ngModel)="questionText" placeholder="What is your doubt ?"></textarea>
+                </div>
+
+              </div>
+              <div>
+              </div>
+              <div class="container p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="loading-indicator" *ngIf="isLoading">
+                  <p>Loading...</p> <!-- trocar por um loadin -->
+                </div>
+
+                <div class="error-message" *ngIf="errorText">
+                  <p>{{ errorText }}</p>
                 </div>
               </div>
+            </div>
           </div>
         </mat-tab>
 

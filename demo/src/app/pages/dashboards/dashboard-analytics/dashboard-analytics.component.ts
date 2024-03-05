@@ -85,8 +85,8 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
 
   // VARIAVEIS
 
-  //voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
-  voices: string[] = ['alloy', 'echo'];
+  voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+  //voices: string[] = ['alloy', 'echo'];
 
   speechRecognition: any;
 
@@ -115,6 +115,9 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
   private subscription: Subscription = new Subscription;
   progressPercentage: number = 0;
 
+  mediaControlsEnabled: boolean = true;
+  mediaControlIcon: string = 'mat:sports_esports'; // Ícone padrão
+
   constructor(
     private http: HttpClient,
     private _snackBar: MatSnackBar
@@ -136,13 +139,10 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
     });
   }
 
-
   ngOnInit(): void {
     this.waveform.play();
-
-  // Inicia um intervalo que chama getCurrentTime() a cada segundo
     this.subscription = interval(1000).subscribe(() => {
-  this.getCurrentTime();
+    this.getCurrentTime();
     });
 
     if (screenfull.isEnabled) {
@@ -152,13 +152,12 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
   }
 
   ngOnDestroy(): void {
-    // Certifique-se de cancelar a inscrição para evitar vazamentos de memória
-    this.subscription.unsubscribe();
+        this.subscription.unsubscribe();
   }
 
   ngAfterViewInit(): void {
 
-    this.isPlaying = false;
+    this.isPlaying = true;
 
     this.waveform = WaveSurfer.create({
 
@@ -183,11 +182,13 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
       autoCenter: true,
       interact: true,
       dragToSeek: true,
-      mediaControls: true,
+
+      mediaControls: false, //controles
+
       autoplay: true,
       fillParent: true,
     });
-      // Adicionando um listener para o evento 'audioprocess' para atualizar o tempo corrente
+
   this.waveform.on('audioprocess', () => {
     this.getCurrentTime();
     this.calculateProgressPercentage();
@@ -235,6 +236,12 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
     const duration = this.waveform.getDuration();
     const currentTime = this.waveform.getCurrentTime();
     this.progressPercentage = (currentTime / duration) * 100;
+  }
+
+  toggleMediaControls(): void {
+    this.mediaControlsEnabled = !this.mediaControlsEnabled;
+    this.waveform.setOptions({ mediaControls: this.mediaControlsEnabled });
+    this.mediaControlIcon = this.mediaControlsEnabled ? 'mat:sports_esports' : 'mat:cloud_download';
   }
 
   // Função para selecionar uma voz aleatória
