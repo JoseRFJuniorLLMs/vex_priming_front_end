@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,7 +11,7 @@ import { ShareBottomGpt4Component } from '../../../../pages/dashboards/component
 import { ShareBottomSheetComponent } from '../../../../pages/dashboards/components/share-bottom-sheet/share-bottom-sheet.component';
 import { ShareBottomWimHofComponent } from '../../../../pages/dashboards/components/share-bottom-wim-hof/share-bottom-wim-hof.component';
 
-
+import screenfull from 'screenfull';
 
 @Component({
   selector: 'vex-config-panel-toggle',
@@ -22,7 +22,7 @@ import { ShareBottomWimHofComponent } from '../../../../pages/dashboards/compone
   standalone: true,
   imports: [MatButtonModule, MatIconModule, MatBottomSheetModule,MatTooltipModule,]
 })
-export class ConfigPanelToggleComponent {
+export class ConfigPanelToggleComponent implements OnInit {
   @Output() openConfig = new EventEmitter();
   @Output() openBottomConfig = new EventEmitter();
 
@@ -30,6 +30,12 @@ export class ConfigPanelToggleComponent {
   result?: string;
 
   constructor(private _bottomSheet: MatBottomSheet, dialog: MatDialog) {}
+
+  ngOnInit(): void {
+    if (screenfull.isEnabled) {
+      screenfull.request();
+    }
+ }
 
   openBothConfigs() {
     this.openConfig.emit();

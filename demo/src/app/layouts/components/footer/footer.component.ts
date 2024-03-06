@@ -107,16 +107,18 @@ startTimer(): void {
   if (this.paused) {
     // Se estiver pausado, continue de onde parou
     this.timer = setInterval(() => {
-      const minutes = Math.floor(this.remainingSeconds / 60);
-      const seconds = this.remainingSeconds % 60;
-      this.displayTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-      this.displayTimeMin = `${minutes}`; // Atualiza displayTimeMin com os minutos
+      const hours = Math.floor(this.remainingSeconds / 3600); // Calcula as horas restantes
+      const minutes = Math.floor((this.remainingSeconds % 3600) / 60); // Calcula os minutos restantes
+      const seconds = this.remainingSeconds % 60; // Calcula os segundos restantes
+
+      // Formata a exibição da hora, minuto e segundo
+      this.displayTime = `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      this.displayTimeMin = `${hours * 60 + minutes}`; // Atualiza displayTimeMin com os minutos totais
       this.cdr.detectChanges();
 
       if (this.remainingSeconds === 0) {
         this.stopTimer();
-        //this.openDialog();
-        this.openBothConfigs();
+        this.endTime(); // Dispara a função quando o tempo acaba
       } else {
         this.remainingSeconds--;
       }
@@ -130,22 +132,30 @@ startTimer(): void {
       const minutes = Math.floor(this.remainingSeconds / 60);
       const seconds = this.remainingSeconds % 60;
       this.displayTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-      this.displayTimeMin = `${minutes}`; // Atualiza displayTimeMin com os minutos
+      this.displayTimeMin = `${minutes}`;
       this.cdr.detectChanges();
-      this.remainingSeconds--;
+      if (this.remainingSeconds === 0) {
+        this.stopTimer();
+        this.endTime(); // Dispara a função quando o tempo acaba
+      } else {
+        this.remainingSeconds--;
+      }
     }, 1000);
   }
 }
 
+endTime(): void {
+  this.openBothConfigs();
+}
+
+
 stopTimer(): void {
   clearInterval(this.timer);
-  this.openBothConfigs();
 }
 
 pauseTimer(): void {
   clearInterval(this.timer);
   this.paused = true;
-  this.openBothConfigs();
 }
 
 continueTimer(): void {

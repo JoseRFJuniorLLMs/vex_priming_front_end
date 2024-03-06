@@ -33,13 +33,17 @@ import {
   MatSnackBarVerticalPosition
 } from '@angular/material/snack-bar';
 
+import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
+
 import screenfull from 'screenfull';
 
 import WaveSurfer from 'wavesurfer.js';
 
 import { interval, Subscription } from 'rxjs';
 /* import * as Annyang from 'annyang'; */
+
 
 // Interface para descrever a estrutura da resposta da API
 interface ResponseData {
@@ -71,7 +75,8 @@ interface ResponseData {
     MatTooltipModule,
     MatInputModule,
     MatFormFieldModule,
-    HttpClientModule
+    HttpClientModule,
+    MatSliderModule
 
   ]
 })

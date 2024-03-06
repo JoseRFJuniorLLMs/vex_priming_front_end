@@ -44,15 +44,17 @@
                   style="cursor: pointer;"
                   [style.left]="progressPercentage + '%'">
                   <div class="time-indicator" [style.left]="progressPercentage + '%'">
-                    {{ currentTime }}
                   </div>
+
                   <button style="cursor: pointer;">
                     <mat-icon svgIcon="mat:heart_check"></mat-icon>
                   </button>
+
                   <button mat-icon-button matTooltip="Play Waveform {{currentTime}} "
                     (click)="playAudio()">
                     <mat-icon svgIcon="mat:play_arrow"></mat-icon>
                   </button>
+
                   <button mat-icon-button  matTooltip="Stop Waveform {{currentTime}} "
                   (click)="stopAudio()">
                     <mat-icon svgIcon="mat:stop"></mat-icon>
@@ -65,15 +67,24 @@
 
                   <button mat-icon-button matTooltip="Download file Waveform {{currentTime}} "
                   (click)="toggleMediaControls()">
-                    <mat-icon *ngIf="mediaControlIcon === 'mat:sports_esports'" svgIcon="mat:sports_esports"></mat-icon>
-                    <mat-icon *ngIf="mediaControlIcon === 'mat:cloud_download'" svgIcon="mat:cloud_download"></mat-icon>
+                  <mat-icon *ngIf="mediaControlIcon === 'mat:sports_esports'" svgIcon="mat:sports_esports"></mat-icon>
+                  <mat-icon *ngIf="mediaControlIcon === 'mat:cloud_download'" svgIcon="mat:cloud_download"></mat-icon>
                   </button>
 
-                </div>
+                  <br>
 
+
+                  <!-- Volume -->
+                    <div class="flex flex-col gap-4">
+                      <mat-slider color="accent" discrete max="100" min="1" showTickMarks
+                      ><input matSliderThumb value="10" />
+                      </mat-slider>
+                    </div>
+               </div>
 
                 <!-- Quick Line Chart -->
-                <vex-widget-quick-line-chart icon="mat:pageview" iconClass="text-primary-600 bg-primary-600/10"
+                <vex-widget-quick-line-chart icon="mat:pageview"
+                  iconClass="text-primary-600 bg-primary-600/10"
                   label="Priming" value="{{ chatMessage }}">
                 </vex-widget-quick-line-chart>
 
@@ -138,6 +149,13 @@
         <mat-tab label="Priming Word List">
           <div class="p-6">
             <vex-page-layout-demo></vex-page-layout-demo>
+          </div>
+        </mat-tab>
+        <mat-tab label="Priming Graph View">
+          <div class="p-6">
+            <span class="material-symbols-outlined">
+              hub
+              </span>
           </div>
         </mat-tab>
       </mat-tab-group>
