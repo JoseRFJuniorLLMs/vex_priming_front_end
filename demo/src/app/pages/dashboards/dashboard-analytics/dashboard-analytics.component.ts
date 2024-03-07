@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { MatTableModule } from '@angular/material/table';
 
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
@@ -40,10 +41,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 import { MatDialog } from '@angular/material/dialog';
-import { interval, Subscription } from 'rxjs';
+import { interval, Observable, Subscription } from 'rxjs';
 import screenfull from 'screenfull';
 import WaveSurfer from 'wavesurfer.js';
 /* import * as Annyang from 'annyang'; */
+import { Course } from 'src/app/model/course/course';
+import { Lesson } from 'src/app/model/lesson/lesson';
+import { CoursesService } from '../../../services/courses.service';
+import { LessonDetailsDialogComponent } from '../components/dialog-lesson/lesson-details-Dialog.component';
 import { DialogExampleComponent } from '../components/dialog/dialog-example.component';
 
 
@@ -79,13 +84,18 @@ interface ResponseData {
     MatFormFieldModule,
     HttpClientModule,
     MatSliderModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTableModule
 
   ]
 })
 
 
 export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
+
+  /* ==================COURSES SERVICES==================== */
+  courses$!: Observable<Course[]>;
+  displayedColumns: string[] = ['_id', 'name', 'objective', 'category', 'level', 'price', 'status', 'content', 'lessons'];
 
   /* ==================VIEWCHILD==================== */
   @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
@@ -124,7 +134,8 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   constructor(
     private http: HttpClient,
     private _snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private coursesService : CoursesService
   ) { }
 
    /* ==================openDialog==================== */
@@ -142,6 +153,13 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
 
   /* ==================OnINIT==================== */
   ngOnInit(): void {
+
+    const studentId = 'student_id';
+    this.courses$ = this.coursesService.getCoursesByStudentId(studentId);
+
+    // Definindo colunas dinamicamente com base na entidade Course (exemplo simplificado)
+    this.displayedColumns = this.getColumnsFromCourseEntity();
+
     this.waveform.play();
     this.subscription = interval(1000).subscribe(() => {
       this.getCurrentTime();
@@ -151,6 +169,11 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
       screenfull.request();
     }
     this.speechRecognition.continuous = true;
+  }
+
+   /* ==================COLUMNS COURSE==================== */
+  private getColumnsFromCourseEntity(): string[] {
+      return ['_id', 'name', 'objective', 'category'];
   }
 
   /* ==================OnDESTROY==================== */
@@ -432,6 +455,12 @@ displayFullText(text: string): void {
     return totalTime;
   }
 
+  openLessonsDialog(lessons: Lesson[]): void {
+    this.dialog.open(LessonDetailsDialogComponent, {
+      width: '80%',
+      data: { lessons }
+    });
+  }
 
 
 

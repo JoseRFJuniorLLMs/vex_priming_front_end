@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { first, of, tap } from 'rxjs';
+import { Observable, first, of, tap } from 'rxjs';
 import { AppConfigurl } from 'src/app/app-config_url';
 
 import { Course } from '../model/course/course';
@@ -16,6 +16,11 @@ export class CoursesService {
   private cache: Course[] = [];
 
   constructor(private http: HttpClient) { }
+
+  getCoursesByStudentId(studentId: string): Observable<any> {
+    const url = `https://priming-1532995a3138.herokuapp.com/student/v2/${studentId}/courses`;
+    return this.http.get<any>(url).pipe(first());
+  }
 
   list(page = 0, pageSize = 10) {
     return this.http.get<CoursePage>(this.API, { params: { page, pageSize } }).pipe(

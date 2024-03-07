@@ -39,8 +39,7 @@
 
                 <!-- Waveform -->
 
-                <div #waveform autoplay matTooltip="Time Current: {{currentTime}}"
-                 style="cursor: pointer;"
+                <div #waveform autoplay matTooltip="Time Current: {{currentTime}}" style="cursor: pointer;"
                   [style.left]="progressPercentage + '%'">
                   <div class="time-indicator" [style.left]="progressPercentage + '%'">
                   </div>
@@ -71,18 +70,15 @@
 
                   <!-- Volume -->
                   <div class="flex flex-col gap-4">
-                    <mat-slider color="accent" discrete max="100"
-                    min="1" showTickMarks><input matSliderThumb
+                    <mat-slider color="accent" discrete max="100" min="1" showTickMarks><input matSliderThumb
                         value="10" />
                     </mat-slider>
                   </div>
                 </div>
 
                 <!-- Quick Line Chart -->
-                <vex-widget-quick-line-chart #chatContainer
-                icon="mat:pageview"
-                iconClass="text-primary-600 bg-primary-600/10"
-                label="
+                <vex-widget-quick-line-chart #chatContainer icon="mat:pageview"
+                  iconClass="text-primary-600 bg-primary-600/10" label="
 She put on her running shoes, ready for the morning jog.
 The word running shoes primes for the activity of jogging.
 As she ran through the park, the cool breeze refreshed her senses.
@@ -93,17 +89,15 @@ Observing the sunrise, she felt a surge of energy and optimism.
 The sunrise links to the early morning jog, symbolizing new beginnings and positive feelings.
 Completing her run, she planned the rest of her day with renewed vigor.
 Completing her run concludes the sequence, connecting back to the initial activity while introducing the concept of planning and energy for future tasks.
-                "
-                  value="{{ questionText }}">
+                " value="{{ questionText }}">
                   <div class="loading-indicator" *ngIf="isLoading">
                     <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
                   </div>
                 </vex-widget-quick-line-chart>
 
                 <!-- Quick Line Chart -->
-                <vex-widget-quick-line-chart id="textDisplay"
-                #chatContainer icon="mat:pageview"
-                iconClass="text-primary-600 bg-primary-600/10" label="" value="{{ chatMessage }}">
+                <vex-widget-quick-line-chart id="textDisplay" #chatContainer icon="mat:pageview"
+                  iconClass="text-primary-600 bg-primary-600/10" label="" value="{{ chatMessage }}">
                   <div class="loading-indicator" *ngIf="isLoading">
                     <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
                   </div>
@@ -136,7 +130,71 @@ Completing her run concludes the sequence, connecting back to the initial activi
 
         <mat-tab label="Priming Lesson">
           <div class="p-6">
-            <vex-page-layout-demo></vex-page-layout-demo>
+
+            <table mat-table [dataSource]="(courses$ | async) || []" class="mat-elevation-z8">
+
+              <!-- Coluna para '_id' -->
+              <ng-container matColumnDef="_id">
+                <th mat-header-cell *matHeaderCellDef> ID </th>
+                <td mat-cell *matCellDef="let course"> {{ course._id }} </td>
+              </ng-container>
+
+              <!-- Coluna Nome do Curso -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Nome </th>
+                <td mat-cell *matCellDef="let course"> {{ course.name }} </td>
+              </ng-container>
+
+              <!-- Coluna Objetivo do Curso -->
+              <ng-container matColumnDef="objective">
+                <th mat-header-cell *matHeaderCellDef> Objetivo </th>
+                <td mat-cell *matCellDef="let course"> {{ course.objective }} </td>
+              </ng-container>
+
+              <!-- Coluna Categoria do Curso -->
+              <ng-container matColumnDef="category">
+                <th mat-header-cell *matHeaderCellDef> Categoria </th>
+                <td mat-cell *matCellDef="let course"> {{ course.category }} </td>
+              </ng-container>
+
+              <!-- Coluna para 'level' -->
+              <ng-container matColumnDef="level">
+                <th mat-header-cell *matHeaderCellDef> Nível </th>
+                <td mat-cell *matCellDef="let course"> {{ course.level }} </td>
+              </ng-container>
+
+              <!-- Coluna para 'price' -->
+              <ng-container matColumnDef="price">
+                <th mat-header-cell *matHeaderCellDef> Preço </th>
+                <td mat-cell *matCellDef="let course"> {{ course.price }} </td>
+              </ng-container>
+
+              <!-- Coluna para 'status' -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef> Status </th>
+                <td mat-cell *matCellDef="let course"> {{ course.status }} </td>
+              </ng-container>
+
+              <!-- Coluna para 'content' -->
+              <ng-container matColumnDef="content">
+                <th mat-header-cell *matHeaderCellDef> Conteúdo (Qtd) </th>
+                <td mat-cell *matCellDef="let course"> {{ course.content.length }} itens </td>
+              </ng-container>
+
+              <!-- Coluna para visualizar 'lessons' -->
+              <ng-container matColumnDef="lessons">
+                <th mat-header-cell *matHeaderCellDef> Lições </th>
+                <td mat-cell *matCellDef="let course">
+                  <button mat-button (click)="openLessonsDialog(course.lessons)">Ver Lições ({{course.lessons.length}})</button>
+                </td>
+              </ng-container>
+
+              <!-- Cabeçalho e linhas da tabela -->
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+
           </div>
         </mat-tab>
         <mat-tab label="Priming Lesson Done">
@@ -181,6 +239,14 @@ Completing her run concludes the sequence, connecting back to the initial activi
             </span>
           </div>
         </mat-tab>
+
+        <!--         <ng-container matColumnDef="lessons">
+          <th mat-header-cell *matHeaderCellDef> Lições </th>
+          <td mat-cell *matCellDef="let course">
+            <button mat-button (click)="openLessonsDialog(course.lessons)">Ver Lições</button>
+          </td>
+        </ng-container> -->
+
       </mat-tab-group>
     </div>
   </vex-page-layout-content>
