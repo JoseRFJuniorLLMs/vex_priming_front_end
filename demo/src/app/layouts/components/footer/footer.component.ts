@@ -54,11 +54,14 @@ export class FooterComponent implements OnInit, OnDestroy {
   durationInSeconds: number = 1800;
 
   selected: string | null = null;
-  icon1: string = 'some-icon1'; // Replace with your actual icons
+  icon1: string = 'some-icon1';
   icon2: string = 'some-icon2';
+  icon3: string = 'some-icon3';
 
   icon60fps: string = 'mat:60fps';
   icon30fps: string = 'mat:30fps';
+  iconmilitarytech: string = 'mat:military_tech';
+
 
   paused: boolean = false;
   remainingSeconds: number = 0;
@@ -68,6 +71,7 @@ export class FooterComponent implements OnInit, OnDestroy {
 changeIcons(): void {
   this.icon60fps = 'mat:60fps_select';
   this.icon30fps = 'mat:30fps_select';
+  this.iconmilitarytech = 'mat:military_tech';
 }
 
 ngOnInit(): void {

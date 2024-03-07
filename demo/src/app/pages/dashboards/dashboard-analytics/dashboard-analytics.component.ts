@@ -37,13 +37,10 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 
-import screenfull from 'screenfull';
-
-import WaveSurfer from 'wavesurfer.js';
-
 import { interval, Subscription } from 'rxjs';
+import screenfull from 'screenfull';
+import WaveSurfer from 'wavesurfer.js';
 /* import * as Annyang from 'annyang'; */
-
 
 // Interface para descrever a estrutura da resposta da API
 interface ResponseData {
@@ -81,30 +78,25 @@ interface ResponseData {
   ]
 })
 
-export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
 
-  audioUrlRT = 'https://storage.googleapis.com/priming_text_wav/ABOVE.wav';
-  audioUrlAssets = '.../../../.../assets/../audio/PRIMING.wav';
+export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
 
   @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
 
-  // VARIAVEIS
 
+     /* ==================VARIAVEIS==================== */
+  private waveform!: WaveSurfer;
+  private subscription: Subscription = new Subscription;
+  public isPlaying: boolean = false;
   voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
-  //voices: string[] = ['alloy', 'echo'];
-
   speechRecognition: any;
-
   isTranscribing = false;
-
   textToSpeech!: string;
   audioBlob!: Blob;
   audioUrl!: string;
-
   durationInSeconds = 130;
   horizontalPosition: MatSnackBarHorizontalPosition = 'end';
   verticalPosition: MatSnackBarVerticalPosition = 'bottom';
-
   questionAnswerList: any[] = [];
   questionText: any = '';
   chatMessage: any;
@@ -112,99 +104,72 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
   errorText = '';
   selectedText: string = '';
   data: any;
-
   currentTime!: string;
-
-  private waveform!: WaveSurfer;
-  public isPlaying: boolean = false;
-  private subscription: Subscription = new Subscription;
   progressPercentage: number = 0;
-
   mediaControlsEnabled: boolean = true;
-  mediaControlIcon: string = 'mat:sports_esports'; // Ícone padrão
+  mediaControlIcon: string = 'mat:sports_esports';
 
-  constructor(
-    private http: HttpClient,
-    private _snackBar: MatSnackBar
-  ) {}
+      /* ==================CONTRUTOR==================== */
+      constructor(
+        private http: HttpClient,
+        private _snackBar: MatSnackBar
+      ) {}
 
-  playAudioDownRealTime() {
-    const headers = new HttpHeaders({
-      'Authorization': 'Basic ' + btoa('service-495734453317@gs-project-accounts.iam.gserviceaccount.com:9EolRyUNmJExsxCi3Fq9N1IV8lY2M/TPT07u1SnQ')
-    });
+      /* ==================OnINIT==================== */
+      ngOnInit(): void {
+        this.waveform.play();
+        this.subscription = interval(1000).subscribe(() => {
+        this.getCurrentTime();
+        });
 
-    this.http.get(this.audioUrlRT, { headers, responseType: 'blob' }).subscribe(response => {
-      const audioBlob = new Blob([response], { type: 'audio/wav' });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      // Carregar o áudio gerado no WaveSurfer
-      this.waveform.load(audioUrl);
-      // Reproduzir o áudio
-      const audio = new Audio(audioUrl);
-      console.log(audio);
-    });
-  }
+        if (screenfull.isEnabled) {
+          screenfull.request();
+        }
+        this.speechRecognition.continuous = true;
+      }
 
-  ngOnInit(): void {
-    this.waveform.play();
-    this.subscription = interval(1000).subscribe(() => {
-    this.getCurrentTime();
-    });
-
-    if (screenfull.isEnabled) {
-      screenfull.request();
-    }
-    this.speechRecognition.continuous = true;
-  }
-
-  ngOnDestroy(): void {
+      /* ==================OnDESTROY==================== */
+      ngOnDestroy(): void {
         this.subscription.unsubscribe();
   }
 
-  ngAfterViewInit(): void {
+      /* ==================WAVESURFER==================== */
+      ngAfterViewInit(): void {
+        this.isPlaying = true;
+        this.waveform = WaveSurfer.create({
+          container: this.waveformEl.nativeElement,
+         /*  url: 'https://storage.googleapis.com/priming_text_wav/ABOVE.wav', */
 
-    this.isPlaying = true;
+          url: '../../assets/audio/PRIMING.wav',
+          waveColor: '#d3d3d3',
+          progressColor: '#000000',
+    /*       waveColor: 'rgb(200, 0, 200)',
+          progressColor: '#000000', */
+          cursorColor: '#000000',
+          cursorWidth: 5,
+          minPxPerSec: 50,
+          barWidth: 10,
+          barRadius: 2,
+          barGap: 2,
+          autoScroll: true,
+          autoCenter: true,
+          interact: true,
+          dragToSeek: true,
+          mediaControls: true, //controles
+          autoplay: true,
+          fillParent: true,
+        });
 
-    this.waveform = WaveSurfer.create({
+      this.waveform.on('audioprocess', () => {
+       this.getCurrentTime();
+       this.calculateProgressPercentage();
 
-      container: this.waveformEl.nativeElement,
-     /*  url: 'https://storage.googleapis.com/priming_text_wav/ABOVE.wav', */
-
-      url: '../../assets/audio/PRIMING.wav',
-      waveColor: '#d3d3d3',
-      progressColor: '#000000',
-/*       waveColor: 'rgb(200, 0, 200)',
-      progressColor: '#000000', */
-      cursorColor: '#000000',
-      cursorWidth: 5,
-
-      minPxPerSec: 50,
-
-      barWidth: 10,
-      barRadius: 2,
-      barGap: 2,
-
-      autoScroll: true,
-      autoCenter: true,
-      interact: true,
-      dragToSeek: true,
-
-      mediaControls: false, //controles
-
-      autoplay: true,
-      fillParent: true,
-    });
-
-  this.waveform.on('audioprocess', () => {
-    this.getCurrentTime();
-    this.calculateProgressPercentage();
-
-  });
-
-    this.events();
-  }
-
+      });
+        this.events();
+      }
 
   events() {
+
     this.waveform.once('interaction', () => {
       this.waveform.play();
     })
@@ -218,18 +183,22 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
     })
   }
 
+  /* ==================PLAY AUDIO==================== */
   playAudio() {
     this.waveform.play();
   }
 
+  /* ==================PAUSE AUDIO==================== */
   pauseAudio() {
     this.waveform.pause();
   }
 
+   /* ==================STOP AUDIO==================== */
   stopAudio() {
     this.waveform.stop();
   }
 
+  /* ==================CURRENT TIME==================== */
   getCurrentTime(): void {
     const currentTime = this.waveform.getCurrentTime();
     const minutes = Math.floor(currentTime / 60);
@@ -237,6 +206,7 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
     this.currentTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   }
 
+  /* ==================CALCULA PORCENTAGEM DE PROGRESSO==================== */
   calculateProgressPercentage(): void {
     const duration = this.waveform.getDuration();
     const currentTime = this.waveform.getCurrentTime();
@@ -249,12 +219,13 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
     this.mediaControlIcon = this.mediaControlsEnabled ? 'mat:sports_esports' : 'mat:cloud_download';
   }
 
-  // Função para selecionar uma voz aleatória
-  getRandomVoice(): string {
+  /* ==================VOZ ALEATORIA==================== */
+    getRandomVoice(): string {
       const randomIndex = Math.floor(Math.random() * this.voices.length);
       return this.voices[randomIndex];
     }
 
+  /* ==================SNACK BAR==================== */
   openSnackBar(message: string) {
     this._snackBar.open(message, 'Save Notes', {
       horizontalPosition: this.horizontalPosition,
@@ -264,7 +235,14 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
     this.generateAudio();
   }
 
- async questionToOpenAI(question: string) {
+
+ /*
+
+     questionToOpenAI CONSOME API DA OPEN IA, recebe question, retorna messages )
+
+*/
+
+async questionToOpenAI(question: string) {
   this.isLoading = true;
   try {
     const headers = new HttpHeaders({
@@ -275,7 +253,7 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
     const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
       messages: [{ role: 'user', content: question }],
       temperature: 0.0,//0.5
-      max_tokens: 100,//4000
+      max_tokens: 50,//4000
       model: "gpt-4",
     }, { headers }).toPromise();
          // Verificando se a resposta é indefinida
@@ -297,6 +275,7 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
       }
     }
 
+    /* ==================AO SELECIONAR O TEXTO==================== */
     @HostListener('document:mouseup', ['$event'])
     handleMouseUp(event: MouseEvent) {
       const selection = window.getSelection();
@@ -305,6 +284,34 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
         this.questionToOpenAI(this.selectedText);
       }
     }
+
+    /* ==================GERA AUDIO==================== */
+  /*   generateAudio(): void {
+      if (!this.chatMessage) {
+        console.error('No chatMessage to generate audio from.');
+        return;
+      }
+      const openAIKey = gpt4.gptApiKey;
+      const url = "https://api.openai.com/v1/audio/speech";
+      const body = {
+        model: "tts-1",
+        voice: this.getRandomVoice(),
+        input: this.chatMessage
+      };
+      const headers = new HttpHeaders({
+        "Authorization": `Bearer ${openAIKey}`
+      });
+      this.http.post(url, body, { headers, responseType: "blob"})
+        .subscribe(response => {
+          this.audioBlob = new Blob([response], { type: 'audio/mpeg' });
+          this.audioUrl = URL.createObjectURL(this.audioBlob);
+          const audio = new Audio(this.audioUrl);
+          audio.play();
+        });
+    }
+ */
+
+
 
     generateAudio(): void {
       if (!this.chatMessage) {
@@ -338,62 +345,12 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
         });
     }
 
-    async transcribeAudio(audioBlob: Blob) {
-      const formData = new FormData();
-      formData.append('file', audioBlob);
 
-      const headers = new HttpHeaders({
-        'Authorization': `Bearer ${gpt4.gptApiKey}`
-      });
-
-      try {
-        const transcription = await this.http.post<any>(
-          'https://api.openai.com/v1/audio/transcribe',
-          formData,
-          { headers }
-        ).toPromise();
-        console.log(transcription.text);
-      } catch (error) {
-        console.error('Error transcribing audio:', error);
-      }
-    }
-
-    onFileSelected(event: any) {
-      const file: File = event.target.files[0];
-      this.transcribeAudio(file);
-    }
-
-    async startSpeechRecognition() {
-      try {
-        if (!this.speechRecognition || this.isTranscribing) {
-          return;
-        }
-
-        this.isTranscribing = true;
-
-        this.speechRecognition.start();
-
-        this.speechRecognition.onresult = (event: { results: { transcript: any; }[]; }) => {
-          const transcript = event.results[0].transcript;
-          this.questionText = transcript;
-        };
-
-        this.speechRecognition.onerror = (error: any) => {
-          console.error('Erro no reconhecimento de voz:', error);
-          this._snackBar.open('Erro ao transcrever áudio.', 'Ok', { duration: 2000 });
-        };
-
-      } catch (error) {
-        this.isTranscribing = false;
-        console.error('Erro ao iniciar reconhecimento de voz:', error);
-        // Exibir erro adequado
-      }
-    }
+ }
 
 
-  }
 
-  interface ResponseData {
-    choices?: { message: { content: string; }; }[];
-  }
+
+
+
 

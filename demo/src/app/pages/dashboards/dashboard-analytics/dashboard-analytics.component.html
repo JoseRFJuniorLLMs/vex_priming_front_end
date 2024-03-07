@@ -16,7 +16,7 @@
 </div>-->
 
 
-<vex-page-layout mode="card" >
+<vex-page-layout mode="card">
 
   <vex-page-layout-content class="container">
 
@@ -39,9 +39,7 @@
 
                 <!-- Waveform -->
 
-                <div #waveform autoplay
-                  matTooltip="Time Current: {{currentTime}}"
-                  style="cursor: pointer;"
+                <div #waveform autoplay matTooltip="Time Current: {{currentTime}}" style="cursor: pointer;"
                   [style.left]="progressPercentage + '%'">
                   <div class="time-indicator" [style.left]="progressPercentage + '%'">
                   </div>
@@ -50,49 +48,89 @@
                     <mat-icon svgIcon="mat:heart_check"></mat-icon>
                   </button>
 
-                  <button mat-icon-button matTooltip="Play Waveform {{currentTime}} "
-                    (click)="playAudio()">
+                  <button mat-icon-button matTooltip="Play Waveform {{currentTime}} " (click)="playAudio()">
                     <mat-icon svgIcon="mat:play_arrow"></mat-icon>
                   </button>
 
-                  <button mat-icon-button  matTooltip="Stop Waveform {{currentTime}} "
-                  (click)="stopAudio()">
+                  <button mat-icon-button matTooltip="Stop Waveform {{currentTime}} " (click)="stopAudio()">
                     <mat-icon svgIcon="mat:stop"></mat-icon>
                   </button>
 
-                  <button mat-icon-button matTooltip="Pause Waveform {{currentTime}} "
-                   (click)="pauseAudio()">
+                  <button mat-icon-button matTooltip="Pause Waveform {{currentTime}} " (click)="pauseAudio()">
                     <mat-icon svgIcon="mat:pause_circle"></mat-icon>
                   </button>
 
                   <button mat-icon-button matTooltip="Download file Waveform {{currentTime}} "
-                  (click)="toggleMediaControls()">
-                  <mat-icon *ngIf="mediaControlIcon === 'mat:sports_esports'" svgIcon="mat:sports_esports"></mat-icon>
-                  <mat-icon *ngIf="mediaControlIcon === 'mat:cloud_download'" svgIcon="mat:cloud_download"></mat-icon>
+                    (click)="toggleMediaControls()">
+                    <mat-icon *ngIf="mediaControlIcon === 'mat:sports_esports'" svgIcon="mat:sports_esports"></mat-icon>
+                    <mat-icon *ngIf="mediaControlIcon === 'mat:cloud_download'" svgIcon="mat:cloud_download"></mat-icon>
                   </button>
 
                   <br>
 
-
                   <!-- Volume -->
-                    <div class="flex flex-col gap-4">
-                      <mat-slider color="accent" discrete max="100" min="1" showTickMarks
-                      ><input matSliderThumb value="10" />
-                      </mat-slider>
-                    </div>
-               </div>
+                  <div class="flex flex-col gap-4">
+                    <mat-slider color="accent" discrete max="100" min="1" showTickMarks><input matSliderThumb
+                        value="10" />
+                    </mat-slider>
+                  </div>
+                </div>
 
                 <!-- Quick Line Chart -->
-                <vex-widget-quick-line-chart icon="mat:pageview"
-                  iconClass="text-primary-600 bg-primary-600/10"
-                  label="Priming" value="{{ chatMessage }}">
+               <!--  <vex-widget-quick-line-chart icon="mat:pageview" iconClass="text-primary-600 bg-primary-600/10"
+                  label="You probably mean priming in psychology. Here's a breakdown of the concept:Priming in Psychology: Definition: Priming is a phenomenon where exposure to a stimulus (like a word, image, or sound) influences how a person responds to a later stimulus, often without their conscious awareness.
+How It Works:Our minds store information in interconnected networks. When we encounter a stimulus, it activates a concept or idea in our memory.
+Related concepts become temporarily more accessible, which can influence our thoughts and actions unconsciously.Types of Priming:Semantic Priming: Based on related meanings.Example: Seeing the word doctor makes you think of the word nurse more quickly.
+Repetition Priming: Repeated exposure to a stimulus makes it easier to process the next time.Example: Hearing a new song several times makes you like it more.
+Conceptual Priming: Activating a broader concept that influences subsequent responses.Example: Thinking about old age makes people walk more slowly.
+Positive and Negative Priming: The priming stimulus can have either a positive or negative impact on behavior.Example: Seeing images of smiling faces might make you more likely to help someone.
+Applications of Priming:Marketing and Advertising: Using subtle cues to influence consumer choices.Therapy: Helping people overcome fears or change habits.Social Behavior: Our environment can unknowingly prime our actions and judgments.
+Important Note: Priming effects are often subtle and short-lived. While they can influence us, they dont fully control our behavior.Let me know if you want to delve deeper into any specific aspect of priming!"
+                  value="{{ chatMessage }}">
                 </vex-widget-quick-line-chart>
+ -->
+                <!-- Quick Line Chart -->
+               <!--  <vex-widget-quick-line-chart icon="mat:pageview" iconClass="text-primary-600 bg-primary-600/10" label="
+                  Semantic Priming (Related Meanings)
+
+The fluffy clouds drifted across the sky. (Clouds -> weather)
+He savored the sweet taste of the chocolate. (Sweet -> dessert, indulgence)
+The pain in his leg was sharp and persistent. (Pain -> injury, doctor)
+The artist used vibrant colors in her painting. (Artist -> creativity)
+Her warm smile and kind words were comforting. (Warm, kind -> friendly)
+Repetition Priming:
+
+Buy Sunshine Soap, the soap that makes you shine. Sunshine Soap.
+Vote for change. Vote for progress. Vote for hope.
+Conceptual Priming:
+
+After reading about heroic deeds, he felt inspired to volunteer. (Heroic -> helping others)
+Images of dollar bills subtly primed participants to act more selfishly. (Money -> greed)
+Thinking about the beach put her in a relaxed mood. (Beach -> vacation)
+Positive/Negative Priming:
+
+The news story filled her with feelings of anxiety. (News -> negativity)
+The smell of freshly baked bread evoked feelings of comfort and home. (Baked bread -> positive emotions)
+The candidate's speech focused on opportunity and growth. (Opportunity -> optimism)
+The movie's violence left him feeling disturbed and uneasy. (Violence -> negative emotions)
+Her smile was genuine and welcoming. (Smile, genuine -> trustworthiness)
+More Complex Examples:
+
+Ready to make a smart decision? Choose our product. (Smart -> intelligence)
+This offer is for a limited time, act now! (Limited time -> urgency, scarcity)
+Our service is backed by a satisfaction guarantee. (Guarantee -> trust, security)
+Join the thousands of people who trust our brand. (Thousands -> popularity)
+Don't miss out on this exclusive opportunity. (Exclusive -> specialness)
+Let me know if you'd like more examples or a focus on a specific type of priming!
+                  " value="{{ chatMessage }}">
+                </vex-widget-quick-line-chart>
+ -->
 
                 <!-- Text Area for Question Input -->
                 <div class="question-form">
                   <textarea matTooltip="Priming GPT Help Text Area" (paste)="questionToOpenAI(questionText)"
                     (keyup.enter)="questionToOpenAI(questionText)" cols="100" rows="15" type="text"
-                    (ngModel)="questionText" placeholder="What is your doubt ?"></textarea>
+                    [(ngModel)]="questionText" placeholder="What is your doubt ?"></textarea>
                 </div>
 
               </div>
@@ -155,7 +193,7 @@
           <div class="p-6">
             <span class="material-symbols-outlined">
               hub
-              </span>
+            </span>
           </div>
         </mat-tab>
       </mat-tab-group>
