@@ -13,7 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import gpt4 from 'gpt4.json';
+import gpt4 from '../../../../../../gpt4.json';
 
 import { WidgetAssistantComponent } from '../components/widgets/widget-assistant/widget-assistant.component';
 import { WidgetLargeChartComponent } from '../components/widgets/widget-large-chart/widget-large-chart.component';
