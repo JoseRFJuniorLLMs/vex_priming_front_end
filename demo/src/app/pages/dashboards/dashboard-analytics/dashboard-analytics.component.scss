@@ -50,3 +50,25 @@ vex-widget-quick-line-chart {
 #textDisplay {
   white-space: pre-wrap;
 }
+
+
+vex-widget-quick-line-chart {
+  // Aninhando o seletor para o elemento com o ID textDisplay
+  #textDisplay {
+    // Aplicando o estilo para que o texto quebre automaticamente
+    overflow-wrap: break-word; // ou word-wrap: break-word; para maior compatibilidade
+
+    // Ajustando o tamanho da fonte para ser 3 vezes maior
+    font-size: 2em; // ou você pode usar px, por exemplo, font-size: 48px; se o tamanho padrão for 16px
+  }
+}
+
+:host ::ng-deep vex-widget-quick-line-chart {
+  font-size: 2em; // Ajuste conforme necessário
+  line-height: 1.5; // Aumenta o espaçamento entre as linhas.
+}
+
+.highlight {
+  background-color: yellow; // Exemplo de estilo de destaque
+}
+

@@ -71,7 +71,8 @@
 
                   <!-- Volume -->
                   <div class="flex flex-col gap-4">
-                    <mat-slider color="accent" discrete max="100" min="1" showTickMarks><input matSliderThumb
+                    <mat-slider color="accent" discrete max="100"
+                    min="1" showTickMarks><input matSliderThumb
                         value="10" />
                     </mat-slider>
                   </div>
@@ -81,14 +82,18 @@
                 <vex-widget-quick-line-chart #chatContainer
                 icon="mat:pageview"
                 iconClass="text-primary-600 bg-primary-600/10"
-                label="You probably mean priming in psychology. Here's a breakdown of the concept:Priming in Psychology: Definition: Priming is a phenomenon where exposure to a stimulus (like a word, image, or sound) influences how a person responds to a later stimulus, often without their conscious awareness.
-How It Works:Our minds store information in interconnected networks. When we encounter a stimulus, it activates a concept or idea in our memory.
-Related concepts become temporarily more accessible, which can influence our thoughts and actions unconsciously.Types of Priming:Semantic Priming: Based on related meanings.Example: Seeing the word doctor makes you think of the word nurse more quickly.
-Repetition Priming: Repeated exposure to a stimulus makes it easier to process the next time.Example: Hearing a new song several times makes you like it more.
-Conceptual Priming: Activating a broader concept that influences subsequent responses.Example: Thinking about old age makes people walk more slowly.
-Positive and Negative Priming: The priming stimulus can have either a positive or negative impact on behavior.Example: Seeing images of smiling faces might make you more likely to help someone.
-Applications of Priming:Marketing and Advertising: Using subtle cues to influence consumer choices.Therapy: Helping people overcome fears or change habits.Social Behavior: Our environment can unknowingly prime our actions and judgments.
-Important Note: Priming effects are often subtle and short-lived. While they can influence us, they dont fully control our behavior.Let me know if you want to delve deeper into any specific aspect of priming!"
+                label="
+She put on her running shoes, ready for the morning jog.
+The word running shoes primes for the activity of jogging.
+As she ran through the park, the cool breeze refreshed her senses.
+wMentioning ran through the park builds on the jogging idea, adding the element of nature and refreshment.
+The rhythmic sound of her footsteps on the path kept her motivated.
+Rhythmic sound of her footsteps continues the theme of running, emphasizing persistence and motivation.
+Observing the sunrise, she felt a surge of energy and optimism.
+The sunrise links to the early morning jog, symbolizing new beginnings and positive feelings.
+Completing her run, she planned the rest of her day with renewed vigor.
+Completing her run concludes the sequence, connecting back to the initial activity while introducing the concept of planning and energy for future tasks.
+                "
                   value="{{ questionText }}">
                   <div class="loading-indicator" *ngIf="isLoading">
                     <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
