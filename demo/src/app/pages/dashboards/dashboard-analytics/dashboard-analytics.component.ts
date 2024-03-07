@@ -266,24 +266,31 @@ async questionToOpenAI(question: string) {
       max_tokens: 50,//4000
       model: "gpt-4",
     }, { headers }).toPromise();
-         // Verificando se a resposta é indefinida
-         if (response === undefined) {
-          throw new Error("Resposta indefinida.");
-        }
-        // Verificando se a propriedade 'choices' está presente na resposta
-        if (response.choices && response.choices.length > 0) {
-          this.chatMessage = response.choices[0].message.content;
-          // Chamando a função para exibir o Snackbar com a mensagem processada
-          this.openSnackBar(this.chatMessage);
-        } else {
-          throw new Error("Resposta inválida.");
-        }
-      } catch (error) {
-        this.errorText = (error as any).error.message;
-      } finally {
-        this.isLoading = false;
-      }
+    if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
+      throw new Error("Resposta da API não contém dados válidos.");
     }
+
+    this.chatMessage = response.choices[0].message.content;
+    // Calcula o tempo necessário para exibir o texto
+    const displayTime = this.displayTextWordByWord(this.chatMessage);
+
+    // Define um atraso para iniciar a reprodução do áudio, baseado no tempo de exibição do texto
+    setTimeout(() => {
+      // Aqui você pode chamar sua função que carrega e reproduz o áudio
+      this.generateAudio();
+    }, displayTime);
+
+    // Opção de exibir a mensagem em um Snackbar imediatamente, ou você pode incluí-lo dentro do setTimeout se preferir esperar
+    this.openSnackBar(this.chatMessage);
+
+  } catch (error) {
+    // Tratamento de erros
+    this.errorText = "Falha ao obter resposta da API: " + (error as Error).message;
+  } finally {
+    // Sempre será executado após a tentativa ou captura de bloco
+    this.isLoading = false;
+  }
+}
 
     /* ==================AO SELECIONAR O TEXTO==================== */
     @HostListener('document:mouseup', ['$event'])
@@ -327,6 +334,28 @@ async questionToOpenAI(question: string) {
       const audio = new Audio(audioUrl);
 
         });
+    }
+
+    /* ==================DISPLAY WORD==================== */
+    displayTextWordByWord(text: string): number {
+      const words = text.split(' ');
+      const displayElement = document.getElementById('textDisplay');
+      let i = 0;
+      displayElement!.innerText = '';
+
+      const wordDisplayInterval = 200; // Intervalo em milissegundos
+      const totalTime = words.length * wordDisplayInterval;
+
+      const intervalId = setInterval(() => {
+        if (i < words.length) {
+          displayElement!.innerText += words[i] + ' ';
+          i++;
+        } else {
+          clearInterval(intervalId);
+        }
+      }, wordDisplayInterval);
+
+      return totalTime;
     }
 
 
