@@ -77,7 +77,7 @@
                 </div>
 
                 <!-- Quick Line Chart -->
-               <!--  <vex-widget-quick-line-chart icon="mat:pageview" iconClass="text-primary-600 bg-primary-600/10"
+                <vex-widget-quick-line-chart icon="mat:pageview" iconClass="text-primary-600 bg-primary-600/10"
                   label="You probably mean priming in psychology. Here's a breakdown of the concept:Priming in Psychology: Definition: Priming is a phenomenon where exposure to a stimulus (like a word, image, or sound) influences how a person responds to a later stimulus, often without their conscious awareness.
 How It Works:Our minds store information in interconnected networks. When we encounter a stimulus, it activates a concept or idea in our memory.
 Related concepts become temporarily more accessible, which can influence our thoughts and actions unconsciously.Types of Priming:Semantic Priming: Based on related meanings.Example: Seeing the word doctor makes you think of the word nurse more quickly.
@@ -86,11 +86,14 @@ Conceptual Priming: Activating a broader concept that influences subsequent resp
 Positive and Negative Priming: The priming stimulus can have either a positive or negative impact on behavior.Example: Seeing images of smiling faces might make you more likely to help someone.
 Applications of Priming:Marketing and Advertising: Using subtle cues to influence consumer choices.Therapy: Helping people overcome fears or change habits.Social Behavior: Our environment can unknowingly prime our actions and judgments.
 Important Note: Priming effects are often subtle and short-lived. While they can influence us, they dont fully control our behavior.Let me know if you want to delve deeper into any specific aspect of priming!"
-                  value="{{ chatMessage }}">
+                  value="{{ questionText }}">
+                  <div class="loading-indicator" *ngIf="isLoading">
+                    <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+                  </div>
                 </vex-widget-quick-line-chart>
- -->
+
                 <!-- Quick Line Chart -->
-               <!--  <vex-widget-quick-line-chart icon="mat:pageview" iconClass="text-primary-600 bg-primary-600/10" label="
+                <vex-widget-quick-line-chart icon="mat:pageview" iconClass="text-primary-600 bg-primary-600/10" label="
                   Semantic Priming (Related Meanings)
 
 The fluffy clouds drifted across the sky. (Clouds -> weather)
@@ -123,24 +126,28 @@ Join the thousands of people who trust our brand. (Thousands -> popularity)
 Don't miss out on this exclusive opportunity. (Exclusive -> specialness)
 Let me know if you'd like more examples or a focus on a specific type of priming!
                   " value="{{ chatMessage }}">
+                  <div class="loading-indicator" *ngIf="isLoading">
+                    <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+                  </div>
                 </vex-widget-quick-line-chart>
- -->
+
 
                 <!-- Text Area for Question Input -->
                 <div class="question-form">
+                  <div class="loading-indicator" *ngIf="isLoading">
+                    <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+                  </div>
                   <textarea matTooltip="Priming GPT Help Text Area" (paste)="questionToOpenAI(questionText)"
                     (keyup.enter)="questionToOpenAI(questionText)" cols="100" rows="15" type="text"
                     [(ngModel)]="questionText" placeholder="What is your doubt ?"></textarea>
                 </div>
-
               </div>
               <div>
               </div>
               <div class="container p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="loading-indicator" *ngIf="isLoading">
-                  <p>Loading...</p> <!-- trocar por um loadin -->
+                  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
                 </div>
-
                 <div class="error-message" *ngIf="errorText">
                   <p>{{ errorText }}</p>
                 </div>

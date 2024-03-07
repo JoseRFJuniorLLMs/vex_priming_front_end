@@ -1,9 +1,20 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
-import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTabsModule } from '@angular/material/tabs';
+
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import gpt4 from 'gpt4.json';
+
 import { WidgetAssistantComponent } from '../components/widgets/widget-assistant/widget-assistant.component';
 import { WidgetLargeChartComponent } from '../components/widgets/widget-large-chart/widget-large-chart.component';
 import { WidgetLargeGoalChartComponent } from '../components/widgets/widget-large-goal-chart/widget-large-goal-chart.component';
@@ -11,21 +22,13 @@ import { WidgetQuickLineChartComponent } from '../components/widgets/widget-quic
 import { WidgetQuickValueCenterComponent } from '../components/widgets/widget-quick-value-center/widget-quick-value-center.component';
 import { WidgetTableComponent } from '../components/widgets/widget-table/widget-table.component';
 
-import { MatTabsModule } from '@angular/material/tabs';
+import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
 import { VexPageLayoutContentDirective } from '@vex/components/vex-page-layout/vex-page-layout-content.directive';
 import { VexPageLayoutHeaderDirective } from '@vex/components/vex-page-layout/vex-page-layout-header.directive';
 import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page-layout.component';
+import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
 import { PageLayoutDemoComponent } from '../../ui/page-layouts/page-layout-demo/page-layout-demo.component';
 
-import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
-import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
-import { MatCardModule } from '@angular/material/card';
-import { MatListModule } from '@angular/material/list';
-
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 
 import {
   MatSnackBar,
@@ -35,6 +38,11 @@ import {
 
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
+/* import {
+  MatDialog,
+  MatDialogModule,
+  MatDialogRef
+} from '@angular/material/dialog'; */
 
 
 import { interval, Subscription } from 'rxjs';
@@ -73,7 +81,8 @@ interface ResponseData {
     MatInputModule,
     MatFormFieldModule,
     HttpClientModule,
-    MatSliderModule
+    MatSliderModule,
+    MatProgressSpinnerModule
 
   ]
 })
@@ -81,10 +90,11 @@ interface ResponseData {
 
 export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
 
+  /* ==================VIEWCHILD==================== */
   @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
 
 
-     /* ==================VARIAVEIS==================== */
+  /* ==================VARIAVEIS==================== */
   private waveform!: WaveSurfer;
   private subscription: Subscription = new Subscription;
   public isPlaying: boolean = false;
@@ -286,32 +296,6 @@ async questionToOpenAI(question: string) {
     }
 
     /* ==================GERA AUDIO==================== */
-  /*   generateAudio(): void {
-      if (!this.chatMessage) {
-        console.error('No chatMessage to generate audio from.');
-        return;
-      }
-      const openAIKey = gpt4.gptApiKey;
-      const url = "https://api.openai.com/v1/audio/speech";
-      const body = {
-        model: "tts-1",
-        voice: this.getRandomVoice(),
-        input: this.chatMessage
-      };
-      const headers = new HttpHeaders({
-        "Authorization": `Bearer ${openAIKey}`
-      });
-      this.http.post(url, body, { headers, responseType: "blob"})
-        .subscribe(response => {
-          this.audioBlob = new Blob([response], { type: 'audio/mpeg' });
-          this.audioUrl = URL.createObjectURL(this.audioBlob);
-          const audio = new Audio(this.audioUrl);
-          audio.play();
-        });
-    }
- */
-
-
 
     generateAudio(): void {
       if (!this.chatMessage) {
