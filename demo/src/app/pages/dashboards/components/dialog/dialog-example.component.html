@@ -1,0 +1,32 @@
+
+<mat-dialog-content>
+
+  <p>
+    <mat-toolbar>
+      <span>Priming</span>
+      <span class="example-spacer"></span>
+     </mat-toolbar>
+  </p>
+  <!-- Cards with media area -->
+<mat-card class="example-card">
+  <mat-card-header>
+    <mat-card-title-group>
+      <mat-card-title>Shiba Inu</mat-card-title>
+      <mat-card-subtitle>Medium</mat-card-subtitle>
+      <img mat-card-md-image src="https://material.angular.io/assets/img/examples/shiba2.jpg"  alt="Image of a Shiba Inu">
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    {{ data.texto }}
+  </mat-card-content>
+</mat-card>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+
+  <button mat-icon-button matTooltip="Attach File" type="button">
+    <mat-icon svgIcon="mat:mic"></mat-icon>
+  </button>
+
+</mat-dialog-actions>

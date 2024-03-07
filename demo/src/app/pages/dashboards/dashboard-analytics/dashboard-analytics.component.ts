@@ -29,7 +29,6 @@ import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page
 import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
 import { PageLayoutDemoComponent } from '../../ui/page-layouts/page-layout-demo/page-layout-demo.component';
 
-
 import {
   MatSnackBar,
   MatSnackBarHorizontalPosition,
@@ -38,17 +37,15 @@ import {
 
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
-/* import {
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef
-} from '@angular/material/dialog'; */
 
 
+import { MatDialog } from '@angular/material/dialog';
 import { interval, Subscription } from 'rxjs';
 import screenfull from 'screenfull';
 import WaveSurfer from 'wavesurfer.js';
 /* import * as Annyang from 'annyang'; */
+import { DialogExampleComponent } from '../components/dialog/dialog-example.component';
+
 
 // Interface para descrever a estrutura da resposta da API
 interface ResponseData {
@@ -60,7 +57,7 @@ interface ResponseData {
   templateUrl: './dashboard-analytics.component.html',
   styleUrls: ['./dashboard-analytics.component.scss'],
   standalone: true,
-  imports: [CommonModule,FormsModule, MatBottomSheetModule, MatListModule,
+  imports: [CommonModule, FormsModule, MatBottomSheetModule, MatListModule,
     VexSecondaryToolbarComponent,
     VexBreadcrumbsComponent,
     MatButtonModule,
@@ -88,7 +85,7 @@ interface ResponseData {
 })
 
 
-export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
+export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
 
   /* ==================VIEWCHILD==================== */
   @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
@@ -118,67 +115,124 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
   progressPercentage: number = 0;
   mediaControlsEnabled: boolean = true;
   mediaControlIcon: string = 'mat:sports_esports';
+  wordsArray: string[] = [];
+  wordsDisplayed: number = 0;
+  wordDuration: number = 0;
+  result: any;
 
+  /* ==================CONTRUTOR==================== */
+  constructor(
+    private http: HttpClient,
+    private _snackBar: MatSnackBar,
+    private dialog: MatDialog
+  ) { }
 
+   /* ==================openDialog==================== */
+   openDialog(textDisplay: string): void {
+    const dialogRef = this.dialog.open(DialogExampleComponent, {
+      width: '600px',
+      data: { texto: textDisplay }
+    });
 
-      /* ==================CONTRUTOR==================== */
-      constructor(
-        private http: HttpClient,
-        private _snackBar: MatSnackBar
-      ) {}
-
-      /* ==================OnINIT==================== */
-      ngOnInit(): void {
-        this.waveform.play();
-        this.subscription = interval(1000).subscribe(() => {
-        this.getCurrentTime();
-        });
-
-        if (screenfull.isEnabled) {
-          screenfull.request();
-        }
-        this.speechRecognition.continuous = true;
-      }
-
-      /* ==================OnDESTROY==================== */
-      ngOnDestroy(): void {
-        this.subscription.unsubscribe();
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('O diálogo foi fechado');
+      //TODO: mandar gerar uma imagem
+    });
   }
 
-      /* ==================WAVESURFER==================== */
-      ngAfterViewInit(): void {
-        this.isPlaying = true;
-        this.waveform = WaveSurfer.create({
-          container: this.waveformEl.nativeElement,
-         /*  url: 'https://storage.googleapis.com/priming_text_wav/ABOVE.wav', */
+  /* ==================OnINIT==================== */
+  ngOnInit(): void {
+    this.waveform.play();
+    this.subscription = interval(1000).subscribe(() => {
+      this.getCurrentTime();
+    });
 
-          url: '../../assets/audio/PRIMING.wav',
-          waveColor: '#d3d3d3',
-          progressColor: '#000000',
-    /*       waveColor: 'rgb(200, 0, 200)',
-          progressColor: '#000000', */
-          cursorColor: '#000000',
-          cursorWidth: 5,
-          minPxPerSec: 50,
-          barWidth: 10,
-          barRadius: 2,
-          barGap: 2,
-          autoScroll: true,
-          autoCenter: true,
-          interact: true,
-          dragToSeek: true,
-          mediaControls: true, //controles
-          autoplay: true,
-          fillParent: true,
-        });
+    if (screenfull.isEnabled) {
+      screenfull.request();
+    }
+    this.speechRecognition.continuous = true;
+  }
 
-      this.waveform.on('audioprocess', () => {
-       this.getCurrentTime();
-       this.calculateProgressPercentage();
+  /* ==================OnDESTROY==================== */
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 
+  /*questionToOpenAI CONSOME API DA OPEN IA, recebe question, retorna messages */
+
+  async questionToOpenAI(question: string) {
+    this.isLoading = true;
+    try {
+      const headers = new HttpHeaders({
+        "Authorization": `Bearer ${gpt4.gptApiKey}`,
+        "Content-Type": "application/json"
       });
-        this.events();
+
+      const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
+        messages: [{ role: 'user', content: question }],
+        temperature: 0.0,//0.5
+        max_tokens: 20,//4000
+        model: "gpt-4",
+      }, { headers }).toPromise();
+      if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
+        throw new Error("Resposta da API não contém dados válidos.");
       }
+
+      this.chatMessage = response.choices[0].message.content;
+      // Calcula o tempo necessário para exibir o texto
+      const displayTime = this.displayTextWordByWord(this.chatMessage);
+
+      // Define um atraso para iniciar a reprodução do áudio, baseado no tempo de exibição do texto
+      setTimeout(() => {
+        // Função que carrega e reproduz o áudio
+        this.generateAudio();
+      }, displayTime);
+
+      // Opção de exibir a mensagem em um Snackbar imediatamente,
+      //this.openSnackBar(this.chatMessage);
+
+    } catch (error) {
+      // Tratamento de erros
+      this.errorText = "Falha ao obter resposta da API: " + (error as Error).message;
+    } finally {
+      // Sempre será executado após a tentativa ou captura de bloco
+      this.isLoading = false;
+    }
+  }
+
+
+  /* ==================WAVESURFER==================== */
+
+  ngAfterViewInit(): void {
+    this.isPlaying = true;
+    this.waveform = WaveSurfer.create({
+      container: this.waveformEl.nativeElement,
+      /*  url: 'https://storage.googleapis.com/priming_text_wav/ABOVE.wav', */
+
+      url: '../../assets/audio/PRIMING.wav',
+      waveColor: '#d3d3d3',
+      progressColor: '#000000',
+      /*       waveColor: 'rgb(200, 0, 200)',
+            progressColor: '#000000', */
+      cursorColor: '#000000',
+      cursorWidth: 5,
+      minPxPerSec: 50,
+      barWidth: 10,
+      barRadius: 2,
+      barGap: 2,
+      autoScroll: true,
+      autoCenter: true,
+      interact: true,
+      dragToSeek: true,
+      mediaControls: true, //controles
+      autoplay: true,
+      fillParent: true,
+    });
+
+    this.waveform.on('audioprocess', () => {
+      this.updateTextDisplayBasedOnAudio();
+    });
+  }
 
   events() {
 
@@ -195,6 +249,62 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
     })
   }
 
+  /* ==================FUNCAO PARA PEGAR O ARRAY DE STRING==================== */
+  getWordsArray(text: string): string[] {
+    return text.split(' ');
+  }
+
+  /* ==================CARREGAR E DA PLAY AUDIO==================== */
+  loadAndPlayAudio(audioUrl: string, text: string, onAudioFinish?: () => void): void {
+    this.wordsArray = this.getWordsArray(text); // Divide o texto em palavras
+    this.wordsDisplayed = 0; // Reseta o contador de palavras exibidas
+
+    // Carrega o áudio a partir da URL fornecida
+    this.waveform.load(audioUrl);
+
+    // Quando o WaveSurfer estiver pronto, calcula a duração de cada palavra e inicia a reprodução
+    this.waveform.on('ready', () => {
+        const duration = this.waveform.getDuration(); // Obtém a duração total do áudio
+        this.wordDuration = duration / this.wordsArray.length; // Calcula a duração de cada palavra
+        this.waveform.play(); // Inicia a reprodução do áudio
+    });
+
+    // Adiciona um listener para o evento de término do áudio
+    // Se um callback foi fornecido, ele será chamado ao terminar a reprodução
+    this.waveform.on('finish', () => {
+        if (onAudioFinish) {
+            onAudioFinish(); // Chama o callback fornecido
+        }
+    });
+}
+
+
+/* ==================FULL TEXT==================== */
+displayFullText(text: string): void {
+  const displayElement = document.getElementById('textDisplay');
+  if (displayElement) {
+      displayElement.textContent = text;
+  }
+}
+
+
+  /* ==================ATUALIZA O TEXTO BASEADO NO AUDIO==================== */
+  updateTextDisplayBasedOnAudio(): void {
+    const currentTime = this.waveform.getCurrentTime(); // Tempo atual do áudio
+    const expectedWords = Math.floor(currentTime / this.wordDuration); // Quantas palavras deveriam ter sido faladas
+
+    // Atualiza o texto para mostrar as palavras até o ponto esperado
+    const displayElement = document.getElementById('textDisplay');
+    if (displayElement) {
+      displayElement.textContent = this.wordsArray.slice(0, expectedWords).join(' ');
+    }
+  }
+
+  /* ==================PLAY AUDIO TEXTO SICRONIZADO==================== */
+  startAudioWithText(audioUrl: string, text: string) {
+    this.loadAndPlayAudio(audioUrl, text);
+  }
+
   /* ==================PLAY AUDIO==================== */
   playAudio() {
     this.waveform.play();
@@ -205,7 +315,7 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
     this.waveform.pause();
   }
 
-   /* ==================STOP AUDIO==================== */
+  /* ==================STOP AUDIO==================== */
   stopAudio() {
     this.waveform.stop();
   }
@@ -232,136 +342,98 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
   }
 
   /* ==================VOZ ALEATORIA==================== */
-    getRandomVoice(): string {
-      const randomIndex = Math.floor(Math.random() * this.voices.length);
-      return this.voices[randomIndex];
-    }
+  getRandomVoice(): string {
+    const randomIndex = Math.floor(Math.random() * this.voices.length);
+    return this.voices[randomIndex];
+  }
 
   /* ==================SNACK BAR==================== */
-  openSnackBar(chatMessage: string) {
-    this._snackBar.open(chatMessage, 'Save Notes', {
+  openSnackBar(textDisplay: string) {
+    const snackBarRef = this._snackBar.open(textDisplay, 'Close', {
       horizontalPosition: this.horizontalPosition,
       verticalPosition: this.verticalPosition,
-      duration: this.durationInSeconds * 1000,
+      duration: this.durationInSeconds * 300,
     });
-    //this.generateAudio();
+
+    snackBarRef.afterDismissed().subscribe(() => {
+      // Chamando o diálogo após o fechamento da snackbar e passando o texto para o diálogo
+      this.openDialog(textDisplay);
+    });
   }
 
+  /* ==================AO SELECIONAR O TEXTO==================== */
+  @HostListener('document:mouseup', ['$event'])
+  handleMouseUp(event: MouseEvent) {
+    const selection = window.getSelection();
+    if (selection && selection.toString().trim() !== '') {
+      this.selectedText = selection.toString();
+      this.questionToOpenAI(this.selectedText);
+    }
+  }
 
- /*
+  /* ==================GERA AUDIO==================== */
+  generateAudio(): void {
+    if (!this.chatMessage) {
+      console.error('No chatMessage to generate audio from.');
+      return;
+    }
 
-     questionToOpenAI CONSOME API DA OPEN IA, recebe question, retorna messages )
+    const openAIKey = gpt4.gptApiKey;
+    const url = "https://api.openai.com/v1/audio/speech";
 
-*/
+    const body = {
+      model: "tts-1",
+      voice: this.getRandomVoice(),
+      input: this.chatMessage
+    };
 
-async questionToOpenAI(question: string) {
-  this.isLoading = true;
-  try {
     const headers = new HttpHeaders({
-      "Authorization": `Bearer ${gpt4.gptApiKey}`,
-      "Content-Type": "application/json"
+      "Authorization": `Bearer ${openAIKey}`
     });
 
-    const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
-      messages: [{ role: 'user', content: question }],
-      temperature: 0.0,//0.5
-      max_tokens: 20,//4000
-      model: "gpt-4",
-    }, { headers }).toPromise();
-    if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
-      throw new Error("Resposta da API não contém dados válidos.");
-    }
+    this.http.post(url, body, { headers, responseType: "blob" }).subscribe(response => {
+      const audioBlob = new Blob([response], { type: 'audio/wav' });
+      const audioUrl = URL.createObjectURL(audioBlob);
 
-    this.chatMessage = response.choices[0].message.content;
-    // Calcula o tempo necessário para exibir o texto
-    const displayTime = this.displayTextWordByWord(this.chatMessage);
+      // Carregar o áudio gerado no WaveSurfer
+    this.waveform.load(audioUrl);
 
-    // Define um atraso para iniciar a reprodução do áudio, baseado no tempo de exibição do texto
-    setTimeout(() => {
-      // Função que carrega e reproduz o áudio
-      this.generateAudio();
-    }, displayTime);
+    // Quando o áudio estiver pronto, inicia a reprodução
+    this.waveform.on('ready', () => {
+      this.waveform.play();
+    });
 
-    // Opção de exibir a mensagem em um Snackbar imediatamente, ou você pode incluí-lo dentro do setTimeout se preferir esperar
-    this.openSnackBar(this.chatMessage);
-
-  } catch (error) {
-    // Tratamento de erros
-    this.errorText = "Falha ao obter resposta da API: " + (error as Error).message;
-  } finally {
-    // Sempre será executado após a tentativa ou captura de bloco
-    this.isLoading = false;
-  }
+    // Adiciona um listener para o evento de término do áudio
+    this.waveform.on('finish', () => {
+      // Abre o SnackBar após a conclusão da reprodução do áudio
+      this.openSnackBar(this.chatMessage);
+    });
+  });
 }
+  /* ==================DISPLAY WORD==================== */
+  displayTextWordByWord(text: string): number {
+    const words = text.split(' ');
+    const displayElement = document.getElementById('textDisplay');
+    let i = 0;
+    displayElement!.textContent += words[i] + ' ';
 
-    /* ==================AO SELECIONAR O TEXTO==================== */
-    @HostListener('document:mouseup', ['$event'])
-    handleMouseUp(event: MouseEvent) {
-      const selection = window.getSelection();
-      if (selection && selection.toString().trim() !== '') {
-        this.selectedText = selection.toString();
-        this.questionToOpenAI(this.selectedText);
+    const wordDisplayInterval = 400; // Intervalo em milissegundos
+    const totalTime = words.length * wordDisplayInterval;
+
+    const intervalId = setInterval(() => {
+      if (i < words.length) {
+        displayElement!.innerText += words[i] + ' ';
+        i++;
+      } else {
+        clearInterval(intervalId);
       }
-    }
+    }, wordDisplayInterval);
 
-    /* ==================GERA AUDIO==================== */
-
-    generateAudio(): void {
-      if (!this.chatMessage) {
-         console.error('No chatMessage to generate audio from.');
-        return;
-      }
-
-      const openAIKey = gpt4.gptApiKey;
-      const url = "https://api.openai.com/v1/audio/speech";
-
-      const body = {
-        model: "tts-1",
-        voice: this.getRandomVoice(),
-        input: this.chatMessage
-      };
-
-      const headers = new HttpHeaders({
-        "Authorization": `Bearer ${openAIKey}`
-      });
-
-      this.http.post(url, body, { headers, responseType: "blob"}).subscribe(response => {
-          const audioBlob = new Blob([response], { type: 'audio/wav' });
-          const audioUrl = URL.createObjectURL(audioBlob);
-
-       // Carregar o áudio gerado no WaveSurfer
-      this.waveform.load(audioUrl);
-
-      // Reproduzir o áudio gerado pelo GPT-4 usando o objeto Audio
-      const audio = new Audio(audioUrl);
-
-        });
-    }
-
-    /* ==================DISPLAY WORD==================== */
-    displayTextWordByWord(text: string): number {
-      const words = text.split(' ');
-      const displayElement = document.getElementById('textDisplay');
-      let i = 0;
-      displayElement!.textContent += words[i] + ' ';
-
-      const wordDisplayInterval = 100; // Intervalo em milissegundos
-      const totalTime = words.length * wordDisplayInterval;
-
-      const intervalId = setInterval(() => {
-        if (i < words.length) {
-          displayElement!.innerText += words[i] + ' ';
-          i++;
-        } else {
-          clearInterval(intervalId);
-        }
-      }, wordDisplayInterval);
-
-      return totalTime;
-    }
+    return totalTime;
+  }
 
 
- }
+}
 
 
 
