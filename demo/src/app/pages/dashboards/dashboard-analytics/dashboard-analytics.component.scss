@@ -42,3 +42,11 @@ vex-widget-quick-line-chart {
     overflow-wrap: break-word; // ou word-wrap: break-word; para maior compatibilidade
   }
 }
+
+@keyframes wordAppear {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+#textDisplay {
+  white-space: pre-wrap;
+}

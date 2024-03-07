@@ -119,6 +119,8 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
   mediaControlsEnabled: boolean = true;
   mediaControlIcon: string = 'mat:sports_esports';
 
+
+
       /* ==================CONTRUTOR==================== */
       constructor(
         private http: HttpClient,
@@ -236,13 +238,13 @@ export class DashboardAnalyticsComponent implements OnInit , AfterViewInit {
     }
 
   /* ==================SNACK BAR==================== */
-  openSnackBar(message: string) {
-    this._snackBar.open(message, 'Save Notes', {
+  openSnackBar(chatMessage: string) {
+    this._snackBar.open(chatMessage, 'Save Notes', {
       horizontalPosition: this.horizontalPosition,
       verticalPosition: this.verticalPosition,
       duration: this.durationInSeconds * 1000,
     });
-    this.generateAudio();
+    //this.generateAudio();
   }
 
 
@@ -263,7 +265,7 @@ async questionToOpenAI(question: string) {
     const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
       messages: [{ role: 'user', content: question }],
       temperature: 0.0,//0.5
-      max_tokens: 50,//4000
+      max_tokens: 20,//4000
       model: "gpt-4",
     }, { headers }).toPromise();
     if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
@@ -276,7 +278,7 @@ async questionToOpenAI(question: string) {
 
     // Define um atraso para iniciar a reprodução do áudio, baseado no tempo de exibição do texto
     setTimeout(() => {
-      // Aqui você pode chamar sua função que carrega e reproduz o áudio
+      // Função que carrega e reproduz o áudio
       this.generateAudio();
     }, displayTime);
 
@@ -341,9 +343,9 @@ async questionToOpenAI(question: string) {
       const words = text.split(' ');
       const displayElement = document.getElementById('textDisplay');
       let i = 0;
-      displayElement!.innerText = '';
+      displayElement!.textContent += words[i] + ' ';
 
-      const wordDisplayInterval = 200; // Intervalo em milissegundos
+      const wordDisplayInterval = 100; // Intervalo em milissegundos
       const totalTime = words.length * wordDisplayInterval;
 
       const intervalId = setInterval(() => {
