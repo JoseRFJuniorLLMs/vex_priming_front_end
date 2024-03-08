@@ -31,11 +31,17 @@ import { WidgetQuickLineChartComponent } from '../components/widgets/widget-quic
 import { WidgetQuickValueCenterComponent } from '../components/widgets/widget-quick-value-center/widget-quick-value-center.component';
 import { WidgetTableComponent } from '../components/widgets/widget-table/widget-table.component';
 
+import { MatStepperModule } from '@angular/material/stepper';
+import { fadeInRight400ms } from '@vex/animations/fade-in-right.animation';
+import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
+import { scaleIn400ms } from '@vex/animations/scale-in.animation';
+import { stagger80ms } from '@vex/animations/stagger.animation';
 import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
 import { VexPageLayoutContentDirective } from '@vex/components/vex-page-layout/vex-page-layout-content.directive';
 import { VexPageLayoutHeaderDirective } from '@vex/components/vex-page-layout/vex-page-layout-header.directive';
 import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page-layout.component';
 import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
+
 
 import { interval, Observable, Subscription } from 'rxjs';
 import screenfull from 'screenfull';
@@ -59,6 +65,7 @@ interface ResponseData {
   selector: 'vex-dashboard-analytics',
   templateUrl: './dashboard-analytics.component.html',
   styleUrls: ['./dashboard-analytics.component.scss'],
+  animations: [stagger80ms, fadeInUp400ms, scaleIn400ms, fadeInRight400ms],
   standalone: true,
   imports: [CommonModule, FormsModule, MatBottomSheetModule, MatListModule,
     VexSecondaryToolbarComponent,
@@ -83,8 +90,8 @@ interface ResponseData {
     HttpClientModule,
     MatSliderModule,
     MatProgressSpinnerModule,
-    MatTableModule
-
+    MatTableModule,
+    MatStepperModule
   ]
 })
 
