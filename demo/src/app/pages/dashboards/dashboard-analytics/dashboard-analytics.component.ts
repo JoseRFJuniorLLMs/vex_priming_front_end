@@ -200,7 +200,6 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   }
 
   /*questionToOpenAI CONSOME API DA OPEN IA, recebe question, retorna messages */
-
   async questionToOpenAI(question: string) {
     this.isLoading = true;
     try {
@@ -210,9 +209,9 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
       });
 
       const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
-        messages: [{ role: 'user', content: "repeat this word:" + question }],
+        messages: [{ role: 'user', content: "repeat this word:" + question +",more three priming sentences that contain the word" }],
         temperature: 0.0,//0.5
-        max_tokens: 10,//4000
+        max_tokens: 30,//4000
         model: "gpt-4",
       }, { headers }).toPromise();
       if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
@@ -242,7 +241,6 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   }
 
   /* ==================WAVESURFER==================== */
-
   ngAfterViewInit(): void {
     this.isPlaying = true;
     this.waveform = WaveSurfer.create({
@@ -275,7 +273,6 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   }
 
   events() {
-
     this.waveform.once('interaction', () => {
       this.waveform.play();
     })
@@ -327,7 +324,6 @@ displayFullText(text: string): void {
   }
 }
 
-
   /* ==================ATUALIZA O TEXTO BASEADO NO AUDIO==================== */
 
   updateTextDisplayBasedOnAudio(): void {
@@ -347,7 +343,6 @@ displayFullText(text: string): void {
       displayElement.textContent = this.wordsArray.slice(0, expectedWords).join(' ');
     }
   }
-
 
   /* ==================PLAY AUDIO TEXTO SICRONIZADO==================== */
   startAudioWithText(audioUrl: string, text: string) {
@@ -529,8 +524,6 @@ displayTextWordByWord(text: string): number {
       data: { lessons }
     });
   }
-
-
 
 }
 

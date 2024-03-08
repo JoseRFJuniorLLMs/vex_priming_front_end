@@ -16,8 +16,7 @@
 <!--       <audio #audioControl controls [src]="audioUrl">
         Your browser does not support the audio element.
       </audio> -->
-      <!-- Div para o WaveSurfer -->
-      <div #waveform></div>
+
     </mat-card-content>
   </mat-card>
 </mat-dialog-content>
@@ -38,4 +37,9 @@
   <button mat-icon-button matTooltip="Close" type="button" (click)="closeDialog()">
     <mat-icon svgIcon="mat:close"></mat-icon>
   </button>
+
+        <!-- Div para o WaveSurfer -->
+
+
 </mat-dialog-actions>
+<div #waveform style="cursor: pointer;"></div>
