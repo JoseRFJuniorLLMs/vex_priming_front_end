@@ -1,6 +1,6 @@
 <mat-dialog-content>
   <mat-toolbar>
-    <span>Priming (1 - Listen, 2 - Read, 3 - Speak)</span>
+    <span>Priming (Listen, Read, Speak)</span>
     <span class="example-spacer"></span>
   </mat-toolbar>
   <!-- Novo botão para tocar o áudio do texto utilizando WaveSurfer -->
@@ -37,8 +37,6 @@
 
       <mat-step >
         <ng-template matStepLabel>Read</ng-template>
-        <mat-step>
-          <ng-template matStepLabel>Listen</ng-template>
           <mat-card class="example-card" [innerHTML]="displayedHtml" class="highlighted-text">
             <mat-card-header>
               <mat-card-title-group>
@@ -52,28 +50,31 @@
             <mat-card-content>
             </mat-card-content>
           </mat-card>
-      </mat-step>
       </mat-step>
 
       <mat-step>
         <ng-template matStepLabel>Speak</ng-template>
-        <mat-step>
-          <ng-template matStepLabel>Listen</ng-template>
-          <mat-card class="example-card" [innerHTML]="displayedHtml" class="highlighted-text">
-            <mat-card-header>
-              <mat-card-title-group>
-                <mat-card-title [innerHTML]="displayedHtml" class="highlighted-text">
-                  <!-- Usando interpolação de strings para exibir o texto com palavras destacadas -->
-                  <span [innerHTML]="displayedHtml" class="highlighted-text"></span>
-                </mat-card-title>
-               <!--  <img mat-card-xl-image src="/assets/img/logo/priming.png" alt="Priming Logo"> -->
-              </mat-card-title-group>
-            </mat-card-header>
-            <mat-card-content>
-            </mat-card-content>
+          <mat-card class="example-card">
+
+            <mat-dialog-actions>
+              <mat-dialog-actions>
+                <button mat-icon-button [color]="isRecording ? 'warn' : 'red'" type="button" matTooltip="Start Recording" (click)="startRecording()">
+                  <mat-icon svgIcon="mat:mic"></mat-icon>
+                </button>
+
+                <button mat-icon-button [color]="isRecording ? 'red' : 'warn'" type="button" matTooltip="Stop Recording" (click)="stopRecording()">
+                  <mat-icon svgIcon="mat:mic_off"></mat-icon>
+                </button>
+
+                <button mat-icon-button matTooltip="Close" format_align_left type="button" (click)="closeDialog()">
+                  <mat-icon svgIcon="mat:close"></mat-icon>
+                </button>
+              </mat-dialog-actions>
+            </mat-dialog-actions>
+
           </mat-card>
       </mat-step>
-      </mat-step>
+
 
 
     </mat-horizontal-stepper>
@@ -86,21 +87,7 @@
 
 </mat-dialog-content>
 
-<mat-dialog-actions>
-  <mat-dialog-actions>
-    <button mat-icon-button [color]="isRecording ? 'warn' : 'red'" type="button" matTooltip="Start Recording" (click)="startRecording()">
-      <mat-icon svgIcon="mat:mic"></mat-icon>
-    </button>
 
-    <button mat-icon-button [color]="isRecording ? 'red' : 'warn'" type="button" matTooltip="Stop Recording" (click)="stopRecording()">
-      <mat-icon svgIcon="mat:mic_off"></mat-icon>
-    </button>
-
-    <button mat-icon-button matTooltip="Close" format_align_left type="button" (click)="closeDialog()">
-      <mat-icon svgIcon="mat:close"></mat-icon>
-    </button>
-  </mat-dialog-actions>
-</mat-dialog-actions>
 
 
 <!-- Div para o WaveSurfer -->

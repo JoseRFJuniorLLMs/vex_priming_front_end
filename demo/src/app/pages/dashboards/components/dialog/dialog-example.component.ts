@@ -7,13 +7,13 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatStepperModule } from '@angular/material/stepper';
+import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { QuillEditorComponent } from 'ngx-quill';
-import gpt4 from '../../../../../../gpt4.json';
 
 import WaveSurfer from 'wavesurfer.js';
+import gpt4 from '../../../../../../gpt4.json';
 
 @Component({
   selector: 'app-dialog-example',
@@ -39,10 +39,10 @@ import WaveSurfer from 'wavesurfer.js';
   ]
 })
 
-
 export class DialogExampleComponent implements OnInit {
   @ViewChild('spectrogram') spectrogramEl: ElementRef | undefined;
   @ViewChild('waveform') waveformEl!: ElementRef;
+  @ViewChild('stepper') stepper!: MatStepper;
 
   longText = ``;
   mediaRecorder?: MediaRecorder;
@@ -284,6 +284,11 @@ export class DialogExampleComponent implements OnInit {
 
       // Iniciar a marcação de palavra por palavra
       this.highlightWords();
+
+      // Avança para a próxima etapa após a reprodução do áudio
+      setTimeout(() => {
+        this.stepper.next();
+      }, this.waveSurfer.getDuration() * 1000); // Espere pela duração do áudio antes de avançar
     } else {
       // Caso o áudio ainda não tenha sido gerado, chame generateAudio primeiro
       // Isso pode exigir ajustes para garantir que o usuário saiba que o áudio está sendo processado
