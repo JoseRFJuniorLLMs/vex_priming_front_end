@@ -67,6 +67,7 @@ export class DialogExampleComponent implements OnInit {
   ngOnInit() {
     this.words = this.chatMessage.split(' ');
     this.initWaveSurfer();
+    this.playSound();
   }
 
   ngAfterViewInit(): void {
@@ -298,14 +299,17 @@ export class DialogExampleComponent implements OnInit {
         return;
       }
 
-      // Atualiza o HTML exibido com a palavra atual destacada
-      const highlightedText = this.words.slice(0, this.currentWordIndex + 1).join(' ');
-      this.updateDisplayedHtml(highlightedText);
+ // Atualiza o HTML exibido com a palavra atual destacada
+ const highlightedText = this.words.slice(0, this.currentWordIndex + 1).join(' ');
+ this.updateDisplayedHtml(highlightedText);
 
-      // Move para a próxima palavra
-      this.currentWordIndex++;
-    }, 400); // Intervalo de 1 segundo entre cada palavra (ajuste conforme necessário)
-  }
+ // Move para a próxima palavra
+ this.currentWordIndex++;
+}, 400); // Intervalo de 1 segundo entre cada palavra (ajuste conforme necessário)
+}
+
+
+
 
   pauseSound(): void {
     if (this.audio && !this.audio.paused) {
