@@ -77,10 +77,9 @@
                 </div>
 
                 <!-- Quick Line Chart -->
-                <vex-widget-quick-line-chart #chatContainer
-                icon="mat:pageview"
-                iconClass="text-primary-600 bg-primary-600/10"
-                label="You probably mean priming in psychology. Here's a breakdown of the concept:Priming in Psychology: Definition: Priming is a phenomenon where exposure to a stimulus (like a word, image, or sound) influences how a person responds to a later stimulus, often without their conscious awareness.
+                <vex-widget-quick-line-chart #chatContainer icon="mat:pageview"
+                  iconClass="text-primary-600 bg-primary-600/10"
+                  label="You probably mean priming in psychology. Here's a breakdown of the concept:Priming in Psychology: Definition: Priming is a phenomenon where exposure to a stimulus (like a word, image, or sound) influences how a person responds to a later stimulus, often without their conscious awareness.
 How It Works:Our minds store information in interconnected networks. When we encounter a stimulus, it activates a concept or idea in our memory.
 Related concepts become temporarily more accessible, which can influence our thoughts and actions unconsciously.Types of Priming:Semantic Priming: Based on related meanings.Example: Seeing the word doctor makes you think of the word nurse more quickly.
 Repetition Priming: Repeated exposure to a stimulus makes it easier to process the next time.Example: Hearing a new song several times makes you like it more.
@@ -95,9 +94,8 @@ Important Note: Priming effects are often subtle and short-lived. While they can
                 </vex-widget-quick-line-chart>
 
                 <!-- Quick Line Chart -->
-                <vex-widget-quick-line-chart id="textDisplay"
-                #chatContainer icon="mat:pageview"
-                iconClass="text-primary-600 bg-primary-600/10" label="Result" value="{{ chatMessage }}">
+                <vex-widget-quick-line-chart id="textDisplay" #chatContainer icon="mat:pageview"
+                  iconClass="text-primary-600 bg-primary-600/10" label="Result" value="{{ chatMessage }}">
                   <div class="loading-indicator" *ngIf="isLoading">
                     <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
                   </div>
@@ -186,7 +184,8 @@ Important Note: Priming effects are often subtle and short-lived. While they can
               <ng-container matColumnDef="lessons">
                 <th mat-header-cell *matHeaderCellDef> Lições </th>
                 <td mat-cell *matCellDef="let course">
-                  <button mat-button (click)="openLessonsDialog(course.lessons)">Ver Lições ({{course.lessons.length || 'Não disponível'}})</button>
+                  <button mat-button (click)="openLessonsDialog(course.lessons)">Ver Lições ({{course.lessons.length ||
+                    'Não disponível'}})</button>
                 </td>
               </ng-container>
 
@@ -220,8 +219,8 @@ Important Note: Priming effects are often subtle and short-lived. While they can
         </mat-tab>
         <mat-tab label="Priming Zettelkasten">
           <div class="p-6">
-                <img src="assets/img/zettelkasten/zettelkasten_steeps.png" alt="Zettelkasten">
-              <p>
+            <img src="assets/img/zettelkasten/zettelkasten_steeps.png" alt="Zettelkasten">
+            <p>
           </div>
         </mat-tab>
         <mat-tab label="Priming Books">

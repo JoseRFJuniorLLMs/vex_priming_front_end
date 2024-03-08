@@ -119,13 +119,14 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   data: any;
   currentTime!: string;
   progressPercentage: number = 0;
-  mediaControlsEnabled: boolean = true;
+  mediaControlsEnabled: boolean = false;
   mediaControlIcon: string = 'mat:sports_esports';
   wordsArray: string[] = [];
   wordsDisplayed: number = 0;
   wordDuration: number = 0;
   result: any;
   imageDisplayed: boolean = false;
+  dialogRef: any = null;
 
   /* ==================CONTRUTOR==================== */
   constructor(
@@ -137,14 +138,21 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
 
   /* ==================openDialog==================== */
   openDialog(textDisplay: string): void {
-    const dialogRef = this.dialog.open(DialogExampleComponent, {
+    // Verifica se já existe um diálogo aberto
+    if (this.dialogRef) {
+      // Fecha o diálogo atual antes de abrir um novo
+      this.dialogRef.close();
+    }
+
+    // Abre o novo diálogo e armazena sua referência
+    this.dialogRef = this.dialog.open(DialogExampleComponent, {
       width: '600px',
       data: { texto: textDisplay }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('O diálogo foi fechado');
-      //TODO: mandar gerar uma imagem
+    // Quando o diálogo for fechado, limpa a referência
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef = null;
     });
   }
 
@@ -193,9 +201,9 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
       });
 
       const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
-        messages: [{ role: 'user', content: question }],
+        messages: [{ role: 'user', content: "repeat this word:" + question }],
         temperature: 0.0,//0.5
-        max_tokens: 100,//4000
+        max_tokens: 10,//4000
         model: "gpt-4",
       }, { headers }).toPromise();
       if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
@@ -248,7 +256,7 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
       autoCenter: true,
       interact: true,
       dragToSeek: true,
-      mediaControls: true, //controles
+      mediaControls: false, //controles
       autoplay: true,
       fillParent: true,
     });
@@ -313,16 +321,6 @@ displayFullText(text: string): void {
 
 
   /* ==================ATUALIZA O TEXTO BASEADO NO AUDIO==================== */
-/*   updateTextDisplayBasedOnAudio(): void {
-    const currentTime = this.waveform.getCurrentTime(); // Tempo atual do áudio
-    const expectedWords = Math.floor(currentTime / this.wordDuration); // Quantas palavras deveriam ter sido faladas
-
-    // Atualiza o texto para mostrar as palavras até o ponto esperado
-    const displayElement = document.getElementById('textDisplay');
-    if (displayElement) {
-      displayElement.textContent = this.wordsArray.slice(0, expectedWords).join(' ');
-    }
-  } */
 
   updateTextDisplayBasedOnAudio(): void {
     // Verifica se a imagem já foi exibida. Se sim, não faz nada para evitar sobrepor a imagem.
@@ -378,6 +376,7 @@ displayFullText(text: string): void {
     this.progressPercentage = (currentTime / duration) * 100;
   }
 
+    /* ==================MOSTRO OS CONTROLES DO VOLUME==================== */
   toggleMediaControls(): void {
     this.mediaControlsEnabled = !this.mediaControlsEnabled;
     this.waveform.setOptions({ mediaControls: this.mediaControlsEnabled });
@@ -392,16 +391,22 @@ displayFullText(text: string): void {
 
   /* ==================SNACK BAR==================== */
   openSnackBar(textDisplay: string) {
-    const snackBarRef = this._snackBar.open(textDisplay, 'Close', {
+    const snackBarRef = this._snackBar.open(textDisplay, "Close", {
       horizontalPosition: this.horizontalPosition,
       verticalPosition: this.verticalPosition,
-      duration: this.durationInSeconds * 300,
+      duration: this.durationInSeconds * 1,
     });
 
     snackBarRef.afterDismissed().subscribe(() => {
-      // Chamando o diálogo após o fechamento da snackbar e passando o texto para o diálogo
+      this.playSound('../../../../assets/audio/toc.wav');
       this.openDialog(textDisplay);
     });
+  }
+
+   /* ==================ALARME==================== */
+  playSound(soundUrl: string) {
+    const audio = new Audio(soundUrl);
+    audio.play().catch(error => console.error("Erro ao tocar o som:", error));
   }
 
   /* ==================AO SELECIONAR O TEXTO==================== */
@@ -449,7 +454,8 @@ displayFullText(text: string): void {
     // Adiciona um listener para o evento de término do áudio
     this.waveform.on('finish', () => {
       // Abre o SnackBar após a conclusão da reprodução do áudio
-      this.openSnackBar(this.chatMessage);
+      //this.openSnackBar(this.chatMessage);
+      this.openDialog(this.chatMessage);
     });
   });
 }
@@ -501,8 +507,6 @@ displayTextWordByWord(text: string): number {
 
   return totalTime;
 }
-
-
 
   openLessonsDialog(lessons: Lesson[]): void {
     this.dialog.open(LessonDetailsDialogComponent, {

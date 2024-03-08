@@ -23,8 +23,21 @@
 
 <mat-dialog-actions>
 
-  <button mat-icon-button matTooltip="Attach File" type="button">
+  <button mat-icon-button color="warn" type="button" (click)="startRecording()">
     <mat-icon svgIcon="mat:mic"></mat-icon>
+  </button>
+
+  <button mat-icon-button type="button" (click)="stopRecording()">
+    <mat-icon svgIcon="mat:mic_off"></mat-icon>
+  </button>
+
+  <button mat-icon-button type="button" (click)="playSound()">
+    <mat-icon svgIcon="mat:play_arrow"></mat-icon>
+  </button>
+
+
+  <button mat-icon-button matTooltip="Close" type="button" (click)="closeDialog()">
+    <mat-icon svgIcon="mat:close"></mat-icon>
   </button>
 
 </mat-dialog-actions>
