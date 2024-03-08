@@ -68,7 +68,7 @@ export class DialogExampleComponent implements OnInit {
   ngAfterViewInit(): void {
     this.waveSurfer = WaveSurfer.create({
       container: this.waveformEl.nativeElement,
-     /*  url: '../../assets/audio/ABOVE.wav', */
+      url: '../../assets/audio/ABOVE.wav',
       waveColor: '#d3d3d3',
       progressColor: '#0000FF',
       cursorColor: '#0000FF',
@@ -106,7 +106,7 @@ export class DialogExampleComponent implements OnInit {
         return;
       }
 
-      const openAIKey = gpt4.gptApiKey; // Certifique-se de que este valor é seguro!
+      const openAIKey = gpt4.gptApiKey;
       const url = "https://api.openai.com/v1/audio/speech";
       const body = {
         model: "tts-1",
@@ -115,7 +115,8 @@ export class DialogExampleComponent implements OnInit {
       };
 
       const headers = new HttpHeaders({
-        "Authorization": `Bearer ${openAIKey}`
+        "Authorization": `Bearer ${openAIKey}`,
+        "Content-Type": "application/json"
       });
 
       this.http.post(url, body, { headers, responseType: "blob" }).subscribe(
@@ -140,6 +141,29 @@ export class DialogExampleComponent implements OnInit {
       );
     }
 
+    transcribeAudio(audioBlob: Blob) {
+      const openAIKey = gpt4.gptApiKey;
+      const url = 'https://api.openai.com/v1/whisper';
+      const formData = new FormData();
+      formData.append('file', audioBlob);
+
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${openAIKey}`,
+        "Content-Type": "multipart/form-data"
+      });
+
+      this.http.post(url, formData, { headers, observe: 'response' }).subscribe(
+        (response: any) => {
+          const transcribedText = response.body.text;
+          console.error('TEXTO:', transcribedText);
+          this.data.texto += (this.data.texto ? " " : "") + transcribedText;
+
+        },
+        error => {
+          console.error('Error transcribing audio:', error);
+        }
+      );
+    }
 
   setupWaveSurferEvents(): void {
     if (!this.waveSurfer) return;
@@ -214,9 +238,21 @@ export class DialogExampleComponent implements OnInit {
         }
 
         this.loadAudio(this.audioUrl); // Carregar o áudio para o elemento HTMLAudioElement, se necessário
+        this.transcribeAudio(audioBlob);
       };
     }
   }
+
+
+  transcribeCurrentAudio() {
+    if (this.audioChunks.length > 0) {
+      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+      this.transcribeAudio(audioBlob);
+    } else {
+      console.error('Nenhum áudio para transcrever');
+    }
+  }
+
 
   loadAudio(url: string): void {
     this.audio = new Audio(url);

@@ -6,8 +6,17 @@
 
   <mat-card class="example-card">
     <mat-card-header>
-      <mat-card-title-group>
-        <mat-card-title>{{ data.texto }}</mat-card-title>
+  <!-- Novo botão para tocar o áudio do texto utilizando WaveSurfer -->
+    <button mat-button type="button" (click)="playSound()">
+      <mat-icon svgIcon="mat:play_arrow"></mat-icon>
+    </button>
+
+    <button mat-button type="button" (click)="transcribeCurrentAudio()">
+      <mat-icon svgIcon="mat:transcribe"></mat-icon>
+    </button>
+
+    <mat-card-title-group>
+    <mat-card-title>{{ data.texto }}</mat-card-title>
         <img mat-card-xl-image src="/assets/img/logo/priming.png" alt="Priming Logo">
       </mat-card-title-group>
     </mat-card-header>
@@ -27,10 +36,7 @@
       <mat-icon svgIcon="mat:mic_off"></mat-icon>
     </button>
 
-    <!-- Novo botão para tocar o áudio do texto utilizando WaveSurfer -->
-    <button mat-button type="button" (click)="playSound()">
-      <mat-icon svgIcon="mat:play_arrow"></mat-icon>
-    </button>
+
 
     <button mat-icon-button matTooltip="Close" type="button" (click)="closeDialog()">
       <mat-icon svgIcon="mat:close"></mat-icon>
