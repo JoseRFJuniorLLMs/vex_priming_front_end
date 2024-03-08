@@ -17,6 +17,7 @@ import WaveSurfer from 'wavesurfer.js';
 @Component({
   selector: 'app-dialog-example',
   templateUrl: 'dialog-example.component.html',
+  styleUrls: ['dialog-example.component.scss'],
   standalone: true,
   imports: [
     MatDialogModule,
@@ -54,6 +55,8 @@ export class DialogExampleComponent implements OnInit {
   chatMessage: string = this.data.texto;
   voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
   isAudioReady: boolean = false;
+  currentWordIndex: number = 0;
+  words: string[] = [];
 
   constructor(
     private http: HttpClient,
@@ -62,13 +65,14 @@ export class DialogExampleComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.words = this.chatMessage.split(' ');
     this.initWaveSurfer();
   }
 
   ngAfterViewInit(): void {
     this.waveSurfer = WaveSurfer.create({
       container: this.waveformEl.nativeElement,
-      url: '../../assets/audio/ABOVE.wav',
+      /* url: '../../assets/audio/ABOVE.wav', */
       waveColor: '#d3d3d3',
       progressColor: '#0000FF',
       cursorColor: '#0000FF',
@@ -187,8 +191,7 @@ export class DialogExampleComponent implements OnInit {
         container: this.waveformEl.nativeElement,
         waveColor: 'violet',
         progressColor: 'purple',
-        backend: 'WebAudio', // or 'MediaElement' if you want to use the <audio> backend
-        // If you're including a spectrogram, you would also initialize it here
+        backend: 'WebAudio',
       });
 
     }
@@ -273,7 +276,11 @@ export class DialogExampleComponent implements OnInit {
   playSound(): void {
     // Verifica se o áudio já foi gerado e está pronto para ser reproduzido
     if (this.waveSurfer && this.isAudioReady) {
+      // Iniciar a reprodução do áudio
       this.waveSurfer.play();
+
+      // Iniciar a marcação de palavra por palavra
+      this.highlightWords();
     } else {
       // Caso o áudio ainda não tenha sido gerado, chame generateAudio primeiro
       // Isso pode exigir ajustes para garantir que o usuário saiba que o áudio está sendo processado
@@ -283,6 +290,22 @@ export class DialogExampleComponent implements OnInit {
     }
   }
 
+  highlightWords(): void {
+    const interval = setInterval(() => {
+      // Verifica se todas as palavras foram destacadas
+      if (this.currentWordIndex >= this.words.length) {
+        clearInterval(interval); // Limpa o intervalo
+        return;
+      }
+
+      // Atualiza o HTML exibido com a palavra atual destacada
+      const highlightedText = this.words.slice(0, this.currentWordIndex + 1).join(' ');
+      this.updateDisplayedHtml(highlightedText);
+
+      // Move para a próxima palavra
+      this.currentWordIndex++;
+    }, 400); // Intervalo de 1 segundo entre cada palavra (ajuste conforme necessário)
+  }
 
   pauseSound(): void {
     if (this.audio && !this.audio.paused) {
@@ -300,4 +323,6 @@ export class DialogExampleComponent implements OnInit {
   closeDialog(): void {
     this.dialogRef.close();
   }
+
+
 }

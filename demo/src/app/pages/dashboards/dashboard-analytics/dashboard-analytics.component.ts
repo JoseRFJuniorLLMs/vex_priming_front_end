@@ -443,7 +443,7 @@ displayFullText(text: string): void {
   }
 
   /* ==================GERA AUDIO==================== */
-  generateAudio(): void {
+   generateAudio(): void {
     // Verifica se já está gerando áudio para evitar duplicação
     if (this.isGeneratingAudio) return;
 
