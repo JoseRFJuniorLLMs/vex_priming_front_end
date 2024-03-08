@@ -525,7 +525,7 @@ displayTextWordByWord(text: string): number {
 
   openLessonsDialog(lessons: Lesson[]): void {
     this.dialog.open(LessonDetailsDialogComponent, {
-      width: '80%',
+      width: '90%',
       data: { lessons }
     });
   }

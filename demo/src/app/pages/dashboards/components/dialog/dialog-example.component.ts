@@ -10,9 +10,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { QuillEditorComponent } from 'ngx-quill';
 
-
 import WaveSurfer from 'wavesurfer.js';
-
 
 @Component({
   selector: 'app-dialog-example',
@@ -34,17 +32,18 @@ import WaveSurfer from 'wavesurfer.js';
   ]
 })
 export class DialogExampleComponent implements OnInit {
-
-  @ViewChild('waveform') waveformEl: ElementRef | undefined;
   @ViewChild('spectrogram') spectrogramEl: ElementRef | undefined;
+  @ViewChild('waveform') waveformEl!: ElementRef;
+
   longText = ``;
   mediaRecorder?: MediaRecorder;
   audioChunks: any[] = [];
   isRecording = false;
   audio?: HTMLAudioElement;
   displayedHtml = ``; // Adicionado para armazenar e exibir HTML
-  waveSurfer: WaveSurfer | undefined;
-
+  audioUrl: string | null = null;
+  isPlaying: boolean = false;
+  waveSurfer: WaveSurfer | null = null;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { texto: string },
@@ -54,6 +53,49 @@ export class DialogExampleComponent implements OnInit {
   ngOnInit() {
     this.initWaveSurfer();
   }
+
+  ngAfterViewInit(): void {
+    this.waveSurfer = WaveSurfer.create({
+      container: this.waveformEl.nativeElement,
+      url: '../../assets/audio/PRIMING.wav',
+      waveColor: '#d3d3d3',
+      progressColor: '#000000',
+      cursorColor: '#000000',
+      cursorWidth: 5,
+      minPxPerSec: 50,
+      barWidth: 10,
+      barRadius: 2,
+      barGap: 2,
+      autoScroll: true,
+      autoCenter: true,
+      interact: true,
+      dragToSeek: true,
+      mediaControls: true, // controles
+      autoplay: true,
+      fillParent: true,
+    });
+
+    this.setupWaveSurferEvents();
+  }
+
+  setupWaveSurferEvents(): void {
+    if (!this.waveSurfer) return;
+
+    this.waveSurfer.on('play', () => {
+      this.isPlaying = true;
+    });
+
+    this.waveSurfer.on('pause', () => {
+      this.isPlaying = false;
+    });
+
+    this.waveSurfer.on('finish', () => {
+      this.isPlaying = false;
+    });
+
+    // Adicione aqui outros eventos necessários
+  }
+
 
   initWaveSurfer(): void {
     if (this.waveformEl) {
@@ -105,11 +147,18 @@ export class DialogExampleComponent implements OnInit {
       this.mediaRecorder.stop();
       this.mediaRecorder.onstop = () => {
         const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        this.loadAudio(audioUrl);
+        this.audioUrl = URL.createObjectURL(audioBlob); // Atualizar a URL do áudio
+
+        if (this.waveSurfer) {
+          this.waveSurfer.load(this.audioUrl); // Carregar o áudio gravado no WaveSurfer
+        }
+
+        this.loadAudio(this.audioUrl); // Carregar o áudio para o elemento HTMLAudioElement, se necessário
       };
     }
   }
+
+
 
   loadAudio(url: string): void {
     this.audio = new Audio(url);
@@ -117,6 +166,7 @@ export class DialogExampleComponent implements OnInit {
 
   playSound(): void {
     if (this.audio) {
+      this.initWaveSurfer();
       this.audio.play().catch(error => console.error("Error playing sound:", error));
     }
   }
