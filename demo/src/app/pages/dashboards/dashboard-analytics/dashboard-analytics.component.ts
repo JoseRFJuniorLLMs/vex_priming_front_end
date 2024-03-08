@@ -127,6 +127,10 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   result: any;
   imageDisplayed: boolean = false;
   dialogRef: any = null;
+  isDialogOpen: boolean = false; // desativa globalmente
+  private isGeneratingAudio: boolean = false;
+  private readyListener: () => void;
+  private finishListener: () => void;
 
   /* ==================CONTRUTOR==================== */
   constructor(
@@ -134,10 +138,14 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
     private _snackBar: MatSnackBar,
     private dialog: MatDialog,
     private coursesService : CoursesService
-  ) { }
+  ) {
+    this.readyListener = () => {};
+    this.finishListener = () => {};
+  }
 
   /* ==================openDialog==================== */
   openDialog(textDisplay: string): void {
+    this.isDialogOpen = true;
     // Verifica se já existe um diálogo aberto
     if (this.dialogRef) {
       // Fecha o diálogo atual antes de abrir um novo
@@ -153,6 +161,7 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
     // Quando o diálogo for fechado, limpa a referência
     this.dialogRef.afterClosed().subscribe(() => {
       this.dialogRef = null;
+      this.isDialogOpen = false; // Resetar quando o diálogo é fechado
     });
   }
 
@@ -231,7 +240,6 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
       this.isLoading = false;
     }
   }
-
 
   /* ==================WAVESURFER==================== */
 
@@ -398,8 +406,8 @@ displayFullText(text: string): void {
     });
 
     snackBarRef.afterDismissed().subscribe(() => {
-      this.playSound('../../../../assets/audio/toc.wav');
-      this.openDialog(textDisplay);
+      //this.playSound('../../../../assets/audio/toc.wav');
+      //this.openDialog(textDisplay);
     });
   }
 
@@ -413,6 +421,9 @@ displayFullText(text: string): void {
   @HostListener('document:mouseup', ['$event'])
   handleMouseUp(event: MouseEvent) {
     const selection = window.getSelection();
+    if (this.isDialogOpen) {
+      return; // Não fazer nada se o diálogo estiver aberto
+    }
     if (selection && selection.toString().trim() !== '') {
       this.selectedText = selection.toString();
       this.questionToOpenAI(this.selectedText);
@@ -421,14 +432,21 @@ displayFullText(text: string): void {
 
   /* ==================GERA AUDIO==================== */
   generateAudio(): void {
+    // Verifica se já está gerando áudio para evitar duplicação
+    if (this.isGeneratingAudio) return;
+
+    // Indica que o processo de geração de áudio começou
+    this.isGeneratingAudio = true;
+
     if (!this.chatMessage) {
       console.error('No chatMessage to generate audio from.');
+      // Restaura o estado para permitir novas gerações de áudio
+      this.isGeneratingAudio = false;
       return;
     }
 
     const openAIKey = gpt4.gptApiKey;
     const url = "https://api.openai.com/v1/audio/speech";
-
     const body = {
       model: "tts-1",
       voice: this.getRandomVoice(),
@@ -439,47 +457,44 @@ displayFullText(text: string): void {
       "Authorization": `Bearer ${openAIKey}`
     });
 
-    this.http.post(url, body, { headers, responseType: "blob" }).subscribe(response => {
-      const audioBlob = new Blob([response], { type: 'audio/wav' });
-      const audioUrl = URL.createObjectURL(audioBlob);
+    this.http.post(url, body, { headers, responseType: "blob" }).subscribe(
+      response => {
+        const audioBlob = new Blob([response], { type: 'audio/wav' });
+        const audioUrl = URL.createObjectURL(audioBlob);
 
-      // Carregar o áudio gerado no WaveSurfer
-    this.waveform.load(audioUrl);
+        // Define as funções listener que serão usadas nos eventos 'ready' e 'finish'
+        const onReady = () => {
+          this.waveform.play();
+        };
 
-    // Quando o áudio estiver pronto, inicia a reprodução
-    this.waveform.on('ready', () => {
-      this.waveform.play();
-    });
+        const onFinish = () => {
+          // Ações adicionais após a conclusão do áudio
+          this.isGeneratingAudio = false;
+          this.playSound('../../../../assets/audio/toc.wav');
+          this.openDialog(this.chatMessage);
 
-    // Adiciona um listener para o evento de término do áudio
-    this.waveform.on('finish', () => {
-      // Abre o SnackBar após a conclusão da reprodução do áudio
-      //this.openSnackBar(this.chatMessage);
-      this.openDialog(this.chatMessage);
-    });
-  });
-}
-  /* ==================DISPLAY WORD==================== */
-  /* displayTextWordByWord(text: string): number {
-    const words = text.split(' ');
-    const displayElement = document.getElementById('textDisplay');
-    let i = 0;
-    displayElement!.textContent += words[i] + ' ';
+          // Limpa os listeners após seu uso
+          this.waveform.un('ready', onReady);
+          this.waveform.un('finish', onFinish);
+        };
 
-    const wordDisplayInterval = 400; // Intervalo em milissegundos
-    const totalTime = words.length * wordDisplayInterval;
+        // Limpa quaisquer listeners anteriores (necessário se a função for chamada múltiplas vezes)
+        this.waveform.un('ready', onReady);
+        this.waveform.un('finish', onFinish);
 
-    const intervalId = setInterval(() => {
-      if (i < words.length) {
-        displayElement!.innerText += words[i] + ' ';
-        i++;
-      } else {
-        clearInterval(intervalId);
+        // Carrega o áudio no WaveSurfer e define os listeners
+        this.waveform.load(audioUrl);
+        this.waveform.on('ready', onReady);
+        this.waveform.on('finish', onFinish);
+      },
+      error => {
+        console.error("Error generating audio:", error);
+        // Restaura o estado em caso de erro
+        this.isGeneratingAudio = false;
       }
-    }, wordDisplayInterval);
+    );
+  }
 
-    return totalTime;
-  } */
 
   /* ==================DISPLAY WORD BY WORD AND SHOW IMAGE==================== */
 displayTextWordByWord(text: string): number {

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatRippleModule } from '@angular/material/core';
@@ -9,6 +9,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { QuillEditorComponent } from 'ngx-quill';
+
+
+import WaveSurfer from 'wavesurfer.js';
+
 
 @Component({
   selector: 'app-dialog-example',
@@ -29,19 +33,41 @@ import { QuillEditorComponent } from 'ngx-quill';
     MatIconModule
   ]
 })
-export class DialogExampleComponent {
+export class DialogExampleComponent implements OnInit {
+
+  @ViewChild('waveform') waveformEl: ElementRef | undefined;
+  @ViewChild('spectrogram') spectrogramEl: ElementRef | undefined;
   longText = ``;
   mediaRecorder?: MediaRecorder;
   audioChunks: any[] = [];
   isRecording = false;
   audio?: HTMLAudioElement;
   displayedHtml = ``; // Adicionado para armazenar e exibir HTML
+  waveSurfer: WaveSurfer | undefined;
+
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { texto: string },
     private dialogRef: MatDialogRef<DialogExampleComponent>
   ) { }
 
+  ngOnInit() {
+    this.initWaveSurfer();
+  }
+
+  initWaveSurfer(): void {
+    if (this.waveformEl) {
+      this.waveSurfer = WaveSurfer.create({
+        container: this.waveformEl.nativeElement,
+        waveColor: 'violet',
+        progressColor: 'purple',
+        backend: 'WebAudio', // or 'MediaElement' if you want to use the <audio> backend
+        // If you're including a spectrogram, you would also initialize it here
+      });
+
+      // Additional configuration for the spectrogram plugin can be set up here if needed
+    }
+  }
   // Função para atualizar o HTML que será exibido
   updateDisplayedHtml(htmlContent: string): void {
     this.displayedHtml = htmlContent;
