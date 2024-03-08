@@ -148,8 +148,7 @@ export class DialogExampleComponent implements OnInit {
       formData.append('file', audioBlob);
 
       const headers = new HttpHeaders({
-        'Authorization': `Bearer ${openAIKey}`,
-        "Content-Type": "multipart/form-data"
+        'Authorization': `Bearer ${openAIKey}`
       });
 
       this.http.post(url, formData, { headers, observe: 'response' }).subscribe(
@@ -227,21 +226,34 @@ export class DialogExampleComponent implements OnInit {
   }
 
   stopRecording(): void {
-    if (this.mediaRecorder) {
-      this.mediaRecorder.stop();
-      this.mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
-        this.audioUrl = URL.createObjectURL(audioBlob); // Atualizar a URL do áudio
-
-        if (this.waveSurfer) {
-          this.waveSurfer.load(this.audioUrl); // Carregar o áudio gravado no WaveSurfer
-        }
-
-        this.loadAudio(this.audioUrl); // Carregar o áudio para o elemento HTMLAudioElement, se necessário
-        this.transcribeAudio(audioBlob);
-      };
+    if (!this.mediaRecorder) {
+      return;
     }
+
+    this.mediaRecorder.stop(); // Pare a gravação
+    this.isRecording = false; // Atualize o estado de gravação
+
+    this.mediaRecorder.onstop = () => {
+      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+      if (this.audioUrl) {
+        URL.revokeObjectURL(this.audioUrl); // Libere a URL anterior, se houver
+      }
+      this.audioUrl = URL.createObjectURL(audioBlob); // Crie uma nova URL
+
+      if (this.waveSurfer) {
+        this.waveSurfer.load(this.audioUrl); // Carregue o áudio no WaveSurfer
+      }
+
+      this.loadAudio(this.audioUrl); // Carregue o áudio para reprodução direta
+      this.transcribeAudio(audioBlob); // Inicie a transcrição do áudio
+
+      // Lembre-se de limpar/resetar os audioChunks para uma nova gravação
+      this.audioChunks = [];
+    };
+
+    // Adicione manuseio de erro conforme necessário
   }
+
 
 
   transcribeCurrentAudio() {

@@ -332,6 +332,7 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
     });
 }
 
+
 /* ==================FULL TEXT==================== */
 displayFullText(text: string): void {
   const displayElement = document.getElementById('textDisplay');
