@@ -6,12 +6,20 @@ import { MatTableModule } from '@angular/material/table';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSliderModule } from '@angular/material/slider';
+import {
+  MatSnackBar,
+  MatSnackBarHorizontalPosition,
+  MatSnackBarVerticalPosition
+} from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import gpt4 from '../../../../../gpt4.json';
@@ -28,23 +36,13 @@ import { VexPageLayoutContentDirective } from '@vex/components/vex-page-layout/v
 import { VexPageLayoutHeaderDirective } from '@vex/components/vex-page-layout/vex-page-layout-header.directive';
 import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page-layout.component';
 import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
-import { PageLayoutDemoComponent } from '../../ui/page-layouts/page-layout-demo/page-layout-demo.component';
 
-import {
-  MatSnackBar,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition
-} from '@angular/material/snack-bar';
-
-import { MatSliderModule } from '@angular/material/slider';
-import { MatTooltipModule } from '@angular/material/tooltip';
-
-
-import { MatDialog } from '@angular/material/dialog';
 import { interval, Observable, Subscription } from 'rxjs';
 import screenfull from 'screenfull';
 import WaveSurfer from 'wavesurfer.js';
+import { PageLayoutDemoComponent } from '../../ui/page-layouts/page-layout-demo/page-layout-demo.component';
 /* import * as Annyang from 'annyang'; */
+
 import { Course } from 'src/app/model/course/course';
 import { Lesson } from 'src/app/model/lesson/lesson';
 import { CoursesService } from '../../../services/courses.service';
@@ -90,7 +88,6 @@ interface ResponseData {
   ]
 })
 
-
 export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
 
   /* ==================COURSES SERVICES==================== */
@@ -99,7 +96,6 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
 
   /* ==================VIEWCHILD==================== */
   @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
-
 
   /* ==================VARIAVEIS==================== */
   private waveform!: WaveSurfer;
@@ -129,6 +125,7 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   wordsDisplayed: number = 0;
   wordDuration: number = 0;
   result: any;
+  imageDisplayed: boolean = false;
 
   /* ==================CONTRUTOR==================== */
   constructor(
@@ -138,8 +135,8 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
     private coursesService : CoursesService
   ) { }
 
-   /* ==================openDialog==================== */
-   openDialog(textDisplay: string): void {
+  /* ==================openDialog==================== */
+  openDialog(textDisplay: string): void {
     const dialogRef = this.dialog.open(DialogExampleComponent, {
       width: '600px',
       data: { texto: textDisplay }
@@ -153,6 +150,10 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
 
   /* ==================OnINIT==================== */
   ngOnInit(): void {
+
+    this.coursesService.getCoursesByStudentId('65c6b529c2c6b863b27a3172').subscribe(cursos => {
+      console.log('Cursos do estudante:', cursos);
+    });
 
     const studentId = 'student_id';
     this.courses$ = this.coursesService.getCoursesByStudentId(studentId);
@@ -194,7 +195,7 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
       const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
         messages: [{ role: 'user', content: question }],
         temperature: 0.0,//0.5
-        max_tokens: 20,//4000
+        max_tokens: 100,//4000
         model: "gpt-4",
       }, { headers }).toPromise();
       if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
@@ -312,7 +313,7 @@ displayFullText(text: string): void {
 
 
   /* ==================ATUALIZA O TEXTO BASEADO NO AUDIO==================== */
-  updateTextDisplayBasedOnAudio(): void {
+/*   updateTextDisplayBasedOnAudio(): void {
     const currentTime = this.waveform.getCurrentTime(); // Tempo atual do áudio
     const expectedWords = Math.floor(currentTime / this.wordDuration); // Quantas palavras deveriam ter sido faladas
 
@@ -321,7 +322,26 @@ displayFullText(text: string): void {
     if (displayElement) {
       displayElement.textContent = this.wordsArray.slice(0, expectedWords).join(' ');
     }
+  } */
+
+  updateTextDisplayBasedOnAudio(): void {
+    // Verifica se a imagem já foi exibida. Se sim, não faz nada para evitar sobrepor a imagem.
+    if (this.imageDisplayed) {
+      return;
+    }
+
+    // Se a imagem ainda não foi exibida, continua com a lógica de atualizar o texto baseado no progresso do áudio.
+    const currentTime = this.waveform.getCurrentTime(); // Obtém o tempo atual do áudio.
+    const expectedWords = Math.floor(currentTime / this.wordDuration); // Calcula quantas palavras deveriam ter sido faladas até o momento.
+
+    // Atualiza o displayElement para mostrar as palavras até o ponto esperado.
+    const displayElement = document.getElementById('textDisplay');
+    if (displayElement) {
+      // Atualiza o texto no displayElement com as palavras correspondentes ao tempo atual do áudio.
+      displayElement.textContent = this.wordsArray.slice(0, expectedWords).join(' ');
+    }
   }
+
 
   /* ==================PLAY AUDIO TEXTO SICRONIZADO==================== */
   startAudioWithText(audioUrl: string, text: string) {
@@ -434,7 +454,7 @@ displayFullText(text: string): void {
   });
 }
   /* ==================DISPLAY WORD==================== */
-  displayTextWordByWord(text: string): number {
+  /* displayTextWordByWord(text: string): number {
     const words = text.split(' ');
     const displayElement = document.getElementById('textDisplay');
     let i = 0;
@@ -453,7 +473,36 @@ displayFullText(text: string): void {
     }, wordDisplayInterval);
 
     return totalTime;
-  }
+  } */
+
+  /* ==================DISPLAY WORD BY WORD AND SHOW IMAGE==================== */
+displayTextWordByWord(text: string): number {
+  const words = text.split(' ');
+  const displayElement = document.getElementById('textDisplay');
+  if (!displayElement) return 0; // Se o elemento não existir, retorna 0.
+
+  let i = 0;
+  displayElement.textContent = ''; // Inicializa o conteúdo do displayElement como vazio.
+
+  const wordDisplayInterval = 900; // Intervalo em milissegundos
+  const totalTime = words.length * wordDisplayInterval;
+
+  const intervalId = setInterval(() => {
+    if (i < words.length) {
+      displayElement.innerText += words[i] + ' ';
+      i++;
+    } else {
+      clearInterval(intervalId);
+      // Após exibir todas as palavras, limpa o texto e insere a imagem.
+      displayElement.innerHTML = '<img src="/assets/img/logo/priming.png" alt="Priming Logo" style="max-width: 100%; height: auto;">';
+      this.imageDisplayed = true; // Imagem exibida, atualize a flag
+    }
+  }, wordDisplayInterval);
+
+  return totalTime;
+}
+
+
 
   openLessonsDialog(lessons: Lesson[]): void {
     this.dialog.open(LessonDetailsDialogComponent, {
