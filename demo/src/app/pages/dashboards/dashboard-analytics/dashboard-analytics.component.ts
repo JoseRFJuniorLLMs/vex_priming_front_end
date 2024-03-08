@@ -98,8 +98,18 @@ interface ResponseData {
 export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
 
   /* ==================COURSES SERVICES==================== */
+
   courses$!: Observable<Course[]>;
-  displayedColumns: string[] = ['_id', 'name', 'objective', 'category', 'level', 'price', 'status', 'content', 'lessons'];
+  displayedColumns: string[] = [
+    '_id',
+    'name',
+    'objective',
+    'category',
+    'level',
+    'price',
+    'status',
+    'content',
+    'lessons'];
 
   /* ==================VIEWCHILD==================== */
   @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
@@ -321,7 +331,6 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
         }
     });
 }
-
 
 /* ==================FULL TEXT==================== */
 displayFullText(text: string): void {

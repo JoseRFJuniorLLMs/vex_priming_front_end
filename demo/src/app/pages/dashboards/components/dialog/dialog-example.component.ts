@@ -1,3 +1,4 @@
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -9,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { QuillEditorComponent } from 'ngx-quill';
+import gpt4 from '../../../../../../gpt4.json';
 
 import WaveSurfer from 'wavesurfer.js';
 
@@ -28,9 +30,13 @@ import WaveSurfer from 'wavesurfer.js';
     MatCardModule,
     MatToolbarModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    HttpClientModule
+
   ]
 })
+
+
 export class DialogExampleComponent implements OnInit {
   @ViewChild('spectrogram') spectrogramEl: ElementRef | undefined;
   @ViewChild('waveform') waveformEl!: ElementRef;
@@ -40,14 +46,19 @@ export class DialogExampleComponent implements OnInit {
   audioChunks: any[] = [];
   isRecording = false;
   audio?: HTMLAudioElement;
-  displayedHtml = ``; // Adicionado para armazenar e exibir HTML
+  displayedHtml = ``;
   audioUrl: string | null = null;
   isPlaying: boolean = false;
   waveSurfer: WaveSurfer | null = null;
+  isGeneratingAudio = false;
+  chatMessage: string = this.data.texto;
+  voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+  isAudioReady: boolean = false;
 
   constructor(
+    private http: HttpClient,
     @Inject(MAT_DIALOG_DATA) public data: { texto: string },
-    private dialogRef: MatDialogRef<DialogExampleComponent>
+    private dialogRef: MatDialogRef<DialogExampleComponent>,
   ) { }
 
   ngOnInit() {
@@ -57,7 +68,7 @@ export class DialogExampleComponent implements OnInit {
   ngAfterViewInit(): void {
     this.waveSurfer = WaveSurfer.create({
       container: this.waveformEl.nativeElement,
-      url: '../../assets/audio/ABOVE.wav',
+     /*  url: '../../assets/audio/ABOVE.wav', */
       waveColor: '#d3d3d3',
       progressColor: '#0000FF',
       cursorColor: '#0000FF',
@@ -78,6 +89,58 @@ export class DialogExampleComponent implements OnInit {
     this.setupWaveSurferEvents();
   }
 
+    /* ==================VOZ ALEATORIA==================== */
+    getRandomVoice(): string {
+      const randomIndex = Math.floor(Math.random() * this.voices.length);
+      return this.voices[randomIndex];
+    }
+
+    /* ==================GERADOR DE AUDIO==================== */
+    generateAudio(): void {
+      if (this.isGeneratingAudio) return;
+      this.isGeneratingAudio = true;
+
+      if (!this.chatMessage) {
+        console.error('No chatMessage to generate audio from.');
+        this.isGeneratingAudio = false;
+        return;
+      }
+
+      const openAIKey = gpt4.gptApiKey; // Certifique-se de que este valor é seguro!
+      const url = "https://api.openai.com/v1/audio/speech";
+      const body = {
+        model: "tts-1",
+        voice: this.getRandomVoice(),
+        input: this.chatMessage
+      };
+
+      const headers = new HttpHeaders({
+        "Authorization": `Bearer ${openAIKey}`
+      });
+
+      this.http.post(url, body, { headers, responseType: "blob" }).subscribe(
+        response => {
+          const audioBlob = new Blob([response], { type: 'audio/wav' });
+          const audioUrl = URL.createObjectURL(audioBlob);
+
+          if (this.waveSurfer) {
+            this.waveSurfer.load(audioUrl);
+            this.waveSurfer.on('ready', () => {
+              this.waveSurfer?.play();
+              this.isAudioReady = true; // Marca o áudio como pronto para reprodução
+            });
+          }
+
+          this.isGeneratingAudio = false;
+        },
+        error => {
+          console.error("Error generating audio:", error);
+          this.isGeneratingAudio = false;
+        }
+      );
+    }
+
+
   setupWaveSurferEvents(): void {
     if (!this.waveSurfer) return;
 
@@ -93,9 +156,7 @@ export class DialogExampleComponent implements OnInit {
       this.isPlaying = false;
     });
 
-    // Adicione aqui outros eventos necessários
   }
-
 
   initWaveSurfer(): void {
     if (this.waveformEl) {
@@ -107,7 +168,6 @@ export class DialogExampleComponent implements OnInit {
         // If you're including a spectrogram, you would also initialize it here
       });
 
-      // Additional configuration for the spectrogram plugin can be set up here if needed
     }
   }
   // Função para atualizar o HTML que será exibido
@@ -158,18 +218,23 @@ export class DialogExampleComponent implements OnInit {
     }
   }
 
-
-
   loadAudio(url: string): void {
     this.audio = new Audio(url);
   }
 
   playSound(): void {
-    if (this.audio) {
-      this.initWaveSurfer();
-      this.audio.play().catch(error => console.error("Error playing sound:", error));
+    // Verifica se o áudio já foi gerado e está pronto para ser reproduzido
+    if (this.waveSurfer && this.isAudioReady) {
+      this.waveSurfer.play();
+    } else {
+      // Caso o áudio ainda não tenha sido gerado, chame generateAudio primeiro
+      // Isso pode exigir ajustes para garantir que o usuário saiba que o áudio está sendo processado
+      this.generateAudio();
+      // Você poderia, opcionalmente, usar um observável ou uma promise para esperar o áudio estar pronto
+      // e então reproduzi-lo automaticamente ou permitir que o usuário aperte o botão novamente
     }
   }
+
 
   pauseSound(): void {
     if (this.audio && !this.audio.paused) {

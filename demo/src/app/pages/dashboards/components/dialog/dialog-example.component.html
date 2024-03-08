@@ -12,34 +12,33 @@
       </mat-card-title-group>
     </mat-card-header>
     <mat-card-content>
-      <!-- Elemento audio adicionado com controles e vinculação à propriedade audioUrl -->
-<!--       <audio #audioControl controls [src]="audioUrl">
-        Your browser does not support the audio element.
-      </audio> -->
-
     </mat-card-content>
   </mat-card>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-icon-button color="warn" type="button" (click)="startRecording()">
-    <mat-icon svgIcon="mat:mic"></mat-icon>
-  </button>
 
-  <button mat-icon-button type="button" (click)="stopRecording()">
-    <mat-icon svgIcon="mat:mic_off"></mat-icon>
-  </button>
+  <mat-dialog-actions>
+    <button mat-icon-button color="warn" type="button" (click)="startRecording()">
+      <mat-icon svgIcon="mat:mic"></mat-icon>
+    </button>
 
-  <button mat-icon-button type="button" (click)="playSound()">
-    <mat-icon svgIcon="mat:play_arrow"></mat-icon>
-  </button>
+    <button mat-icon-button type="button" (click)="stopRecording()">
+      <mat-icon svgIcon="mat:mic_off"></mat-icon>
+    </button>
 
-  <button mat-icon-button matTooltip="Close" type="button" (click)="closeDialog()">
-    <mat-icon svgIcon="mat:close"></mat-icon>
-  </button>
+    <!-- Novo botão para tocar o áudio do texto utilizando WaveSurfer -->
+    <button mat-button type="button" (click)="playSound()">
+      <mat-icon svgIcon="mat:play_arrow"></mat-icon>
+    </button>
 
-        <!-- Div para o WaveSurfer -->
+    <button mat-icon-button matTooltip="Close" type="button" (click)="closeDialog()">
+      <mat-icon svgIcon="mat:close"></mat-icon>
+    </button>
+  </mat-dialog-actions>
 
 
 </mat-dialog-actions>
+
+<!-- Div para o WaveSurfer -->
 <div #waveform style="cursor: pointer;"></div>
