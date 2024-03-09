@@ -20,6 +20,7 @@
 
       <mat-step>
           <ng-template matStepLabel>Listen</ng-template>
+          <mat-icon svgIcon="mat:mic"></mat-icon>
           <mat-card class="example-card" [innerHTML]="displayedHtml" class="highlighted-text">
             <mat-card-header>
               <mat-card-title-group>
@@ -39,12 +40,11 @@
         <ng-template matStepLabel>Read</ng-template>
           <mat-card class="example-card" [innerHTML]="displayedHtml" class="highlighted-text">
             <mat-card-header>
-              <mat-card-title-group>
+              <mat-card-title-group (click)="playSound()">
                 <mat-card-title [innerHTML]="displayedHtml" class="highlighted-text">
                   <!-- Usando interpolação de strings para exibir o texto com palavras destacadas -->
                   <span [innerHTML]="displayedHtml" class="highlighted-text"></span>
                 </mat-card-title>
-               <!--  <img mat-card-xl-image src="/assets/img/logo/priming.png" alt="Priming Logo"> -->
               </mat-card-title-group>
             </mat-card-header>
             <mat-card-content>
