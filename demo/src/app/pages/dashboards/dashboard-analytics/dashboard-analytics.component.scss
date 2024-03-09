@@ -1,27 +1,25 @@
-// Definição de estilos para mensagens do usuário
+/* Estilos Globais para Mensagens e Outros Componentes */
+.user-message, .assistant-message {
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  color: #000; /* Cor do texto para todas as mensagens */
+}
+
 .user-message {
   background-color: #e0f2f1; /* Cor de fundo para mensagens do usuário */
-  color: #000; /* Cor do texto para mensagens do usuário */
-  padding: 10px;
-  margin-bottom: 5px;
-  border-radius: 5px;
 }
 
-// Definição de estilos para mensagens do assistente
 .assistant-message {
   background-color: #fce4ec; /* Cor de fundo para mensagens do assistente */
-  color: #000; /* Cor do texto para mensagens do assistente */
-  padding: 10px;
-  margin-bottom: 5px;
-  border-radius: 5px;
 }
 
-// Estilo adicional para a área de histórico de conversação
 .conversation-history {
-  max-height: 300px; /* Altura máxima para a área de histórico de conversação */
-  overflow-y: auto; /* Adicionar barra de rolagem vertical quando necessário */
+  max-height: 300px;
+  overflow-y: auto; /* Barra de rolagem vertical quando necessário */
 }
 
+/* Ajustes para mat-form-field e outros elementos */
 mat-form-field {
   margin-right: 12px;
 }
@@ -30,45 +28,34 @@ mat-form-field {
   cursor: pointer;
 }
 
+/* Ajustes para o layout do vex e outros componentes específicos */
 :host {
   display: block;
 }
 
-// Seletor para o componente vex-widget-quick-line-chart
-vex-widget-quick-line-chart {
-  // Seletor para o elemento com o ID textDisplay dentro do componente
-  #textDisplay {
-    // Aplicando o estilo para que o texto quebre automaticamente
-    overflow-wrap: break-word; // ou word-wrap: break-word; para maior compatibilidade
-  }
+/* Foco na expansão do layout e componentes para ocupar todo o espaço */
+.vex-page-layout-content, .container, .card, .mat-slider {
+  width: 100%; /* Garante que ocupem todo o espaço disponível */
+  margin: 0;
+  padding: 0;
 }
 
+/* Refatoração para Text Display e Quick Line Chart */
+#textDisplay, vex-widget-quick-line-chart {
+  overflow-wrap: break-word; /* Para quebra automática de texto */
+  white-space: pre-wrap; /* Mantém o espaçamento e quebras de linha */
+  font-size: 2em; /* Ajusta o tamanho da fonte se necessário */
+  line-height: 1.5; /* Melhora o espaçamento entre linhas */
+}
+
+/* Animação e Destaque */
 @keyframes wordAppear {
   0% { opacity: 0; }
   100% { opacity: 1; }
 }
-#textDisplay {
-  white-space: pre-wrap;
-}
-
-
-vex-widget-quick-line-chart {
-  // Aninhando o seletor para o elemento com o ID textDisplay
-  #textDisplay {
-    // Aplicando o estilo para que o texto quebre automaticamente
-    overflow-wrap: break-word; // ou word-wrap: break-word; para maior compatibilidade
-
-    // Ajustando o tamanho da fonte para ser 3 vezes maior
-    font-size: 2em; // ou você pode usar px, por exemplo, font-size: 48px; se o tamanho padrão for 16px
-  }
-}
-
-:host ::ng-deep vex-widget-quick-line-chart {
-  font-size: 2em; // Ajuste conforme necessário
-  line-height: 1.5; // Aumenta o espaçamento entre as linhas.
-}
 
 .highlight {
-  background-color: yellow; // Exemplo de estilo de destaque
+  background-color: yellow; /* Estilo de destaque */
 }
+
 

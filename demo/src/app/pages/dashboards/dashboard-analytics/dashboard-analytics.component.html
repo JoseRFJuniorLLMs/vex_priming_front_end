@@ -32,10 +32,10 @@
         </ng-template>
 
         <mat-step>
-            <ng-template matStepLabel>Course</ng-template>
+          <ng-template matStepLabel>Course</ng-template>
         </mat-step>
 
-        <mat-step >
+        <mat-step>
           <ng-template matStepLabel>Lesson</ng-template>
         </mat-step>
 
@@ -79,17 +79,27 @@
                 <vex-widget-assistant class="sm:col-span-1">
                 </vex-widget-assistant>
 
-
                 <!-- Waveform -->
 
                 <div #waveform autoplay matTooltip="Time Current: {{currentTime}}" style="cursor: pointer;"
                   [style.left]="progressPercentage + '%'">
                   <div class="time-indicator" [style.left]="progressPercentage + '%'">
-                  </div>
 
-                  <button style="cursor: pointer;">
-                    <mat-icon svgIcon="mat:heart_check"></mat-icon>
-                  </button>
+                    <!-- Volume com ícone -->
+
+                    <mat-icon svgIcon="mat:volume_up"></mat-icon>
+                    <mat-slider id="1" color="accent" discrete [max]="100" [min]="0" [step]="1" showTickMarks
+                      (input)="onVolumeChange($event)"><input matSliderThumb value="10" />
+                    </mat-slider>
+
+                    <!-- Velocidade com ícone -->
+
+                    <mat-icon svgIcon="mat:speed"></mat-icon>
+                    <mat-slider color="warn" discrete [max]="200" [min]="50" [step]="10" showTickMarks
+                      (input)="onSpeedChange($event)"><input matSliderThumb value="100" />
+                    </mat-slider>
+
+                  </div>
 
                   <button mat-icon-button matTooltip="Play Waveform {{currentTime}} " (click)="playAudio()">
                     <mat-icon svgIcon="mat:play_arrow"></mat-icon>
@@ -108,21 +118,12 @@
                     <mat-icon *ngIf="mediaControlIcon === 'mat:sports_esports'" svgIcon="mat:sports_esports"></mat-icon>
                     <mat-icon *ngIf="mediaControlIcon === 'mat:cloud_download'" svgIcon="mat:cloud_download"></mat-icon>
                   </button>
-
                   <br>
-
-                  <!-- Volume -->
-                  <div class="flex flex-col gap-4">
-                    <mat-slider color="accent" discrete max="100" min="1" showTickMarks><input matSliderThumb
-                        value="10" />
-                    </mat-slider>
-                  </div>
                 </div>
 
                 <!-- Quick Line Chart -->
                 <vex-widget-quick-line-chart #chatContainer icon="mat:pageview"
-                  iconClass="text-primary-600 bg-primary-600/10"
-                  label="
+                  iconClass="text-primary-600 bg-primary-600/10" label="
                   Mom, Dad, Baby, Sister, Brother, Grandma, Grandpa, Dog, Cat, Bird, Fish, Cow, Pig, Horse, Sheep, Duck, Chicken,
 Tree, Flower, Grass, Sun, Moon, Star, Cloud, Rain, Snow, Wind, Water, Fire, Earth, Sky, Sand, Sea, River, Lake,
 Mountain, Hill, Valley, Forest, Park, Eat, Sleep, Play, Drink, Run, Jump, Walk, Talk, Sing, Laugh,
@@ -132,8 +133,7 @@ Food, Milk, Juice, Apple, Banana, Orange, Bread, Soup, Egg, Cheese, Ice Cream, C
 Bath, Shower, Clothes, Shoes, Hat, Coat, Colors (red, blue, green, yellow, etc.), Shapes (circle, square, triangle, etc.),
 Go, Stop, Come, See, Look, Listen, Cry, Help, Want, Need, Big, Small, Hot, Cold, Happy, Sad, Mine,
 Here, There, Up, Down, In, Out
-                  "
-                  value="{{ questionText }}">
+                  " value="{{ questionText }}">
                   <div class="loading-indicator" *ngIf="isLoading">
                     <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
                   </div>

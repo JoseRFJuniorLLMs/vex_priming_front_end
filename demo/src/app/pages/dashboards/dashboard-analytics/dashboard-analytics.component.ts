@@ -21,6 +21,7 @@ import {
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import gpt4 from '../../../../../gpt4.json';
 
@@ -290,6 +291,8 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
     this.waveform.on('audioprocess', () => {
       this.updateTextDisplayBasedOnAudio();
     });
+    // Ajusta o volume inicial conforme o valor inicial do slider
+  this.waveform.setVolume(0.1); // 10/100
   }
 
   events() {
@@ -544,6 +547,25 @@ displayTextWordByWord(text: string): number {
       data: { lessons }
     });
   }
+
+  onVolumeChange(event: Event): void {
+    // O evento é um Event genérico, então precisamos fazer um cast para acessar as propriedades específicas do slider
+    const slider = event.target as HTMLInputElement;
+    const newVolume = Number(slider.value); // Converte o valor para número, já que o valor de um input é sempre uma string
+    if (!isNaN(newVolume)) { // Verifica se newVolume é um número válido
+      const normalizedVolume = newVolume / 100; // Transforma o volume de 0-100 para 0-1
+      this.waveform.setVolume(normalizedVolume); // Atualiza o volume do WaveSurfer
+    }
+  }
+
+  onSpeedChange(event: Event): void {
+    const slider = event.target as HTMLInputElement;
+    const newSpeed = Number(slider.value) / 100; // Convertendo para uma escala de 0.5 a 2
+    if (this.waveform && !isNaN(newSpeed)) {
+      this.waveform.setPlaybackRate(newSpeed);
+    }
+  }
+
 
 }
 
