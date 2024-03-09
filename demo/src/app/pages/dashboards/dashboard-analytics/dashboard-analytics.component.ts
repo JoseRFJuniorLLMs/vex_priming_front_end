@@ -171,11 +171,10 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
 
 // Abre o novo diálogo e armazena sua referência
 this.dialogRef = this.dialog.open(DialogExampleComponent, {
-  width: '800px',
-  height: '600px',
+  width: '900px',
+  height: '800px',
   data: { texto: textDisplay }
 });
-
 
     // Quando o diálogo for fechado, limpa a referência
     this.dialogRef.afterClosed().subscribe(() => {
@@ -228,9 +227,9 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
       });
 
       const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
-        messages: [{ role: 'user', content: "repeat this word:" + question +",more 3 priming sentences, children's phrases that contain the word" }],
+        messages: [{ role: 'user', content: "repeat this word:" + question +",more 6 priming sentences, children's phrases that contain the word" }],
         temperature: 0.0,//0.5
-        max_tokens: 75,//4000
+        max_tokens: 90,//4000
         model: "gpt-4",
       }, { headers }).toPromise();
       if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
