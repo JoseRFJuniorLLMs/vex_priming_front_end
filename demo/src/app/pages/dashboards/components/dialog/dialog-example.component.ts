@@ -266,8 +266,6 @@ export class DialogExampleComponent implements OnInit {
     // Adicione manuseio de erro conforme necessário
   }
 
-
-
   transcribeCurrentAudio() {
     if (this.audioChunks.length > 0) {
       const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
@@ -320,8 +318,6 @@ export class DialogExampleComponent implements OnInit {
  this.currentWordIndex++;
 }, 400); // Intervalo de 1 segundo entre cada palavra (ajuste conforme necessário)
 }
-
-
 
   pauseSound(): void {
     if (this.audio && !this.audio.paused) {
