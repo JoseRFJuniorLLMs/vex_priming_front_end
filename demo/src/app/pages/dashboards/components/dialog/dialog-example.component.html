@@ -1,12 +1,21 @@
 <mat-dialog-content>
-  <mat-toolbar>
-    <span>Priming (Listen, Read, Speak)</span>
+
+  <mat-card class="example-card">
+    <mat-card-content>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-fab color="warn" matTooltip="Pay : Repeat as many times as necessary!"  type="button" (click)="playSound()">
+        <mat-icon svgIcon="mat:play_arrow"></mat-icon>
+      </button>
+    </mat-card-actions>
+    <mat-divider></mat-divider>
+    <mat-card-footer>
+      <mat-progress-bar mode="buffer"></mat-progress-bar>
+    </mat-card-footer>
+  </mat-card>
+
     <span class="example-spacer"></span>
-  </mat-toolbar>
-  <!-- Novo botão para tocar o áudio do texto utilizando WaveSurfer -->
-  <button mat-icon-button color="warn" type="button" (click)="playSound()">
-    <mat-icon svgIcon="mat:play_arrow"></mat-icon>
-  </button>
+
   <div @fadeInUp class="card overflow-hidden">
 
     <mat-horizontal-stepper #stepper="matHorizontalStepper" [linear]="true">
@@ -27,8 +36,7 @@
                 <mat-card-title [innerHTML]="displayedHtml" class="highlighted-text">
                   <!-- Usando interpolação de strings para exibir o texto com palavras destacadas -->
                   <span [innerHTML]="displayedHtml" class="highlighted-text"></span>
-                </mat-card-title>
-               <!--  <img mat-card-xl-image src="/assets/img/logo/priming.png" alt="Priming Logo"> -->
+                </mat-card-title> <!--  <img mat-card-xl-image src="/assets/img/logo/priming.png" alt="Priming Logo"> -->
               </mat-card-title-group>
             </mat-card-header>
             <mat-card-content>

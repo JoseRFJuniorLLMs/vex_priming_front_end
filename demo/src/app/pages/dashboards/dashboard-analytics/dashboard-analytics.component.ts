@@ -226,9 +226,9 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
       });
 
       const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
-        messages: [{ role: 'user', content: "repeat this word:" + question +",more 10 priming sentences, children's phrases that contain the word" }],
+        messages: [{ role: 'user', content: "repeat this word:" + question +",more 1 priming sentences, children's phrases that contain the word" }],
         temperature: 0.0,//0.5
-        max_tokens: 300,//4000
+        max_tokens: 10,//4000
         model: "gpt-4",
       }, { headers }).toPromise();
       if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
