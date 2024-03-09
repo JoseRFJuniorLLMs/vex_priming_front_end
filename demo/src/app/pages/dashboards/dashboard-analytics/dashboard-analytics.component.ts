@@ -6,6 +6,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,16 +22,17 @@ import {
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import gpt4 from '../../../../../gpt4.json';
 
+import { MatChipSelectionChange } from '@angular/material/chips';
 import { WidgetAssistantComponent } from '../components/widgets/widget-assistant/widget-assistant.component';
 import { WidgetLargeChartComponent } from '../components/widgets/widget-large-chart/widget-large-chart.component';
 import { WidgetLargeGoalChartComponent } from '../components/widgets/widget-large-goal-chart/widget-large-goal-chart.component';
 import { WidgetQuickLineChartComponent } from '../components/widgets/widget-quick-line-chart/widget-quick-line-chart.component';
 import { WidgetQuickValueCenterComponent } from '../components/widgets/widget-quick-value-center/widget-quick-value-center.component';
 import { WidgetTableComponent } from '../components/widgets/widget-table/widget-table.component';
+
 
 import { MatStepperModule } from '@angular/material/stepper';
 import { fadeInRight400ms } from '@vex/animations/fade-in-right.animation';
@@ -92,7 +94,8 @@ interface ResponseData {
     MatSliderModule,
     MatProgressSpinnerModule,
     MatTableModule,
-    MatStepperModule
+    MatStepperModule,
+    MatChipsModule
   ]
 })
 
@@ -220,7 +223,7 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
   }
 
   /*questionToOpenAI CONSOME API DA OPEN IA, recebe question, retorna messages */
-  async questionToOpenAI(question: string) {
+  /* async questionToOpenAI(question: string) {
     this.isLoading = true;
     try {
       const headers = new HttpHeaders({
@@ -229,10 +232,10 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
       });
 
       const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
-        //messages: [{ role: 'user', content: "repeat this word:" + question +",more 6 priming sentences, children's phrases that contain the word" }],
-        messages: [{ role: 'user', content: "repeat this word:" + question }],
+        messages: [{ role: 'user', content: "repeat this word:" + question +",more 3 priming sentences, children's phrases that contain the word" }],
+        //messages: [{ role: 'user', content: "repeat this word:" + question }],
         temperature: 0.0,//0.5
-        max_tokens: 4000,//4000
+        max_tokens: 1000,//4000
         model: "gpt-4",
       }, { headers }).toPromise();
       if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
@@ -260,6 +263,62 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
       this.isLoading = false;
     }
   }
+ */
+
+
+
+
+  async questionToOpenAI(question: string, selection: 'phrase' | 'text' | 'word') {
+    this.isLoading = true;
+    try {
+      const headers = {
+        "Authorization": `Bearer ${gpt4.gptApiKey}`,
+        "Content-Type": "application/json",
+      };
+
+      let contentMessage = `repeat this ${selection}: ${question}`;
+      if (selection === 'phrase') {
+        contentMessage += ', and provide more phrases that contain the word, priming sentences.';
+      } else if (selection === 'text') {
+        contentMessage += ',and provide a text using memory palace, using this word.';
+      } else { // 'word'
+        contentMessage += ', and provide a detailed explanation orlist of primers and targets related to the word.';
+      }
+
+      const response = await this.http.post<any>(gpt4.gptUrl, {
+        messages: [{ role: 'user', content: contentMessage }],
+        temperature: 0.0,
+        max_tokens: 1000,
+        model: "gpt-4",
+      }, { headers }).toPromise();
+
+      if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
+        throw new Error("Resposta da API não contém dados válidos.");
+      }
+
+      this.chatMessage = response.choices[0].message.content;
+      const displayTime = this.displayTextWordByWord(this.chatMessage);
+      setTimeout(() => this.generateAudio(), displayTime);
+    } catch (error) {
+      this.errorText = "Falha ao obter resposta da API: " + (error as Error).message;
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  onSelection(selection: string, event: MatChipSelectionChange) {
+    if (event.selected) {
+      const question = this.selectedText; // Assuming `selectedText` contains the user's question
+      // Ensure the selection is valid before calling the function
+      if (selection === 'phrase' || selection === 'text' || selection === 'word') {
+        this.questionToOpenAI(question, selection);
+      } else {
+        console.error('Invalid selection:', selection);
+      }
+    }
+  }
+
+
 
   /* ==================WAVESURFER==================== */
   ngAfterViewInit(): void {
@@ -273,7 +332,7 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
       progressColor: 'rgb(0, 0, 0)',
       /*       waveColor: 'rgb(200, 0, 200)',
             progressColor: '#000000', */
-      cursorColor: 'rgb(255, 0, 0)',
+      cursorColor: 'rgb(0, 0, 0)',
       cursorWidth: 5,
       minPxPerSec: 50,
       barWidth: 10,
@@ -440,15 +499,17 @@ displayFullText(text: string): void {
   /* ==================AO SELECIONAR O TEXTO==================== */
   @HostListener('document:mouseup', ['$event'])
   handleMouseUp(event: MouseEvent) {
-    const selection = window.getSelection();
-    if (this.isDialogOpen) {
-      return; // Não fazer nada se o diálogo estiver aberto
-    }
-    if (selection && selection.toString().trim() !== '') {
-      this.selectedText = selection.toString();
-      this.questionToOpenAI(this.selectedText);
-    }
+  const selection = window.getSelection();
+  if (this.isDialogOpen) {
+    return; // Do not do anything if a dialog is open
   }
+  if (selection && selection.toString().trim() !== '') {
+    this.selectedText = selection.toString();
+    // You must specify the selection type here. For demonstration, let's use 'word'.
+    this.questionToOpenAI(this.selectedText, 'word'); // Added 'word' as the selection type
+  }
+}
+
 
   /* ==================GERA AUDIO==================== */
    generateAudio(): void {
@@ -598,7 +659,6 @@ hidePlaybackHint() {
         hintElement.style.display = 'none';
     }
 }
-
 
 
 }
