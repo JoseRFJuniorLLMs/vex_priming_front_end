@@ -54,6 +54,8 @@
     "jwt-decode": "^4.0.0",
     "luxon": "~3.4.3",
     "ng2-pdf-viewer": "^10.0.0",
+    "ngx-highlight-words": "^1.1.1",
+    "ngx-highlightjs": "^10.0.0",
     "ngx-quill": "~24.0.0",
     "openai": "^4.28.0",
     "pdfjs-dist": "4.0.379",

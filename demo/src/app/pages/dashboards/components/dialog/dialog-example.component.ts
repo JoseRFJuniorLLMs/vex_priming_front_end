@@ -12,6 +12,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { HighlightModule } from 'ngx-highlightjs';
 import { QuillEditorComponent } from 'ngx-quill';
 
 import WaveSurfer from 'wavesurfer.js';
@@ -38,7 +39,8 @@ import gpt4 from '../../../../../../gpt4.json';
     HttpClientModule,
     MatStepperModule,
     MatProgressBarModule,
-    MatDividerModule
+    MatDividerModule,
+    HighlightModule
 
   ]
 })
@@ -318,7 +320,6 @@ export class DialogExampleComponent implements OnInit {
  this.currentWordIndex++;
 }, 400); // Intervalo de 1 segundo entre cada palavra (ajuste conforme necessário)
 }
-
 
 
 
