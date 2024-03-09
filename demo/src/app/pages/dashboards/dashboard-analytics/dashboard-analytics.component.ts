@@ -193,6 +193,7 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
 
     this.coursesService.getCoursesByStudentId('65c6b529c2c6b863b27a3172').subscribe(cursos => {
       console.log('Cursos do estudante:', cursos);
+      this.openSnackBar("Cursos" + cursos);
     });
 
     const studentId = 'student_id';
@@ -276,9 +277,12 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
       let contentMessage = `repeat this ${selection}: ${question}`;
       if (selection === 'phrase') {
         contentMessage += ', and provide more phrases that contain the word, priming sentences.';
+        this.openSnackBar("Phrase");
       } else if (selection === 'text') {
+        this.openSnackBar("Text");
         contentMessage += ',and provide a text using memory palace, using this word.';
       } else { // 'word'
+        this.openSnackBar("Word");
         contentMessage += ', and provide a detailed explanation orlist of primers and targets related to the word.';
       }
 
@@ -297,7 +301,8 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
       const displayTime = this.displayTextWordByWord(this.chatMessage);
       setTimeout(() => this.generateAudio(), displayTime);
     } catch (error) {
-      this.errorText = "Falha ao obter resposta da API: " + (error as Error).message;
+      this.errorText = "Falha ao obter resposta da API (OPEN IA): " + (error as Error).message;
+      this.openSnackBar(this.errorText);
     } finally {
       this.isLoading = false;
     }
@@ -311,6 +316,7 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
         this.questionToOpenAI(question, selection);
       } else {
         console.error('Invalid selection:', selection);
+        this.openSnackBar('Invalid selection:'+ selection);
       }
     }
   }
@@ -358,10 +364,12 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
 
     this.waveform.on('play', () => {
       this.isPlaying = true;
+      this.openSnackBar("Play");
     })
 
     this.waveform.on('pause', () => {
       this.isPlaying = false;
+      this.openSnackBar("Pause");
     })
   }
 
@@ -383,6 +391,7 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
         const duration = this.waveform.getDuration(); // Obtém a duração total do áudio
         this.wordDuration = duration / this.wordsArray.length; // Calcula a duração de cada palavra
         this.waveform.play(); // Inicia a reprodução do áudio
+        this.openSnackBar("Begin Play Wav");
     });
 
     // Adiciona um listener para o evento de término do áudio
@@ -400,6 +409,7 @@ displayFullText(text: string): void {
   const displayElement = document.getElementById('textDisplay');
   if (displayElement) {
       displayElement.textContent = text;
+      this.openSnackBar("Text: "+text);
   }
 }
 
@@ -426,21 +436,25 @@ displayFullText(text: string): void {
   /* ==================PLAY AUDIO TEXTO SICRONIZADO==================== */
   startAudioWithText(audioUrl: string, text: string) {
     this.loadAndPlayAudio(audioUrl, text);
+    this.openSnackBar("Play Audio Sicrono: "+ text);
   }
 
   /* ==================PLAY AUDIO==================== */
   playAudio() {
     this.waveform.play();
+    this.openSnackBar("waveform: Play");
   }
 
   /* ==================PAUSE AUDIO==================== */
   pauseAudio() {
     this.waveform.pause();
+    this.openSnackBar("waveform: Pause");
   }
 
   /* ==================STOP AUDIO==================== */
   stopAudio() {
     this.waveform.stop();
+    this.openSnackBar("waveform: Stop");
   }
 
   /* ==================CURRENT TIME==================== */
@@ -449,6 +463,7 @@ displayFullText(text: string): void {
     const minutes = Math.floor(currentTime / 60);
     const seconds = Math.floor(currentTime % 60);
     this.currentTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    this.openSnackBar(this.currentTime);
   }
 
   /* ==================CALCULA PORCENTAGEM DE PROGRESSO==================== */
@@ -456,6 +471,7 @@ displayFullText(text: string): void {
     const duration = this.waveform.getDuration();
     const currentTime = this.waveform.getCurrentTime();
     this.progressPercentage = (currentTime / duration) * 100;
+    this.openSnackBar("Progress: " + this.progressPercentage);
   }
 
     /* ==================MOSTRO OS CONTROLES DO VOLUME==================== */
@@ -463,12 +479,15 @@ displayFullText(text: string): void {
     this.mediaControlsEnabled = !this.mediaControlsEnabled;
     this.waveform.setOptions({ mediaControls: this.mediaControlsEnabled });
     this.mediaControlIcon = this.mediaControlsEnabled ? 'mat:sports_esports' : 'mat:cloud_download';
+    this.openSnackBar("Progress: " + this.mediaControlIcon);
   }
 
   /* ==================VOZ ALEATORIA==================== */
   getRandomVoice(): string {
     const randomIndex = Math.floor(Math.random() * this.voices.length);
+    this.openSnackBar("Voz: " + this.voices[randomIndex]);
     return this.voices[randomIndex];
+
   }
 
   /* ==================SNACK BAR==================== */
@@ -476,7 +495,7 @@ displayFullText(text: string): void {
     const snackBarRef = this._snackBar.open(textDisplay, "Close", {
       horizontalPosition: this.horizontalPosition,
       verticalPosition: this.verticalPosition,
-      duration: this.durationInSeconds * 1,
+      duration: this.durationInSeconds * 100,
     });
 
     snackBarRef.afterDismissed().subscribe(() => {
@@ -496,11 +515,13 @@ displayFullText(text: string): void {
   handleMouseUp(event: MouseEvent) {
   const selection = window.getSelection();
   if (this.isDialogOpen) {
+    this.openSnackBar("Do not do anything if a dialog is open (document:mouseup)");
     return; // Do not do anything if a dialog is open
   }
   if (selection && selection.toString().trim() !== '') {
     this.selectedText = selection.toString();
     // You must specify the selection type here. For demonstration, let's use 'word'.
+    this.openSnackBar("Added 'word' as the selection type");
     this.questionToOpenAI(this.selectedText, 'word'); // Added 'word' as the selection type
   }
 }
@@ -516,6 +537,7 @@ displayFullText(text: string): void {
 
     if (!this.chatMessage) {
       console.error('No chatMessage to generate audio from.');
+      this.openSnackBar("No chatMessage to generate audio from.");
       // Restaura o estado para permitir novas gerações de áudio
       this.isGeneratingAudio = false;
       return;
@@ -548,7 +570,7 @@ displayFullText(text: string): void {
           this.isGeneratingAudio = false;
           this.playSound('../../../../assets/audio/toc.wav');
           this.openDialog(this.chatMessage);
-
+          this.openSnackBar(this.chatMessage);
           // Limpa os listeners após seu uso
           this.waveform.un('ready', onReady);
           this.waveform.un('finish', onFinish);
@@ -591,7 +613,7 @@ displayTextWordByWord(text: string): number {
     } else {
       clearInterval(intervalId);
       // Após exibir todas as palavras, limpa o texto e insere a imagem.
-      displayElement.innerHTML = '<img src="/assets/img/logo/priming.png" alt="Priming Logo" style="max-width: 100%; height: auto;">';
+      //displayElement.innerHTML = '<img src="/assets/img/logo/priming.png" alt="Priming Logo" style="max-width: 100%; height: auto;">';
       this.imageDisplayed = true; // Imagem exibida, atualize a flag
     }
   }, wordDisplayInterval);
@@ -613,6 +635,7 @@ displayTextWordByWord(text: string): number {
     if (!isNaN(newVolume)) { // Verifica se newVolume é um número válido
       const normalizedVolume = newVolume / 100; // Transforma o volume de 0-100 para 0-1
       this.waveform.setVolume(normalizedVolume); // Atualiza o volume do WaveSurfer
+      this.openSnackBar("Update volume WaveSurfer."+normalizedVolume);
     }
   }
 
@@ -621,20 +644,10 @@ displayTextWordByWord(text: string): number {
     const newSpeed = Number(slider.value) / 100; // Convertendo para uma escala de 0.5 a 2
     if (this.waveform && !isNaN(newSpeed)) {
       this.waveform.setPlaybackRate(newSpeed);
+      this.openSnackBar("Speed Change."+newSpeed);
     }
   }
 
-/*   onZoomChange(event: any) {
-    const zoomValue = event.value;
-    const waveformContainer = document.getElementById('waveform-container');
-    if (waveformContainer) {
-      waveformContainer.style.width = `${zoomValue}%`;
-    }
-    if (this.waveform) {
-      this.waveform.destroy();
-      //this.createWaveform();
-    }
-  } */
 
   updatePlaybackHint(currentTime: number) {
     const minutes = Math.floor(currentTime / 60);
