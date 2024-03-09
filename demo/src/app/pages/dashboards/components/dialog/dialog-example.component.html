@@ -1,3 +1,5 @@
+
+
 <mat-dialog-content>
 
   <div @fadeInUp class="card overflow-hidden">
@@ -13,7 +15,6 @@
 
       <mat-step>
         <ng-template matStepLabel>Listen</ng-template>
-        <mat-icon svgIcon="mat:mic"></mat-icon>
         <mat-card class="example-card">
           <mat-card-header>
             <mat-card-title-group>
@@ -59,9 +60,6 @@
               <mat-icon svgIcon="mat:mic_off"></mat-icon>
             </button>
 
-            <button mat-icon-button matTooltip="Close" format_align_left type="button" (click)="closeDialog()">
-              <mat-icon svgIcon="mat:close"></mat-icon>
-            </button>
           </mat-dialog-actions>
 
         </mat-card>
@@ -77,9 +75,15 @@
 <span class="example-spacer"></span>
 <mat-progress-bar id="2" class="play-sound-button" color="warn" mode="buffer"></mat-progress-bar>
 
-<button mat-fab style="cursor: pointer;" class="play-sound-button" color="warn"
+<button mat-fab style="cursor: pointer;"
+class="play-sound-button" color="warn"
   matTooltip="Play : Repeat as many times as necessary!" type="button" (click)="playSound()">
   <mat-icon svgIcon="mat:play_arrow"></mat-icon>
 </button>
 
+<button mat-icon-button matTooltip="Close"
+class="close-button" color="warn"
+format_align_left type="button" (click)="closeDialog()">
+  <mat-icon svgIcon="mat:close"></mat-icon>
+</button>
 

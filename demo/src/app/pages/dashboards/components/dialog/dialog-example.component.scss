@@ -35,3 +35,16 @@
   height: 10px; // Altura fixa de 50px (ajuste conforme necessário)
 }
 
+.close-button {
+  position: absolute; /* Alterado de 'fixed' para 'absolute' */
+  right: 0px; /* Posicionamento no canto superior direito */
+  top: 0px; /* Posicionamento no canto superior direito */
+  z-index: 1050; /* Mantém acima dos outros elementos */
+  width: 90px; /* Largura do botão */
+  height: 90px; /* Altura do botão */
+}
+
+.card {
+  position: relative;
+}
+

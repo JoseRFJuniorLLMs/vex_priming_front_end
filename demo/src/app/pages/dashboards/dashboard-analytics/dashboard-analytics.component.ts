@@ -118,7 +118,8 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   private waveform!: WaveSurfer;
   private subscription: Subscription = new Subscription;
   public isPlaying: boolean = false;
-  voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+  //voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+  voices: string[] = ['alloy'];
   speechRecognition: any;
   isTranscribing = false;
   textToSpeech!: string;
@@ -227,9 +228,10 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
       });
 
       const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
-        messages: [{ role: 'user', content: "repeat this word:" + question +",more 6 priming sentences, children's phrases that contain the word" }],
+        //messages: [{ role: 'user', content: "repeat this word:" + question +",more 6 priming sentences, children's phrases that contain the word" }],
+        messages: [{ role: 'user', content: "repeat this word:" + question }],
         temperature: 0.0,//0.5
-        max_tokens: 90,//4000
+        max_tokens: 4000,//4000
         model: "gpt-4",
       }, { headers }).toPromise();
       if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
