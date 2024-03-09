@@ -270,10 +270,10 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
 
       url: '../../assets/audio/PRIMING.wav',
       waveColor: '#d3d3d3',
-      progressColor: '#000000',
+      progressColor: 'rgb(0, 0, 0)',
       /*       waveColor: 'rgb(200, 0, 200)',
             progressColor: '#000000', */
-      cursorColor: '#000000',
+      cursorColor: 'rgb(255, 0, 0)',
       cursorWidth: 5,
       minPxPerSec: 50,
       barWidth: 10,
@@ -565,6 +565,19 @@ displayTextWordByWord(text: string): number {
       this.waveform.setPlaybackRate(newSpeed);
     }
   }
+
+/*   onZoomChange(event: any) {
+    const zoomValue = event.value;
+    const waveformContainer = document.getElementById('waveform-container');
+    if (waveformContainer) {
+      waveformContainer.style.width = `${zoomValue}%`;
+    }
+    if (this.waveform) {
+      this.waveform.destroy();
+      //this.createWaveform();
+    }
+  } */
+
 
 
 }
