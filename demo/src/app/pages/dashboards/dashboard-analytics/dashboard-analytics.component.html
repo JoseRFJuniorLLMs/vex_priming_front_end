@@ -87,30 +87,47 @@
 
 
                   <mat-chip-listbox aria-label="Fish selection">
-                    <mat-chip-option id="phase" value="phrase" matTooltip="phrase {{currentTime}}" (selectionChange)="onSelection('phrase', $event)">Phrase</mat-chip-option>
-                    <mat-chip-option id="text" value="text" matTooltip="text {{currentTime}}" (selectionChange)="onSelection('text', $event)">Text</mat-chip-option>
-                    <mat-chip-option id="word" value="word" matTooltip="word {{currentTime}}" color="accent" (selectionChange)="onSelection('word', $event)">Word</mat-chip-option>
+                    <mat-chip-option id="phase" value="phrase"
+                    matTooltip="phrase {{currentTime}}" color="primary"
+                    (selectionChange)="onSelection('phrase', $event)">Phrase
+                    <mat-icon svgIcon="mat:checklist"></mat-icon>
+                  </mat-chip-option>
+
+                    <mat-chip-option id="text" value="text"
+                     matTooltip="text {{currentTime}}" color="primary"
+                     (selectionChange)="onSelection('text', $event)">Text
+                     <mat-icon svgIcon="mat:menu_book"></mat-icon>
+                    </mat-chip-option>
+
+                    <mat-chip-option id="word" value="word"
+                    matTooltip="word {{currentTime}}" color="primary"
+                    (selectionChange)="onSelection('word', $event)">Word
+                    <mat-icon svgIcon="mat:fact_check"></mat-icon>
+                  </mat-chip-option>
 
 
-                    <button mat-icon-button matTooltip="Play Waveform {{currentTime}} " (click)="playAudio()">
+                    <button mat-icon-button matTooltip="Play Waveform
+                    {{currentTime}}" color="primary" (click)="playAudio()">
                       <mat-icon svgIcon="mat:play_arrow"></mat-icon>
                     </button>
 
-                    <button mat-icon-button matTooltip="Stop Waveform {{currentTime}} " (click)="stopAudio()">
+                    <button mat-icon-button matTooltip="Stop Waveform {{currentTime}}" color="primary"
+                    (click)="stopAudio()">
                       <mat-icon svgIcon="mat:stop"></mat-icon>
                     </button>
 
-                    <button mat-icon-button matTooltip="Pause Waveform {{currentTime}} " (click)="pauseAudio()">
+                    <button mat-icon-button matTooltip="Pause Waveform {{currentTime}}" color="primary"
+                    (click)="pauseAudio()">
                       <mat-icon svgIcon="mat:pause_circle"></mat-icon>
                     </button>
 
-                    <button mat-icon-button matTooltip="Download file Waveform {{currentTime}} "
+<!--                     <button mat-icon-button matTooltip="Download file Waveform {{currentTime}}" color="primary"
                       (click)="toggleMediaControls()">
                       <mat-icon *ngIf="mediaControlIcon === 'mat:sports_esports'"
                         svgIcon="mat:sports_esports"></mat-icon>
                       <mat-icon *ngIf="mediaControlIcon === 'mat:cloud_download'"
                         svgIcon="mat:cloud_download"></mat-icon>
-                    </button>
+                    </button> -->
 
                   </mat-chip-listbox>
 
@@ -118,7 +135,7 @@
                   <!-- Volume com ícone -->
 
                   <mat-icon svgIcon="mat:volume_up"></mat-icon>
-                  <mat-slider id="1" color="accent" discrete [max]="100" [min]="0" [step]="1" showTickMarks
+                  <mat-slider id="1" color="primary" discrete [max]="100" [min]="0" [step]="1" showTickMarks
                     (input)="onVolumeChange($event)"><input matSliderThumb value="10" />
                   </mat-slider>
 

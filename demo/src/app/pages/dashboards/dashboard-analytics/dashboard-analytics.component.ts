@@ -265,9 +265,6 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
   }
  */
 
-
-
-
   async questionToOpenAI(question: string, selection: 'phrase' | 'text' | 'word') {
     this.isLoading = true;
     try {
@@ -318,8 +315,6 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
     }
   }
 
-
-
   /* ==================WAVESURFER==================== */
   ngAfterViewInit(): void {
     this.isPlaying = true;
@@ -342,7 +337,7 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
       autoCenter: true,
       interact: true,
       dragToSeek: true,
-      mediaControls: false, //controles
+      mediaControls: true, //controles
       autoplay: true,
       fillParent: true,
     });
