@@ -291,8 +291,10 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
     this.waveform.on('audioprocess', () => {
       this.updateTextDisplayBasedOnAudio();
     });
-    // Ajusta o volume inicial conforme o valor inicial do slider
   this.waveform.setVolume(0.1); // 10/100
+  this.waveform.on('audioprocess', (currentTime) => this.updatePlaybackHint(currentTime));
+  this.waveform.on('pause', () => this.hidePlaybackHint());
+  this.waveform.on('finish', () => this.hidePlaybackHint());
   }
 
   events() {
@@ -577,6 +579,25 @@ displayTextWordByWord(text: string): number {
       //this.createWaveform();
     }
   } */
+
+  updatePlaybackHint(currentTime: number) {
+    const minutes = Math.floor(currentTime / 60);
+    const seconds = Math.floor(currentTime % 60);
+    const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+    const hintElement = document.getElementById('playback-hint');
+    if (hintElement) {
+        hintElement.textContent = `Tempo: ${formattedTime}`;
+        hintElement.style.display = 'block';
+    }
+}
+
+hidePlaybackHint() {
+    const hintElement = document.getElementById('playback-hint');
+    if (hintElement) {
+        hintElement.style.display = 'none';
+    }
+}
 
 
 
