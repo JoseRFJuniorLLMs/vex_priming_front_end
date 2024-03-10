@@ -1,3 +1,5 @@
+
+
 <!-- <vex-secondary-toolbar current="Dashboards">
   <vex-breadcrumbs
     [crumbs]="['Dashboards', 'Student']"
@@ -21,6 +23,12 @@
   <vex-page-layout-content class="container">
 
     <div @fadeInUp class="card overflow-hidden">
+
+      <div>
+        <h1>Analysis of "{{ text }}"</h1>
+        <p><strong>Pronouns:</strong> {{ pronouns.join(', ') }}</p>
+        <p><strong>Verbs:</strong> {{ verbs.join(', ') }}</p>
+      </div>
 
       <mat-horizontal-stepper #stepper="matHorizontalStepper" [linear]="true">
         <ng-template matStepperIcon="edit">
@@ -87,24 +95,22 @@
 
 
                   <mat-chip-listbox aria-label="Fish selection">
-                    <mat-chip-option id="phase" value="phrase"
-                    matTooltip="phrase {{currentTime}}" color="primary"
-                    (selectionChange)="onSelection('phrase', $event)">Phrase
-                    <mat-icon svgIcon="mat:checklist"></mat-icon>
-                  </mat-chip-option>
 
-                    <mat-chip-option id="text" value="text"
-                     matTooltip="text {{currentTime}}" color="primary"
-                     (selectionChange)="onSelection('text', $event)">Text
-                     <mat-icon svgIcon="mat:menu_book"></mat-icon>
+                   <!--  <mat-chip-option id="phase" value="phrase" matTooltip="phrase {{currentTime}}" color="primary"
+                      (selectionChange)="onSelection('phrase', $event)">Phrase
+                      <mat-icon svgIcon="mat:checklist"></mat-icon>
                     </mat-chip-option>
 
-                    <mat-chip-option id="word" value="word"
-                    matTooltip="word {{currentTime}}" color="primary"
-                    (selectionChange)="onSelection('word', $event)">Word
-                    <mat-icon svgIcon="mat:fact_check"></mat-icon>
-                  </mat-chip-option>
+                    <mat-chip-option id="text" value="text" matTooltip="text {{currentTime}}" color="primary"
+                      (selectionChange)="onSelection('text', $event)">Text
+                      <mat-icon svgIcon="mat:menu_book"></mat-icon>
+                    </mat-chip-option>
 
+                    <mat-chip-option id="word" value="word" matTooltip="word {{currentTime}}" color="primary"
+                      (selectionChange)="onSelection('word', $event)">Word
+                      <mat-icon svgIcon="mat:fact_check"></mat-icon>
+                    </mat-chip-option>
+ -->
 
                     <button mat-icon-button matTooltip="Play Waveform
                     {{currentTime}}" color="primary" (click)="playAudio()">
@@ -112,16 +118,16 @@
                     </button>
 
                     <button mat-icon-button matTooltip="Stop Waveform {{currentTime}}" color="primary"
-                    (click)="stopAudio()">
+                      (click)="stopAudio()">
                       <mat-icon svgIcon="mat:stop"></mat-icon>
                     </button>
 
                     <button mat-icon-button matTooltip="Pause Waveform {{currentTime}}" color="primary"
-                    (click)="pauseAudio()">
+                      (click)="pauseAudio()">
                       <mat-icon svgIcon="mat:pause_circle"></mat-icon>
                     </button>
 
-<!--                     <button mat-icon-button matTooltip="Download file Waveform {{currentTime}}" color="primary"
+                    <!--                     <button mat-icon-button matTooltip="Download file Waveform {{currentTime}}" color="primary"
                       (click)="toggleMediaControls()">
                       <mat-icon *ngIf="mediaControlIcon === 'mat:sports_esports'"
                         svgIcon="mat:sports_esports"></mat-icon>
@@ -151,12 +157,24 @@
                     Tempo: 00:00
                   </div>
 
-
-
                 </div>
 
+              <div>
+              <mat-chip-option id="phase" value="phrase" matTooltip="phrase {{currentTime}}" color="primary"
+                (selectionChange)="onSelection('phrase', $event)">Phrase
+                <mat-icon svgIcon="mat:checklist"></mat-icon>
+              </mat-chip-option>
 
-                <!-- Quick Line Chart -->
+              <mat-chip-option id="text" value="text" matTooltip="text {{currentTime}}" color="primary"
+                (selectionChange)="onSelection('text', $event)">Text
+                <mat-icon svgIcon="mat:menu_book"></mat-icon>
+              </mat-chip-option>
+
+              <mat-chip-option id="word" value="word" matTooltip="word {{currentTime}}" color="primary"
+                (selectionChange)="onSelection('word', $event)">Word
+                <mat-icon svgIcon="mat:fact_check"></mat-icon>
+              </mat-chip-option>
+             <!-- Quick Line Chart -->
                 <vex-widget-quick-line-chart #chatContainer icon="mat:pageview"
                   iconClass="text-primary-900 bg-primary-900/10" label="
                   Mom, Dad, Baby, Sister, Brother, Grandma, Grandpa, Dog, Cat, Bird, Fish, Cow, Pig, Horse, Sheep, Duck, Chicken,
@@ -169,7 +187,7 @@ Help, Want, Need, Big, Small, Hot, Cold, Happy, Sad, Mine,Here, There, Up, Down,
                   " value="{{ chatMessage }}">
                 </vex-widget-quick-line-chart>
 
-
+              </div>
                 <!-- Quick Line Chart -->
                 <!--  <vex-widget-quick-line-chart id="textDisplay" #chatContainer icon="mat:pageview"
                   iconClass="text-primary-600 bg-primary-600/10" label="Result" value="{{ chatMessage }}">
@@ -216,7 +234,7 @@ Help, Want, Need, Big, Small, Hot, Cold, Happy, Sad, Mine,Here, There, Up, Down,
 
               <!-- Coluna para '_id' -->
               <ng-container matColumnDef="_id">
-                <th mat-header-cell *matHeaderCellDef> ID </th>
+                <th mat-header-cell *matHeaderCellDef> Id </th>
                 <td mat-cell *matCellDef="let course"> {{ course._id || 'Não disponível'}} </td>
               </ng-container>
 
@@ -263,17 +281,18 @@ Help, Want, Need, Big, Small, Hot, Cold, Happy, Sad, Mine,Here, There, Up, Down,
               </ng-container>
 
               <!-- Coluna para visualizar 'lessons' -->
-              <ng-container matColumnDef="lessons">
+ <!--              <ng-container matColumnDef="lessons">
                 <th mat-header-cell *matHeaderCellDef> Lições </th>
                 <td mat-cell *matCellDef="let course">
                   <button mat-button (click)="openLessonsDialog(course.lessons)">Ver Lições ({{course.lessons.length ||
                     'Não disponível'}})</button>
                 </td>
-              </ng-container>
+              </ng-container> -->
 
               <!-- Cabeçalho e linhas da tabela -->
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
             </table>
 
 

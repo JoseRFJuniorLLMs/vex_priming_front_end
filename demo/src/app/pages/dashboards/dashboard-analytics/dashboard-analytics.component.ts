@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 
@@ -19,8 +20,10 @@ import {
   MatSnackBarHorizontalPosition,
   MatSnackBarVerticalPosition
 } from '@angular/material/snack-bar';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
 
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import gpt4 from '../../../../../gpt4.json';
@@ -33,7 +36,6 @@ import { WidgetQuickLineChartComponent } from '../components/widgets/widget-quic
 import { WidgetQuickValueCenterComponent } from '../components/widgets/widget-quick-value-center/widget-quick-value-center.component';
 import { WidgetTableComponent } from '../components/widgets/widget-table/widget-table.component';
 
-
 import { MatStepperModule } from '@angular/material/stepper';
 import { fadeInRight400ms } from '@vex/animations/fade-in-right.animation';
 import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
@@ -45,19 +47,18 @@ import { VexPageLayoutHeaderDirective } from '@vex/components/vex-page-layout/ve
 import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page-layout.component';
 import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
 
-
 import { interval, Observable, Subscription } from 'rxjs';
 import screenfull from 'screenfull';
 import WaveSurfer from 'wavesurfer.js';
-import { PageLayoutDemoComponent } from '../../ui/page-layouts/page-layout-demo/page-layout-demo.component';
-/* import * as Annyang from 'annyang'; */
+
+import nlp from 'compromise';
 
 import { Course } from 'src/app/model/course/course';
 import { Lesson } from 'src/app/model/lesson/lesson';
 import { CoursesService } from '../../../services/courses.service';
+import { PageLayoutDemoComponent } from '../../ui/page-layouts/page-layout-demo/page-layout-demo.component';
 import { LessonDetailsDialogComponent } from '../components/dialog-lesson/lesson-details-Dialog.component';
 import { DialogExampleComponent } from '../components/dialog/dialog-example.component';
-
 
 // Interface para descrever a estrutura da resposta da API
 interface ResponseData {
@@ -104,16 +105,10 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   /* ==================COURSES SERVICES==================== */
 
   courses$!: Observable<Course[]>;
-  displayedColumns: string[] = [
-    '_id',
-    'name',
-    'objective',
-    'category',
-    'level',
-    'price',
-    'status',
-    'content',
-    'lessons'];
+  //displayedColumns : string[] = ['_id', 'name', 'objective', 'category', 'level', 'price', 'status', 'content', 'lessons', 'description'];
+  displayedColumns: string[] = ['name', 'level', 'objective', 'status'];
+
+
 
   /* ==================VIEWCHILD==================== */
   @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
@@ -154,12 +149,18 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   private readyListener: () => void;
   private finishListener: () => void;
 
+  //Promisse NLP
+  text: string = 'I love you';
+  pronouns: string[] = [];
+  verbs: string[] = [];
+
   /* ==================CONTRUTOR==================== */
   constructor(
     private http: HttpClient,
     private _snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private coursesService : CoursesService
+    private coursesService : CoursesService,
+    private cdRef: ChangeDetectorRef
   ) {
     this.readyListener = () => {};
     this.finishListener = () => {};
@@ -188,13 +189,17 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
     });
   }
 
+  dataSource = new MatTableDataSource<Course>();
+
   /* ==================OnINIT==================== */
   ngOnInit(): void {
 
-    this.coursesService.getCoursesByStudentId('65c6b529c2c6b863b27a3172').subscribe(cursos => {
-      console.log('Cursos do estudante:', cursos);
-      this.openSnackBar("Cursos" + cursos);
-    });
+     // Inicialização direta
+  this.displayedColumns = ['_id', 'name', 'objective', 'category', 'level', 'price', 'status', 'content', 'lessons'];
+  //this.displayedColumns = ['name', 'level', 'objective', 'status'];
+  this.coursesService.getCoursesByStudentId('65c6b529c2c6b863b27a3172').subscribe(cursos => {
+    this.dataSource = new MatTableDataSource(cursos);
+  });
 
     const studentId = 'student_id';
     this.courses$ = this.coursesService.getCoursesByStudentId(studentId);
@@ -276,20 +281,20 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
 
       let contentMessage = `repeat this ${selection}: ${question}`;
       if (selection === 'phrase') {
-        contentMessage += ', and provide more phrases that contain the word, priming sentences.';
+        contentMessage += ', and provide more sentences that contain the word simple and children';
         this.openSnackBar("Phrase");
       } else if (selection === 'text') {
         this.openSnackBar("Text");
-        contentMessage += ',and provide a text using memory palace, using this word.';
+        contentMessage += 'and word';
       } else { // 'word'
         this.openSnackBar("Word");
-        contentMessage += ', and provide a detailed explanation orlist of primers and targets related to the word.';
+        contentMessage += ', ';
       }
 
       const response = await this.http.post<any>(gpt4.gptUrl, {
         messages: [{ role: 'user', content: contentMessage }],
         temperature: 0.0,
-        max_tokens: 1000,
+        max_tokens: 50,
         model: "gpt-4",
       }, { headers }).toPromise();
 
@@ -526,7 +531,6 @@ displayFullText(text: string): void {
   }
 }
 
-
   /* ==================GERA AUDIO==================== */
    generateAudio(): void {
     // Verifica se já está gerando áudio para evitar duplicação
@@ -593,7 +597,6 @@ displayFullText(text: string): void {
     );
   }
 
-
   /* ==================DISPLAY WORD BY WORD AND SHOW IMAGE==================== */
 displayTextWordByWord(text: string): number {
   const words = text.split(' ');
@@ -648,7 +651,6 @@ displayTextWordByWord(text: string): number {
     }
   }
 
-
   updatePlaybackHint(currentTime: number) {
     const minutes = Math.floor(currentTime / 60);
     const seconds = Math.floor(currentTime % 60);
@@ -668,7 +670,14 @@ hidePlaybackHint() {
     }
 }
 
+analyzeText() {
+  const doc = nlp(this.text);
+  this.pronouns = doc.pronouns().out('array');
+  this.verbs = doc.verbs().out('array');
+}
 
+
+//fim
 }
 
 
