@@ -1,5 +1,17 @@
 <mat-card cdkDrag cdkDragHandle class="action flex-none" color="primary" id="barr01" mat-flat-button>
-  <mat-card-actions align="end">
+
+   <mat-card-actions align="end">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Layout Options</mat-label>
+      <mat-select (selectionChange)="changeRenderOption($event.value)">
+        <mat-option value="default">Default</mat-option>
+        <mat-option value="continuous">Continuous</mat-option>
+        <mat-option value="paginated">Paginated</mat-option>
+        <mat-option value="auto">Auto</mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <button (click)="prevPage()" matTooltip="Previous Page" class="config-panel-toggle4" color="primary" mat-fab type="button">
       <mat-icon svgIcon="mat:arrow_back_ios"></mat-icon>
     </button>
@@ -23,4 +35,7 @@
     </button>
   </mat-card-actions>
 </mat-card>
+
+
+
 <div id="area-de-exibicao"></div>
