@@ -106,6 +106,7 @@ hashtags: string[] = []; // Hashtags
     this.words = this.chatMessage.split(' ');
     this.initWaveSurfer();
     this.playSound();
+    this.performAnalysis();
   }
 
   ngAfterViewInit(): void {
