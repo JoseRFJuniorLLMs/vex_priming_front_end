@@ -315,7 +315,7 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
       const response = await this.http.post<any>(gpt4.gptUrl, {
         messages: [{ role: 'user', content: contentMessage }],
         temperature: 0.0,
-        max_tokens: 50,
+        max_tokens: 300,
         model: "gpt-4",
       }, { headers }).toPromise();
 
@@ -334,11 +334,11 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
     }
   }
 
-   /* ==================SELECTION PHASE TEXT WORD==================== */
-   onSelection(selection: 'phrase' | 'text' | 'word') {
+  /* ==================SELECTION PHASE TEXT WORD==================== */
+  onSelection(selection: 'phrase' | 'text' | 'word') {
     this.selectedChip = this.selectedChip === selection ? null : selection;
+    this.openSnackBar(selection);
   }
-
 
   /* ==================WAVESURFER==================== */
   ngAfterViewInit(): void {
@@ -422,7 +422,6 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
     });
 }
 
-
 /* ==================FULL TEXT==================== */
 displayFullText(text: string): void {
   const displayElement = document.getElementById('textDisplay');
@@ -433,7 +432,6 @@ displayFullText(text: string): void {
 }
 
   /* ==================ATUALIZA O TEXTO BASEADO NO AUDIO==================== */
-
   updateTextDisplayBasedOnAudio(): void {
     // Verifica se a imagem já foi exibida. Se sim, não faz nada para evitar sobrepor a imagem.
     if (this.imageDisplayed) {
@@ -493,7 +491,7 @@ displayFullText(text: string): void {
     this.openSnackBar("Progress: " + this.progressPercentage);
   }
 
-    /* ==================MOSTRO OS CONTROLES DO VOLUME==================== */
+  /* ==================MOSTRO OS CONTROLES DO VOLUME==================== */
   toggleMediaControls(): void {
     this.mediaControlsEnabled = !this.mediaControlsEnabled;
     this.waveform.setOptions({ mediaControls: this.mediaControlsEnabled });
@@ -531,19 +529,21 @@ displayFullText(text: string): void {
 
   /* ==================AO SELECIONAR O TEXTO==================== */
   @HostListener('document:mouseup', ['$event'])
-  handleMouseUp(event: MouseEvent) {
+handleMouseUp(event: MouseEvent) {
   const selection = window.getSelection();
   if (this.isDialogOpen) {
-    this.openSnackBar("Do not do anything if a dialog is open (document:mouseup)");
+    this.openSnackBar("Do not do anything if a dialog is open");
     return; // Do not do anything if a dialog is open
   }
-  if (selection && selection.toString().trim() !== '') {
+  if (this.selectedChip && selection && selection.toString().trim() !== '') {
     this.selectedText = selection.toString();
-    // You must specify the selection type here. For demonstration, let's use 'word'.
-    this.openSnackBar("Added 'word' as the selection type");
-    this.questionToOpenAI(this.selectedText, 'word'); // Added 'word' as the selection type
+    this.openSnackBar(`Added '${this.selectedChip}' as the selection type`);
+    this.questionToOpenAI(this.selectedText, this.selectedChip);
+  } else {
+    this.openSnackBar("Please select an option (text, phrase, or word) before making a selection.");
   }
 }
+
 
   /* ==================GERA AUDIO==================== */
    generateAudio(): void {
@@ -611,8 +611,8 @@ displayFullText(text: string): void {
     );
   }
 
-  /* ==================DISPLAY WORD BY WORD AND SHOW IMAGE==================== */
-displayTextWordByWord(text: string): number {
+ /* ==================DISPLAY WORD BY WORD AND SHOW IMAGE==================== */
+  displayTextWordByWord(text: string): number {
   const words = text.split(' ');
   const displayElement = document.getElementById('textDisplay');
   if (!displayElement) return 0; // Se o elemento não existir, retorna 0.
@@ -637,7 +637,6 @@ displayTextWordByWord(text: string): number {
 
   return totalTime;
 }
-
 
   onVolumeChange(event: Event): void {
     // O evento é um Event genérico, então precisamos fazer um cast para acessar as propriedades específicas do slider
@@ -710,10 +709,3 @@ analyzeText() {
 
 //fim
 }
-
-
-
-
-
-
-

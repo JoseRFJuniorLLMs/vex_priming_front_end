@@ -15,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { HighlightModule } from 'ngx-highlightjs';
 import { QuillEditorComponent } from 'ngx-quill';
 
+import nlp from 'compromise';
 import WaveSurfer from 'wavesurfer.js';
 import gpt4 from '../../../../../../gpt4.json';
 
@@ -65,6 +66,33 @@ export class DialogExampleComponent implements OnInit {
   isAudioReady: boolean = false;
   currentWordIndex: number = 0;
   words: string[] = [];
+
+//NLP
+// Manipulação de Texto
+textNLP: string = '';
+pronouns: string[] = []; // Pronome
+verbs: string[] = []; // Verbo
+nouns: string[] = []; // Substantivo
+adjectives: string[] = []; // Adjetivo
+adverbs: string[] = []; // Advérbio
+people: string[] = []; // Pessoas
+places: string[] = []; // Lugares
+organizations: string[] = []; // Organizações
+dates: string[] = []; // Datas
+values: string[] = []; // Valores
+
+// Adicionando novas variáveis para funcionalidades adicionais
+phrases: any[] = []; // Frases
+clauses: string[] = []; // Cláusulas
+negations: string[] = []; // Negativas
+questions: string[] = []; // Perguntas
+quotes: string[] = []; // Citações
+acronyms: string[] = []; // Siglas
+emails: string[] = []; // E-mails
+urls: string[] = []; // URLs
+emojis: string[] = []; // Emojis
+mentions: string[] = []; // Menções (@usuario)
+hashtags: string[] = []; // Hashtags
 
   constructor(
     private http: HttpClient,
@@ -275,7 +303,6 @@ export class DialogExampleComponent implements OnInit {
     }
   }
 
-
   loadAudio(url: string): void {
     this.audio = new Audio(url);
   }
@@ -337,4 +364,40 @@ export class DialogExampleComponent implements OnInit {
   }
 
 
+performAnalysis(): void {
+  // Atualiza textNLP com o valor de chatMessage
+  this.textNLP = this.chatMessage;
+  // Agora chama analyzeText para processar o texto
+  this.analyzeText();
+}
+
+  analyzeText() {
+    const doc = nlp(this.chatMessage);
+    // Análise básica
+    this.pronouns = doc.pronouns().out('array');
+    this.verbs = doc.verbs().out('array');
+    this.nouns = doc.nouns().out('array');
+    this.adjectives = doc.adjectives().out('array');
+    this.adverbs = doc.adverbs().out('array');
+    this.people = doc.people().out('array');
+    this.places = doc.places().out('array');
+    this.organizations = doc.organizations().out('array');
+    //this.dates = doc.dates().out('array');
+    //this.values = doc.values().out('array');
+    // Funcionalidades adicionais
+    //this.phrases = doc.phrases().out('any'); // Frases
+    this.clauses = doc.clauses().out('array'); // Cláusulas
+    //this.negations = doc.negations().out('array'); // Negativas
+    this.questions = doc.questions().out('array'); // Perguntas
+    //this.quotes = doc.quotes().out('array'); // Citações
+    this.acronyms = doc.acronyms().out('array'); // Siglas
+    this.emails = doc.emails().out('array'); // E-mails
+    this.urls = doc.urls().out('array'); // URLs
+    //this.emojis = doc.emojis().out('array'); // Emojis
+    //this.mentions = doc.mentions().out('array'); // Menções (@usuario)
+    //this.hashtags = doc.hashtags().out('array'); // Hashtags
+    // Nota: Algumas dessas funcionalidades podem requerer plugins adicionais ou implementação específica.
+  }
+
+  //fim
 }

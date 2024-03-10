@@ -69,6 +69,31 @@
                   <!-- Usando interpolação de strings para exibir o texto com palavras destacadas -->
                   <span class="highlighted-gray" [innerHTML]="displayedHtml"></span>
                 </mat-card-title>
+                <div>
+                  <h1>Analysis of "{{ textNLP }}"</h1>
+                  <p><strong>Pronouns:</strong> {{ pronouns.join(', ') }}</p>
+                  <p><strong>Verbs:</strong> {{ verbs.join(', ') }}</p>
+                  <p><strong>Nouns:</strong> {{ nouns.join(', ') }}</p>
+                  <p><strong>Adjectives:</strong> {{ adjectives.join(', ') }}</p>
+                  <p><strong>Adverbs:</strong> {{ adverbs.join(', ') }}</p>
+                  <p><strong>People:</strong> {{ people.join(', ') }}</p>
+                  <p><strong>Places:</strong> {{ places.join(', ') }}</p>
+                  <p><strong>Organizations:</strong> {{ organizations.join(', ') }}</p>
+                  <!-- <p><strong>Dates:</strong> {{ dates.join(', ') }}</p> -->
+                  <!-- <p><strong>Values:</strong> {{ values.join(', ') }}</p> -->
+                  <!-- Funcionalidades adicionais -->
+                  <!-- <p><strong>Phrases:</strong> {{ phrases.join(', ') }}</p> -->
+                  <p><strong>Clauses:</strong> {{ clauses.join(', ') }}</p>
+                  <!-- <p><strong>Negations:</strong> {{ negations.join(', ') }}</p> -->
+                  <p><strong>Questions:</strong> {{ questions.join(', ') }}</p>
+                  <!-- <p><strong>Quotes:</strong> {{ quotes.join(', ') }}</p> -->
+                  <p><strong>Acronyms:</strong> {{ acronyms.join(', ') }}</p>
+                  <p><strong>Emails:</strong> {{ emails.join(', ') }}</p>
+                  <p><strong>URLs:</strong> {{ urls.join(', ') }}</p>
+                  <!-- <p><strong>Emojis:</strong> {{ emojis.join(', ') }}</p> -->
+                  <!-- <p><strong>Mentions:</strong> {{ mentions.join(', ') }}</p> -->
+                  <!-- <p><strong>Hashtags:</strong> {{ hashtags.join(', ') }}</p> -->
+              </div>
               </mat-card-title-group>
             </mat-card-header>
             <mat-card-content>

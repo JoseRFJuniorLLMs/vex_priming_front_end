@@ -22,7 +22,7 @@
 
     <div @fadeInUp class="card overflow-hidden">
 
-        <mat-horizontal-stepper #stepper="matHorizontalStepper" [linear]="true">
+      <mat-horizontal-stepper #stepper="matHorizontalStepper" [linear]="true">
         <ng-template matStepperIcon="edit">
           <mat-icon svgIcon="mat:done_all"></mat-icon>
         </ng-template>
@@ -156,25 +156,25 @@
                 <div>
 
                   <mat-chip-option #chipPhrase value="phrase" [selected]="selectedChip === 'phrase'"
-                  (click)="onSelection('phrase')"
-                  matTooltip="Priming Phrase Option Selected! : {{currentTime}}" color="primary">
-                  Phrase
-                  <mat-icon svgIcon="mat:speaker_notes"></mat-icon>
-                </mat-chip-option>
+                    (click)="onSelection('phrase')" matTooltip="Priming Phrase Option Selected! : {{currentTime}}"
+                    color="primary">
+                    Phrase
+                    <mat-icon svgIcon="mat:speaker_notes"></mat-icon>
+                  </mat-chip-option>
 
-  <mat-chip-option #chipText value="text" [selected]="selectedChip === 'text'"
-                  (click)="onSelection('text')"
-                  matTooltip="Priming Text Option Selected! : {{currentTime}}" color="primary">
-                  Text
-                  <mat-icon svgIcon="mat:menu_book"></mat-icon>
-                </mat-chip-option>
+                  <mat-chip-option #chipText value="text" [selected]="selectedChip === 'text'"
+                    (click)="onSelection('text')" matTooltip="Priming Text Option Selected! : {{currentTime}}"
+                    color="primary">
+                    Text
+                    <mat-icon svgIcon="mat:menu_book"></mat-icon>
+                  </mat-chip-option>
 
-  <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'"
-                  (click)="onSelection('word')"
-                  matTooltip="Priming Word Option Selected! : {{currentTime}}" color="primary">
-                  Word
-                  <mat-icon svgIcon="mat:fact_check"></mat-icon>
-  </mat-chip-option>
+                  <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'"
+                    (click)="onSelection('word')" matTooltip="Priming Word Option Selected! : {{currentTime}}"
+                    color="primary">
+                    Word
+                    <mat-icon svgIcon="mat:fact_check"></mat-icon>
+                  </mat-chip-option>
 
 
 
@@ -333,7 +333,7 @@ Help, Want, Need, Big, Small, Hot, Cold, Happy, Sad, Mine,Here, There, Up, Down,
               <!-- <p><strong>Emojis:</strong> {{ emojis.join(', ') }}</p> -->
               <!-- <p><strong>Mentions:</strong> {{ mentions.join(', ') }}</p> -->
               <!-- <p><strong>Hashtags:</strong> {{ hashtags.join(', ') }}</p> -->
-          </div>
+            </div>
 
           </div>
         </mat-tab>
