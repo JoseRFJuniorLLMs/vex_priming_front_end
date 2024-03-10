@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatTableModule } from '@angular/material/table';
 
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,15 +19,13 @@ import {
   MatSnackBarHorizontalPosition,
   MatSnackBarVerticalPosition
 } from '@angular/material/snack-bar';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
 
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import gpt4 from '../../../../../gpt4.json';
 
-import { MatChipSelectionChange } from '@angular/material/chips';
 import { WidgetAssistantComponent } from '../components/widgets/widget-assistant/widget-assistant.component';
 import { WidgetLargeChartComponent } from '../components/widgets/widget-large-chart/widget-large-chart.component';
 import { WidgetLargeGoalChartComponent } from '../components/widgets/widget-large-goal-chart/widget-large-goal-chart.component';
@@ -52,12 +49,11 @@ import screenfull from 'screenfull';
 import WaveSurfer from 'wavesurfer.js';
 
 import nlp from 'compromise';
+//import { NlpService } from 'promise-nlp';
 
 import { Course } from 'src/app/model/course/course';
-import { Lesson } from 'src/app/model/lesson/lesson';
 import { CoursesService } from '../../../services/courses.service';
 import { PageLayoutDemoComponent } from '../../ui/page-layouts/page-layout-demo/page-layout-demo.component';
-import { LessonDetailsDialogComponent } from '../components/dialog-lesson/lesson-details-Dialog.component';
 import { DialogExampleComponent } from '../components/dialog/dialog-example.component';
 
 // Interface para descrever a estrutura da resposta da API
@@ -108,8 +104,6 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   //displayedColumns : string[] = ['_id', 'name', 'objective', 'category', 'level', 'price', 'status', 'content', 'lessons', 'description'];
   displayedColumns: string[] = ['name', 'level', 'objective', 'status'];
 
-
-
   /* ==================VIEWCHILD==================== */
   @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
 
@@ -149,10 +143,35 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   private readyListener: () => void;
   private finishListener: () => void;
 
-  //Promisse NLP
-  text: string = 'I love you';
-  pronouns: string[] = [];
-  verbs: string[] = [];
+//NLP
+// Manipulação de Texto
+textNLP: string = 'After a long day at work, she quickly went home to relax and prepare for the busy day ahead.';
+pronouns: string[] = []; // Pronome
+verbs: string[] = []; // Verbo
+nouns: string[] = []; // Substantivo
+adjectives: string[] = []; // Adjetivo
+adverbs: string[] = []; // Advérbio
+people: string[] = []; // Pessoas
+places: string[] = []; // Lugares
+organizations: string[] = []; // Organizações
+dates: string[] = []; // Datas
+values: string[] = []; // Valores
+
+// Adicionando novas variáveis para funcionalidades adicionais
+phrases: string[] = []; // Frases
+clauses: string[] = []; // Cláusulas
+negations: string[] = []; // Negativas
+questions: string[] = []; // Perguntas
+quotes: string[] = []; // Citações
+acronyms: string[] = []; // Siglas
+emails: string[] = []; // E-mails
+urls: string[] = []; // URLs
+emojis: string[] = []; // Emojis
+mentions: string[] = []; // Menções (@usuario)
+hashtags: string[] = []; // Hashtags
+
+
+  selectedChip: 'phrase' | 'text' | 'word' | null = null;
 
   /* ==================CONTRUTOR==================== */
   constructor(
@@ -193,6 +212,8 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
 
   /* ==================OnINIT==================== */
   ngOnInit(): void {
+
+    this.analyzeText();
 
      // Inicialização direta
   this.displayedColumns = ['_id', 'name', 'objective', 'category', 'level', 'price', 'status', 'content', 'lessons'];
@@ -285,7 +306,7 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
         this.openSnackBar("Phrase");
       } else if (selection === 'text') {
         this.openSnackBar("Text");
-        contentMessage += 'and word';
+        contentMessage += 'and provide stories using memory palace memorization technique, for children with the word.';
       } else { // 'word'
         this.openSnackBar("Word");
         contentMessage += ', ';
@@ -313,18 +334,11 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
     }
   }
 
-  onSelection(selection: string, event: MatChipSelectionChange) {
-    if (event.selected) {
-      const question = this.selectedText; // Assuming `selectedText` contains the user's question
-      // Ensure the selection is valid before calling the function
-      if (selection === 'phrase' || selection === 'text' || selection === 'word') {
-        this.questionToOpenAI(question, selection);
-      } else {
-        console.error('Invalid selection:', selection);
-        this.openSnackBar('Invalid selection:'+ selection);
-      }
-    }
+   /* ==================SELECTION PHASE TEXT WORD==================== */
+   onSelection(selection: 'phrase' | 'text' | 'word') {
+    this.selectedChip = this.selectedChip === selection ? null : selection;
   }
+
 
   /* ==================WAVESURFER==================== */
   ngAfterViewInit(): void {
@@ -624,12 +638,6 @@ displayTextWordByWord(text: string): number {
   return totalTime;
 }
 
-  openLessonsDialog(lessons: Lesson[]): void {
-    this.dialog.open(LessonDetailsDialogComponent, {
-      width: '90%',
-      data: { lessons }
-    });
-  }
 
   onVolumeChange(event: Event): void {
     // O evento é um Event genérico, então precisamos fazer um cast para acessar as propriedades específicas do slider
@@ -671,10 +679,33 @@ hidePlaybackHint() {
 }
 
 analyzeText() {
-  const doc = nlp(this.text);
+  const doc = nlp(this.textNLP);
+  // Análise básica
   this.pronouns = doc.pronouns().out('array');
   this.verbs = doc.verbs().out('array');
+  this.nouns = doc.nouns().out('array');
+  this.adjectives = doc.adjectives().out('array');
+  this.adverbs = doc.adverbs().out('array');
+  this.people = doc.people().out('array');
+  this.places = doc.places().out('array');
+  this.organizations = doc.organizations().out('array');
+  //this.dates = doc.dates().out('array');
+  //this.values = doc.values().out('array');
+  // Funcionalidades adicionais
+  //this.phrases = doc.phrases().out('array'); // Frases
+  this.clauses = doc.clauses().out('array'); // Cláusulas
+  //this.negations = doc.negations().out('array'); // Negativas
+  this.questions = doc.questions().out('array'); // Perguntas
+  //this.quotes = doc.quotes().out('array'); // Citações
+  this.acronyms = doc.acronyms().out('array'); // Siglas
+  this.emails = doc.emails().out('array'); // E-mails
+  this.urls = doc.urls().out('array'); // URLs
+  //this.emojis = doc.emojis().out('array'); // Emojis
+  //this.mentions = doc.mentions().out('array'); // Menções (@usuario)
+  //this.hashtags = doc.hashtags().out('array'); // Hashtags
+  // Nota: Algumas dessas funcionalidades podem requerer plugins adicionais ou implementação específica.
 }
+
 
 
 //fim

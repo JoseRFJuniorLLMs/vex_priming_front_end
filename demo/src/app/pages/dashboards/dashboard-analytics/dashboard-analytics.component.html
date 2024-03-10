@@ -1,5 +1,3 @@
-
-
 <!-- <vex-secondary-toolbar current="Dashboards">
   <vex-breadcrumbs
     [crumbs]="['Dashboards', 'Student']"
@@ -24,13 +22,7 @@
 
     <div @fadeInUp class="card overflow-hidden">
 
-      <div>
-        <h1>Analysis of "{{ text }}"</h1>
-        <p><strong>Pronouns:</strong> {{ pronouns.join(', ') }}</p>
-        <p><strong>Verbs:</strong> {{ verbs.join(', ') }}</p>
-      </div>
-
-      <mat-horizontal-stepper #stepper="matHorizontalStepper" [linear]="true">
+        <mat-horizontal-stepper #stepper="matHorizontalStepper" [linear]="true">
         <ng-template matStepperIcon="edit">
           <mat-icon svgIcon="mat:done_all"></mat-icon>
         </ng-template>
@@ -96,7 +88,7 @@
 
                   <mat-chip-listbox aria-label="Fish selection">
 
-                   <!--  <mat-chip-option id="phase" value="phrase" matTooltip="phrase {{currentTime}}" color="primary"
+                    <!--  <mat-chip-option id="phase" value="phrase" matTooltip="phrase {{currentTime}}" color="primary"
                       (selectionChange)="onSelection('phrase', $event)">Phrase
                       <mat-icon svgIcon="mat:checklist"></mat-icon>
                     </mat-chip-option>
@@ -159,24 +151,36 @@
 
                 </div>
 
-              <div>
-              <mat-chip-option id="phase" value="phrase" matTooltip="phrase {{currentTime}}" color="primary"
-                (selectionChange)="onSelection('phrase', $event)">Phrase
-                <mat-icon svgIcon="mat:checklist"></mat-icon>
-              </mat-chip-option>
+                <!-- Selection -->
 
-              <mat-chip-option id="text" value="text" matTooltip="text {{currentTime}}" color="primary"
-                (selectionChange)="onSelection('text', $event)">Text
-                <mat-icon svgIcon="mat:menu_book"></mat-icon>
-              </mat-chip-option>
+                <div>
 
-              <mat-chip-option id="word" value="word" matTooltip="word {{currentTime}}" color="primary"
-                (selectionChange)="onSelection('word', $event)">Word
-                <mat-icon svgIcon="mat:fact_check"></mat-icon>
-              </mat-chip-option>
-             <!-- Quick Line Chart -->
-                <vex-widget-quick-line-chart #chatContainer icon="mat:pageview"
-                  iconClass="text-primary-900 bg-primary-900/10" label="
+                  <mat-chip-option #chipPhrase value="phrase" [selected]="selectedChip === 'phrase'"
+                  (click)="onSelection('phrase')"
+                  matTooltip="Priming Phrase Option Selected! : {{currentTime}}" color="primary">
+                  Phrase
+                  <mat-icon svgIcon="mat:speaker_notes"></mat-icon>
+                </mat-chip-option>
+
+  <mat-chip-option #chipText value="text" [selected]="selectedChip === 'text'"
+                  (click)="onSelection('text')"
+                  matTooltip="Priming Text Option Selected! : {{currentTime}}" color="primary">
+                  Text
+                  <mat-icon svgIcon="mat:menu_book"></mat-icon>
+                </mat-chip-option>
+
+  <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'"
+                  (click)="onSelection('word')"
+                  matTooltip="Priming Word Option Selected! : {{currentTime}}" color="primary">
+                  Word
+                  <mat-icon svgIcon="mat:fact_check"></mat-icon>
+  </mat-chip-option>
+
+
+
+                  <!-- Quick Line Chart -->
+                  <vex-widget-quick-line-chart #chatContainer icon="mat:pageview"
+                    iconClass="text-primary-900 bg-primary-900/10" label="
                   Mom, Dad, Baby, Sister, Brother, Grandma, Grandpa, Dog, Cat, Bird, Fish, Cow, Pig, Horse, Sheep, Duck, Chicken,
 Tree, Flower, Grass, Sun, Moon, Star, Cloud, Rain, Snow, Wind, Water, Fire, Earth, Sky, Sand, Sea, River, Lake,Mountain, Hill, Valley,
 Forest, Park, Eat, Sleep, Play, Drink, Run, Jump, Walk, Talk, Sing, Laugh,Yes, No, Thank you, Please, Bye-bye, Hello, Good morning,
@@ -185,9 +189,9 @@ Apple, Banana, Orange, Bread, Soup, Egg, Cheese, Ice Cream, Candy, Cookie, Cake,
 Colors (red, blue, green, yellow, etc.), Shapes (circle, square, triangle, etc.), Go, Stop, Come, See, Look, Listen, Cry,
 Help, Want, Need, Big, Small, Hot, Cold, Happy, Sad, Mine,Here, There, Up, Down, In, Out
                   " value="{{ chatMessage }}">
-                </vex-widget-quick-line-chart>
+                  </vex-widget-quick-line-chart>
 
-              </div>
+                </div>
                 <!-- Quick Line Chart -->
                 <!--  <vex-widget-quick-line-chart id="textDisplay" #chatContainer icon="mat:pageview"
                   iconClass="text-primary-600 bg-primary-600/10" label="Result" value="{{ chatMessage }}">
@@ -281,7 +285,7 @@ Help, Want, Need, Big, Small, Hot, Cold, Happy, Sad, Mine,Here, There, Up, Down,
               </ng-container>
 
               <!-- Coluna para visualizar 'lessons' -->
- <!--              <ng-container matColumnDef="lessons">
+              <!--              <ng-container matColumnDef="lessons">
                 <th mat-header-cell *matHeaderCellDef> Lições </th>
                 <td mat-cell *matCellDef="let course">
                   <button mat-button (click)="openLessonsDialog(course.lessons)">Ver Lições ({{course.lessons.length ||
@@ -305,7 +309,32 @@ Help, Want, Need, Big, Small, Hot, Cold, Happy, Sad, Mine,Here, There, Up, Down,
         </mat-tab>
         <mat-tab label="Priming Text">
           <div class="p-6">
-            <vex-page-layout-demo></vex-page-layout-demo>
+            <div>
+              <h1>Analysis of "{{ textNLP }}"</h1>
+              <p><strong>Pronouns:</strong> {{ pronouns.join(', ') }}</p>
+              <p><strong>Verbs:</strong> {{ verbs.join(', ') }}</p>
+              <p><strong>Nouns:</strong> {{ nouns.join(', ') }}</p>
+              <p><strong>Adjectives:</strong> {{ adjectives.join(', ') }}</p>
+              <p><strong>Adverbs:</strong> {{ adverbs.join(', ') }}</p>
+              <p><strong>People:</strong> {{ people.join(', ') }}</p>
+              <p><strong>Places:</strong> {{ places.join(', ') }}</p>
+              <p><strong>Organizations:</strong> {{ organizations.join(', ') }}</p>
+              <!-- <p><strong>Dates:</strong> {{ dates.join(', ') }}</p> -->
+              <!-- <p><strong>Values:</strong> {{ values.join(', ') }}</p> -->
+              <!-- Funcionalidades adicionais -->
+              <!-- <p><strong>Phrases:</strong> {{ phrases.join(', ') }}</p> -->
+              <p><strong>Clauses:</strong> {{ clauses.join(', ') }}</p>
+              <!-- <p><strong>Negations:</strong> {{ negations.join(', ') }}</p> -->
+              <p><strong>Questions:</strong> {{ questions.join(', ') }}</p>
+              <!-- <p><strong>Quotes:</strong> {{ quotes.join(', ') }}</p> -->
+              <p><strong>Acronyms:</strong> {{ acronyms.join(', ') }}</p>
+              <p><strong>Emails:</strong> {{ emails.join(', ') }}</p>
+              <p><strong>URLs:</strong> {{ urls.join(', ') }}</p>
+              <!-- <p><strong>Emojis:</strong> {{ emojis.join(', ') }}</p> -->
+              <!-- <p><strong>Mentions:</strong> {{ mentions.join(', ') }}</p> -->
+              <!-- <p><strong>Hashtags:</strong> {{ hashtags.join(', ') }}</p> -->
+          </div>
+
           </div>
         </mat-tab>
         <mat-tab label="Priming Phrase">
