@@ -46,12 +46,12 @@ import { VexPageLayoutHeaderDirective } from '@vex/components/vex-page-layout/ve
 import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page-layout.component';
 import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
 
+import nlp from 'compromise';
 import { interval, Observable, Subscription } from 'rxjs';
 import screenfull from 'screenfull';
 import WaveSurfer from 'wavesurfer.js';
-
-import nlp from 'compromise';
 //import { NlpService } from 'promise-nlp';
+import { WordComponent } from '../components/word/word.component';
 
 import { Course } from 'src/app/model/course/course';
 import { CoursesService } from '../../../services/courses.service';
@@ -95,7 +95,8 @@ interface ResponseData {
     MatTableModule,
     MatStepperModule,
     MatChipsModule,
-    VexHighlightDirective
+    VexHighlightDirective,
+    WordComponent
   ]
 })
 

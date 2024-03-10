@@ -376,7 +376,13 @@ Help, Want, Need, Big, Small, Hot, Cold, Happy, Sad, Mine,Here, There, Up, Down,
         </mat-tab>
         <mat-tab label="Priming Word List">
           <div class="p-6">
-            <vex-page-layout-demo></vex-page-layout-demo>
+            <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'"
+            (click)="onSelection('word')" matTooltip="Priming Word Option Selected!"
+            color="primary">
+            Word
+            <mat-icon svgIcon="mat:fact_check"></mat-icon>
+          </mat-chip-option>
+            <word-component></word-component>
           </div>
         </mat-tab>
         <mat-tab label="Priming Graph View">
