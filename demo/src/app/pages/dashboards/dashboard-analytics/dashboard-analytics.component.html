@@ -119,6 +119,7 @@
                       <mat-icon svgIcon="mat:pause_circle"></mat-icon>
                     </button>
 
+
                     <!--                     <button mat-icon-button matTooltip="Download file Waveform {{currentTime}}" color="primary"
                       (click)="toggleMediaControls()">
                       <mat-icon *ngIf="mediaControlIcon === 'mat:sports_esports'"
@@ -156,26 +157,41 @@
                 <div>
 
                   <mat-chip-option #chipPhrase value="phrase" [selected]="selectedChip === 'phrase'"
-                    (click)="onSelection('phrase')" matTooltip="Priming Phrase Option Selected! : {{currentTime}}"
+                    (click)="onSelection('phrase')" matTooltip="Priming Phrase Option Selected!"
                     color="primary">
                     Phrase
                     <mat-icon svgIcon="mat:speaker_notes"></mat-icon>
                   </mat-chip-option>
 
                   <mat-chip-option #chipText value="text" [selected]="selectedChip === 'text'"
-                    (click)="onSelection('text')" matTooltip="Priming Text Option Selected! : {{currentTime}}"
+                    (click)="onSelection('text')" matTooltip="Priming Text Option Selected!"
                     color="primary">
                     Text
                     <mat-icon svgIcon="mat:menu_book"></mat-icon>
                   </mat-chip-option>
 
                   <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'"
-                    (click)="onSelection('word')" matTooltip="Priming Word Option Selected! : {{currentTime}}"
+                    (click)="onSelection('word')" matTooltip="Priming Word Option Selected!"
                     color="primary">
                     Word
                     <mat-icon svgIcon="mat:fact_check"></mat-icon>
                   </mat-chip-option>
 
+
+<!-- inicio -->
+
+
+<mat-list-item>
+  <img matTooltip="alloy" alt="alloy" matListItemAvatar src="assets/img/avatars/1.jpg" />
+  <img matTooltip="onyx" alt="onyx"  matListItemAvatar src="assets/img/avatars/2.jpg" />
+  <img matTooltip="fable" alt="fable" matListItemAvatar src="assets/img/avatars/3.jpg" />
+  <img matTooltip="nova" alt="nova"  matListItemAvatar src="assets/img/avatars/4.jpg" />
+  <img matTooltip="echo" alt="echo"  matListItemAvatar src="assets/img/avatars/5.jpg" />
+ <!--  <img matTooltip="shimmer" alt="shimmer" matListItemAvatar src="assets/img/avatars/5.jpg" /> -->
+
+</mat-list-item>
+
+<!-- fim -->
 
 
                   <!-- Quick Line Chart -->

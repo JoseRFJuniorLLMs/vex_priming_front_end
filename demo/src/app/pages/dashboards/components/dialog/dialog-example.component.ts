@@ -1,5 +1,6 @@
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatRippleModule } from '@angular/material/core';
@@ -12,6 +13,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
 import { HighlightModule } from 'ngx-highlightjs';
 import { QuillEditorComponent } from 'ngx-quill';
 

@@ -38,7 +38,9 @@ import { fadeInRight400ms } from '@vex/animations/fade-in-right.animation';
 import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
 import { scaleIn400ms } from '@vex/animations/scale-in.animation';
 import { stagger80ms } from '@vex/animations/stagger.animation';
+
 import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-breadcrumbs.component';
+import { VexHighlightDirective } from '@vex/components/vex-highlight/vex-highlight.directive';
 import { VexPageLayoutContentDirective } from '@vex/components/vex-page-layout/vex-page-layout-content.directive';
 import { VexPageLayoutHeaderDirective } from '@vex/components/vex-page-layout/vex-page-layout-header.directive';
 import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page-layout.component';
@@ -92,7 +94,8 @@ interface ResponseData {
     MatProgressSpinnerModule,
     MatTableModule,
     MatStepperModule,
-    MatChipsModule
+    MatChipsModule,
+    VexHighlightDirective
   ]
 })
 
@@ -111,8 +114,8 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   private waveform!: WaveSurfer;
   private subscription: Subscription = new Subscription;
   public isPlaying: boolean = false;
-  //voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
-  voices: string[] = ['alloy'];
+  voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+  //voices: string[] = ['alloy'];
   speechRecognition: any;
   isTranscribing = false;
   textToSpeech!: string;
