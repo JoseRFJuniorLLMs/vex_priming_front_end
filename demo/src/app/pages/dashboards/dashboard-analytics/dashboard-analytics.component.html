@@ -157,41 +157,38 @@
                 <div>
 
                   <mat-chip-option #chipPhrase value="phrase" [selected]="selectedChip === 'phrase'"
-                    (click)="onSelection('phrase')" matTooltip="Priming Phrase Option Selected!"
-                    color="primary">
+                    (click)="onSelection('phrase')" matTooltip="Priming Phrase Option Selected!" color="primary">
                     Phrase
                     <mat-icon svgIcon="mat:speaker_notes"></mat-icon>
                   </mat-chip-option>
 
                   <mat-chip-option #chipText value="text" [selected]="selectedChip === 'text'"
-                    (click)="onSelection('text')" matTooltip="Priming Text Option Selected!"
-                    color="primary">
+                    (click)="onSelection('text')" matTooltip="Priming Text Option Selected!" color="primary">
                     Text
                     <mat-icon svgIcon="mat:menu_book"></mat-icon>
                   </mat-chip-option>
 
                   <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'"
-                    (click)="onSelection('word')" matTooltip="Priming Word Option Selected!"
-                    color="primary">
+                    (click)="onSelection('word')" matTooltip="Priming Word Option Selected!" color="primary">
                     Word
                     <mat-icon svgIcon="mat:fact_check"></mat-icon>
                   </mat-chip-option>
 
 
-<!-- inicio -->
+                  <!-- inicio -->
 
 
-<mat-list-item>
-  <img matTooltip="alloy" alt="alloy" matListItemAvatar src="assets/img/avatars/1.jpg" />
-  <img matTooltip="onyx" alt="onyx"  matListItemAvatar src="assets/img/avatars/2.jpg" />
-  <img matTooltip="fable" alt="fable" matListItemAvatar src="assets/img/avatars/3.jpg" />
-  <img matTooltip="nova" alt="nova"  matListItemAvatar src="assets/img/avatars/4.jpg" />
-  <img matTooltip="echo" alt="echo"  matListItemAvatar src="assets/img/avatars/5.jpg" />
- <!--  <img matTooltip="shimmer" alt="shimmer" matListItemAvatar src="assets/img/avatars/5.jpg" /> -->
+                  <mat-list-item>
+                    <img matTooltip="alloy" alt="alloy" matListItemAvatar src="assets/img/avatars/1.jpg" />
+                    <img matTooltip="onyx" alt="onyx" matListItemAvatar src="assets/img/avatars/2.jpg" />
+                    <img matTooltip="fable" alt="fable" matListItemAvatar src="assets/img/avatars/3.jpg" />
+                    <img matTooltip="nova" alt="nova" matListItemAvatar src="assets/img/avatars/4.jpg" />
+                    <img matTooltip="echo" alt="echo" matListItemAvatar src="assets/img/avatars/5.jpg" />
+                    <!--  <img matTooltip="shimmer" alt="shimmer" matListItemAvatar src="assets/img/avatars/5.jpg" /> -->
 
-</mat-list-item>
+                  </mat-list-item>
 
-<!-- fim -->
+                  <!-- fim -->
 
 
                   <!-- Quick Line Chart -->
@@ -376,28 +373,25 @@ Help, Want, Need, Big, Small, Hot, Cold, Happy, Sad, Mine,Here, There, Up, Down,
         </mat-tab>
         <mat-tab label="Priming Word List">
           <div class="p-6">
-            <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'"
-            (click)="onSelection('word')" matTooltip="Priming Word Option Selected!"
-            color="primary">
-            Word
-            <mat-icon svgIcon="mat:fact_check"></mat-icon>
-          </mat-chip-option>
+            <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'" (click)="onSelection('word')"
+              matTooltip="Priming Word Option Selected!" color="primary">
+              Word
+              <mat-icon svgIcon="mat:fact_check"></mat-icon>
+            </mat-chip-option>
 
-          <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'"
-          (click)="onSelection('word')" matTooltip="Priming Gamer Option Selected!"
-          color="primary">
-          Game
-            <mat-icon svgIcon="mat:videogame_asset"></mat-icon>
-           <!--  <mat-icon fontSet="material-icons" fontIcon="home"></mat-icon> -->
-            <mat-icon fontSet="fontawesome" fontIcon="fa-home"></mat-icon>
-        </mat-chip-option>
+            <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'" (click)="onSelection('word')"
+              matTooltip="Priming Gamer Option Selected!" color="primary">
+              Game
+              <mat-icon svgIcon="mat:videogame_asset"></mat-icon>
+              <!--  <mat-icon fontSet="material-icons" fontIcon="home"></mat-icon> -->
+              <mat-icon fontSet="fontawesome" fontIcon="fa-home"></mat-icon>
+            </mat-chip-option>
 
-        <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'"
-        (click)="onSelection('word')" matTooltip="Priming Gamer Option Selected!"
-        color="primary">
-        Game
-        <mat-icon svgIcon="mat:videogame_asset"></mat-icon>
-      </mat-chip-option>
+            <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'" (click)="onSelection('word')"
+              matTooltip="Priming Gamer Option Selected!" color="primary">
+              Game
+              <mat-icon svgIcon="mat:videogame_asset"></mat-icon>
+            </mat-chip-option>
 
             <word-component></word-component>
 
