@@ -382,7 +382,25 @@ Help, Want, Need, Big, Small, Hot, Cold, Happy, Sad, Mine,Here, There, Up, Down,
             Word
             <mat-icon svgIcon="mat:fact_check"></mat-icon>
           </mat-chip-option>
+
+          <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'"
+          (click)="onSelection('word')" matTooltip="Priming Gamer Option Selected!"
+          color="primary">
+          Game
+            <mat-icon svgIcon="mat:videogame_asset"></mat-icon>
+           <!--  <mat-icon fontSet="material-icons" fontIcon="home"></mat-icon> -->
+            <mat-icon fontSet="fontawesome" fontIcon="fa-home"></mat-icon>
+        </mat-chip-option>
+
+        <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'"
+        (click)="onSelection('word')" matTooltip="Priming Gamer Option Selected!"
+        color="primary">
+        Game
+        <mat-icon svgIcon="mat:videogame_asset"></mat-icon>
+      </mat-chip-option>
+
             <word-component></word-component>
+
           </div>
         </mat-tab>
         <mat-tab label="Priming Graph View">

@@ -1,69 +1,72 @@
-import { DialogModule } from '@angular/cdk/dialog';
-import {
-  CdkDrag,
-  CdkDropList
-} from '@angular/cdk/drag-drop';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
-import { stagger40ms } from '@vex/animations/stagger.animation';
-
 import ePub from 'epubjs';
-import hljs from 'highlight.js';
-import { PdfViewerModule } from 'ng2-pdf-viewer';
+import gpt4 from '../../../../../gpt4.json';
 
 @Component({
   selector: 'book',
   templateUrl: 'book.html',
   styleUrls: ['book.scss'],
   encapsulation: ViewEncapsulation.None,
-  animations: [stagger40ms, fadeInUp400ms],
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    PdfViewerModule,
-    MatButtonModule,
-    CdkDrag,
-    CdkDropList,
-    DialogModule,
-    MatIconModule,
-    MatCardModule,
-    MatTooltipModule
-  ]
+  imports: [MatBadgeModule, MatCardModule,
+    MatIconModule],
+
 })
 export class BookComponent implements OnInit {
   book: any;
   rendition: any;
   selectedText: string = '';
-  highlighted: boolean = false;
+  totalPages: number = 0;
+  currentPage: number = 0;
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
-  async ngOnInit() {
+  ngOnInit() {
+    this.initializeBook();
+  }
+
+  async initializeBook() {
     try {
       this.book = ePub("../../assets/epub/TheLittlePrince.epub");
       await this.book.ready;
+
       this.rendition = this.book.renderTo("area-de-exibicao");
       this.rendition.display();
 
-      // Lógica para destacar o texto selecionado
       this.rendition.on('selection', (selection: any) => {
-        console.log('Selection event fired @@@@@@');
         this.selectedText = selection.text;
-        this.highlighted = true;
-
         const elements = document.querySelectorAll('.ePubSelection');
-        Array.from(elements).forEach(element => {
-          hljs.highlightElement(element as HTMLElement);
-        });
       });
+
     } catch (error) {
       console.error("Error loading or rendering book: ", error);
     }
+  }
+
+  async getCurrentPageText(): Promise<string> {
+    if (!this.rendition || !this.rendition.location) {
+      return '';
+    }
+
+    const currentLocation = this.rendition.location.start;
+    const currentPage = await this.book.spine.get(currentLocation);
+
+    if (!currentPage) {
+      return '';
+    }
+
+    return currentPage.getText();
+  }
+
+  toggleLayout() {
+    return () => {
+      this.rendition.spread = (this.rendition.spread === "none") ? "always" : "none";
+      this.rendition.display();
+    };
   }
 
   nextPage() {
@@ -82,14 +85,43 @@ export class BookComponent implements OnInit {
     this.rendition.themes.fontSize('100%');
   }
 
-  // Destaca quando você clica fora da seleção
   clearSelection() {
     this.selectedText = '';
-    this.highlighted = false;
   }
 
-  // Exemplo de ação ao copiar texto
   copySelectedText() {
     navigator.clipboard.writeText(this.selectedText);
+  }
+
+  async sendCurrentPageTextToAI() {
+    const currentPageText = await this.getCurrentPageText();
+
+    const headers = new HttpHeaders({
+      "Authorization": `Bearer ${gpt4.gptApiKey}`,
+      "Content-Type": "application/json"
+    });
+
+    const body = {
+      prompt: currentPageText,
+      max_tokens: 10,
+      temperature: 0.0,
+      model: "gpt-4",
+    };
+
+    this.http.post(gpt4.gptUrl, body, { headers }).subscribe((response: any) => {
+      console.log("Resposta da OpenAI:", response);
+    }, (error: any) => {
+      console.error("Erro ao enviar texto para a OpenAI: ", error);
+    });
+  }
+
+  async countPages(): Promise<number> {
+    const numberOfPages = await this.book.locations.length;
+    return numberOfPages;
+  }
+
+  getCurrentPage(): number {
+    const currentPageIndex = this.book && this.book.navigation && this.book.navigation.indexOf(this.book.currentLocation);
+    return currentPageIndex + 1;
   }
 }

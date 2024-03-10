@@ -1,95 +1,26 @@
-<!--<pdf-viewer [src]="pdfSrc" [render-text]="true" style="display: block; width: 100%; height: 100vh;"></pdf-viewer>
--->
-
-
-<mat-card cdkDrag cdkDragHandle class="action flex-none"
-color="primary" id="barr01" mat-flat-button>
- <!-- <mat-card-header>
-    <mat-card-title>Actions Buttons</mat-card-title>
-  </mat-card-header>-->
-
+<mat-card cdkDrag cdkDragHandle class="action flex-none" color="primary" id="barr01" mat-flat-button>
   <mat-card-actions align="end">
-    <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
-      <path d="M0 0h24v24H0z" fill="none"></path>
-    </svg>
-
-    <div class="example-boundary">
-      <button  matTooltip="Previous Page"
-        (click)="prevPage()"
-        class="config-panel-toggle4"
-        color="primary"
-        mat-fab
-        type="button">
-        <mat-icon svgIcon="mat:arrow_back_ios"></mat-icon>
-      </button>
-
-      <button matTooltip="Next Page"
-        (click)="nextPage()"
-        class="config-panel-toggle4"
-        color="primary"
-        mat-fab
-        type="button">
-        <mat-icon svgIcon="mat:arrow_forward_ios">Next Page</mat-icon>
-      </button>
-
-      <button matTooltip="Zoom IN"
-        (click)="zoomIn()"
-        class="config-panel-toggle4"
-        color="primary"
-        mat-fab
-        type="button">
-        <mat-icon svgIcon="mat:zoom_in">Zoom IN</mat-icon>
-      </button>
-
-      <button matTooltip="Zoom OUT"
-        (click)="zoomOut()"
-        class="config-panel-toggle4"
-        color="primary"
-        mat-fab
-        type="button">
-        <mat-icon svgIcon="mat:zoom_out">Zoom OUT</mat-icon>
-      </button>
-
-      <button matTooltip="Full"
-      (click)="zoomOut()"
-      class="config-panel-toggle4"
-      color="primary"
-      mat-fab
-      type="button">
-      <mat-icon svgIcon="mat:crop_free">Full</mat-icon>
-     </button>
-
-     <button matTooltip="Translate"
-     (click)="zoomOut()"
-     class="config-panel-toggle4"
-     color="primary"
-     mat-fab
-     type="button">
-     <mat-icon svgIcon="mat:translate">Translate</mat-icon>
+    <button (click)="prevPage()" matTooltip="Previous Page" class="config-panel-toggle4" color="primary" mat-fab type="button">
+      <mat-icon svgIcon="mat:arrow_back_ios"></mat-icon>
     </button>
-
-    <button matTooltip="Select To Speak"
-    (click)="zoomOut()"
-    class="config-panel-toggle4"
-    color="primary"
-    mat-fab
-    type="button">
-    <mat-icon svgIcon="mat:volume_up">Select To Speak</mat-icon>
-   </button>
-
-</div>
-</mat-card-actions>
+    <button (click)="nextPage()" matTooltip="Next Page" class="config-panel-toggle4" color="primary" mat-fab type="button">
+      <mat-icon svgIcon="mat:arrow_forward_ios">Next Page</mat-icon>
+    </button>
+    <button (click)="zoomIn()" matTooltip="Zoom IN" class="config-panel-toggle4" color="primary" mat-fab type="button">
+      <mat-icon svgIcon="mat:zoom_in">Zoom IN</mat-icon>
+    </button>
+    <button (click)="zoomOut()" matTooltip="Zoom OUT" class="config-panel-toggle4" color="primary" mat-fab type="button">
+      <mat-icon svgIcon="mat:zoom_out">Zoom OUT</mat-icon>
+    </button>
+    <button (click)="sendCurrentPageTextToAI()" matTooltip="Send Current Page Text to AI" class="config-panel-toggle4" color="primary" mat-fab type="button">
+      <mat-icon svgIcon="mat:send">Send</mat-icon>
+    </button>
+    <button (click)="countPages()" matTooltip="Count Pages" class="config-panel-toggle4" color="primary" mat-fab type="button">
+      <mat-icon svgIcon="mat:content_paste">Count Pages</mat-icon>
+    </button>
+    <button mat-raised-button [matBadge]="totalPages">
+      Total Pages
+    </button>
+  </mat-card-actions>
 </mat-card>
-
-<div class="example-box"  (click)="nextPage()" cdkDrag>
-<div class="container py-6" (click)="nextPage()" cdkDrag>
-  <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
-    <path d="M0 0h24v24H0z" fill="none"></path>
-  </svg>
-  <div id="area-de-exibicao" (click)="nextPage()" matTooltip="Select To Speak">
-  </div>
-</div>
-</div>
-
+<div id="area-de-exibicao"></div>
