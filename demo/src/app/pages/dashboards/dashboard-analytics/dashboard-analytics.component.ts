@@ -349,7 +349,7 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
       container: this.waveformEl.nativeElement,
       /*  url: 'https://storage.googleapis.com/priming_text_wav/ABOVE.wav', */
 
-      url: '../../assets/audio/PRIMING.wav',
+      url: '../../assets/audio/music.mp3',
       waveColor: '#d3d3d3',
       progressColor: 'rgb(0, 0, 0)',
       /*       waveColor: 'rgb(200, 0, 200)',

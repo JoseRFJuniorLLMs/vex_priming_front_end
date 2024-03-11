@@ -1,7 +1,14 @@
-<mat-card cdkDrag cdkDragHandle class="action flex-none" color="primary" id="barr01" mat-flat-button>
+<!-- Waveform -->
 
-   <mat-card-actions align="end">
+<div #waveform autoplay matTooltip="Wave Form" style="cursor: pointer;">
+  <div class="time-indicator">
+</div>
 
+<mat-card cdkDrag cdkDragHandle
+class="action flex-none" color="primary"
+id="barr01" mat-flat-button>
+
+  <mat-card-actions align="end">
     <mat-form-field appearance="fill">
       <mat-label>Layout Options</mat-label>
       <mat-select (selectionChange)="changeRenderOption($event.value)">

@@ -271,7 +271,6 @@ async questionToOpenAI(question: string) {
     return totalTime;
   }
 
-
   /* ==================GERA AUDIO==================== */
   generateAudio(): void {
     // Verifica se já está gerando áudio para evitar duplicação
@@ -313,7 +312,7 @@ async questionToOpenAI(question: string) {
         const onFinish = () => {
           // Ações adicionais após a conclusão do áudio
           this.isGeneratingAudio = false;
-          this.playSound('../../../../assets/audio/toc.wav');
+          this.playSound('../../../../assets/audio/music.mp3');
           this.openDialog(this.chatMessage);
           this.openSnackBar(this.chatMessage);
           // Limpa os listeners após seu uso
@@ -439,12 +438,21 @@ hidePlaybackHint() {
   }
 }
 
-  /* ==================AO SELECIONAR O TEXTO==================== */
-  @HostListener('document:mouseup', ['$event'])
-   handleMouseUp(event: MouseEvent) {
-    const selection = window.getSelection();
-    this.openSnackBar(`AO SELECIONAR O TEXTO`+selection);
+/* ==================AO SELECIONAR O TEXTO==================== */
+@HostListener('document:mouseup', ['$event'])
+handleMouseUp(event: MouseEvent) {
+  const selection = window.getSelection();
+  if (selection) {
+    const selectedText = selection.toString().trim();
+    if (selectedText.length > 0) {
+      this.openSnackBar(`Texto selecionado: ${selectedText}`);
+      this.questionToOpenAI(selectedText); // Chama questionToOpenAI com o texto selecionado
+      this.openDialog(selectedText);
+      console.log("SELECIONADO:"+selectedText)
+    }
+  }
 }
+
 
 
 }//fim
