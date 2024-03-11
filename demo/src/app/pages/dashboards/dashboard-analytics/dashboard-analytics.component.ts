@@ -14,11 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSliderModule } from '@angular/material/slider';
-import {
-  MatSnackBar,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition
-} from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -55,6 +51,7 @@ import { WordComponent } from '../components/word/word.component';
 
 import { Course } from 'src/app/model/course/course';
 import { CoursesService } from '../../../services/courses.service';
+import { BookComponent } from '../../apps/book/book.component';
 import { PageLayoutDemoComponent } from '../../ui/page-layouts/page-layout-demo/page-layout-demo.component';
 import { DialogExampleComponent } from '../components/dialog/dialog-example.component';
 
@@ -96,7 +93,8 @@ interface ResponseData {
     MatStepperModule,
     MatChipsModule,
     VexHighlightDirective,
-    WordComponent
+    WordComponent,
+    BookComponent
   ]
 })
 

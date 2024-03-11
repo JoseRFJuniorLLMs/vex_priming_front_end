@@ -24,9 +24,10 @@
     <button (click)="zoomOut()" matTooltip="Zoom OUT" class="config-panel-toggle4" color="primary" mat-fab type="button">
       <mat-icon svgIcon="mat:zoom_out">Zoom OUT</mat-icon>
     </button>
-    <button (click)="sendCurrentPageTextToAI()" matTooltip="Send Current Page Text to AI" class="config-panel-toggle4" color="primary" mat-fab type="button">
+    <button (click)="questionToOpenAI(currentPageText)" matTooltip="Send Current Page Text to AI" class="config-panel-toggle4" color="primary" mat-fab type="button">
       <mat-icon svgIcon="mat:send">Send</mat-icon>
     </button>
+
     <button (click)="countPages()" matTooltip="Count Pages" class="config-panel-toggle4" color="primary" mat-fab type="button">
       <mat-icon svgIcon="mat:content_paste">Count Pages</mat-icon>
     </button>
