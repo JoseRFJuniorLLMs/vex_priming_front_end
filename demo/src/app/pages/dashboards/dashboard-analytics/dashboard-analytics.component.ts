@@ -172,6 +172,7 @@ emojis: string[] = []; // Emojis
 mentions: string[] = []; // Menções (@usuario)
 hashtags: string[] = []; // Hashtags
 
+musicFiles = ['ABOVE.wav', 'ADVANCE.wav', 'FULL.wav','FULL2.wav','music.mp3', 'PRIMING.wav'];
 
   selectedChip: 'phrase' | 'text' | 'word' | null = null;
 
@@ -215,7 +216,7 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
   /* ==================OnINIT==================== */
   ngOnInit(): void {
 
-    this.analyzeText();
+   this.analyzeText();
 
      // Inicialização direta
   this.displayedColumns = ['_id', 'name', 'objective', 'category', 'level', 'price', 'status', 'content', 'lessons'];
@@ -349,7 +350,7 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
       container: this.waveformEl.nativeElement,
       /*  url: 'https://storage.googleapis.com/priming_text_wav/ABOVE.wav', */
 
-      url: '../../assets/audio/music.mp3',
+      url: '../../assets/audio/FULL.wav',
       waveColor: '#d3d3d3',
       progressColor: 'rgb(0, 0, 0)',
       /*       waveColor: 'rgb(200, 0, 200)',

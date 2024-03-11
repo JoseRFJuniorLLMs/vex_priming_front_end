@@ -1,17 +1,12 @@
-<!-- Waveform -->
-
-<div #waveform autoplay matTooltip="Wave Form" style="cursor: pointer;">
-  <div class="time-indicator">
-</div>
-
 <mat-card cdkDrag cdkDragHandle
 class="action flex-none" color="primary"
 id="barr01" mat-flat-button>
 
   <mat-card-actions align="end">
-    <mat-form-field appearance="fill">
+
+<mat-form-field appearance="fill" matTooltip="Layout Options" >
       <mat-label>Layout Options</mat-label>
-      <mat-select (selectionChange)="changeRenderOption($event.value)">
+      <mat-select [(ngModel)]="selectedLayoutOption" (selectionChange)="changeRenderOption($event.value)">
         <mat-option value="default">Default</mat-option>
         <mat-option value="continuous">Continuous</mat-option>
         <mat-option value="paginated">Paginated</mat-option>
@@ -19,7 +14,8 @@ id="barr01" mat-flat-button>
       </mat-select>
     </mat-form-field>
 
-    <button (click)="prevPage()" matTooltip="Previous Page" class="config-panel-toggle4" color="primary" mat-fab type="button">
+    <button (click)="prevPage()" matTooltip="Previous Page"
+    class="config-panel-toggle4" color="primary" mat-fab type="button">
       <mat-icon svgIcon="mat:arrow_back_ios"></mat-icon>
     </button>
     <button (click)="nextPage()" matTooltip="Next Page" class="config-panel-toggle4" color="primary" mat-fab type="button">
@@ -41,8 +37,22 @@ id="barr01" mat-flat-button>
     <button mat-raised-button [matBadge]="totalPages">
       Total Pages
     </button>
-  </mat-card-actions>
+
+ </mat-card-actions>
 </mat-card>
+
+
+<!-- Container para o Waveform, com posicionamento relativo -->
+<div class="waveform-container">
+  <!-- Waveform -->
+  <div id="waveform" #waveform autoplay style="cursor: pointer;">
+  </div>
+
+  <!-- Tooltip -->
+  <div class="tooltip-meu-tooltip">
+    Tooltip content goes here
+  </div>
+</div>
 
 
 
