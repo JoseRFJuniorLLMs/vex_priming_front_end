@@ -52,6 +52,7 @@ import { WordComponent } from '../components/word/word.component';
 import { Course } from 'src/app/model/course/course';
 import { CoursesService } from '../../../services/courses.service';
 import { BookComponent } from '../../apps/book/book.component';
+import { GraphComponent } from '../../apps/graph/graph.component';
 import { PageLayoutDemoComponent } from '../../ui/page-layouts/page-layout-demo/page-layout-demo.component';
 import { DialogExampleComponent } from '../components/dialog/dialog-example.component';
 
@@ -94,7 +95,8 @@ interface ResponseData {
     MatChipsModule,
     VexHighlightDirective,
     WordComponent,
-    BookComponent
+    BookComponent,
+    GraphComponent
   ]
 })
 

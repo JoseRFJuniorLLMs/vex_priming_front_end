@@ -39,6 +39,7 @@
     "@ngneat/falso": "^7.1.1",
     "@ngx-loading-bar/core": "^6.0.2",
     "@ngx-loading-bar/router": "^6.0.2",
+    "@swimlane/ngx-graph": "^8.2.4",
     "@tinymce/tinymce-angular": "^7.0.0",
     "@types/jest": "^29.5.12",
     "@types/wavesurfer.js": "6.0.12",
