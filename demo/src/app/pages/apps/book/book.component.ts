@@ -74,64 +74,91 @@ export class BookComponent implements OnInit, AfterViewInit {
   //initializeBook
   async initializeBook() {
     try {
-      this.book = ePub("../../assets/epub/TheLittlePrince.epub");
-      await this.book.ready;
-      this.rendition = this.book.renderTo("area-de-exibicao");
+        this.book = ePub("../../assets/epub/TheLittlePrince.epub");
+        await this.book.ready;
+        this.rendition = this.book.renderTo("area-de-exibicao");
+        await this.book.locations.generate(1024);
+        this.totalPages = this.book.locations.length(); // Atualiza o total de páginas
 
-      await this.book.locations.generate(1024); // Gera localizações CFI para cada 1024 caracteres.
+        this.rendition.display().then(() => {
+            // Após a exibição inicial, chama a função para atualizar texto da página e localização
+            this.updateCurrentPageTextAndLocation();
+        });
 
-      this.totalPages = this.book.locations.length(); // Atualiza o total de páginas.
-
-      // Exibe o conteúdo inicial e atualiza a página corrente.
-      this.rendition.display().then(() => this.updateCurrentPage());
-
-      // Adicionando um ouvinte para o evento 'relocated'.
-      this.rendition.on('relocated', (location: any) => {
-        this.updateCurrentPage();
-      });
+        // Adiciona um ouvinte para o evento 'relocated'
+        this.rendition.on('relocated', (location: any) => {
+            // Chamada após cada navegação do usuário
+            this.updateCurrentPageTextAndLocation();
+        });
     } catch (error) {
-      console.error("Error loading or rendering book: ", error);
+        console.error("Error loading or rendering book: ", error);
     }
-  }
+}
 
-  //updateCurrentPage
+ //updateCurrentPage
   updateCurrentPage() {
     const currentLocation = this.rendition.currentLocation();
     if (currentLocation && currentLocation.start && currentLocation.start.cfi) {
         // Encontrar o índice do CFI atual nas localizações geradas
         const pageIndex = this.book.locations.locationFromCfi(currentLocation.start.cfi);
         this.currentPage = pageIndex + 1; // ePub.js pode usar índices base 0, então adicione 1 para ter base 1
-        console.log(`Página Atual: ${this.currentPage} / ${this.totalPages}`);
-        this.openSnackBar(`Página Atual: ${this.currentPage} / ${this.totalPages}`);
+        console.log(`Current page: ${this.currentPage} / ${this.totalPages}`);
+        this.openSnackBar(`Current page: ${this.currentPage} / ${this.totalPages}`);
     } else {
         console.log("Não foi possível determinar a localização atual.");
     }
 }
 
-
-
-// Assumindo que esta função é chamada dentro do evento `relocated`
+// getCurrentPageText
 async getCurrentPageText(): Promise<string> {
   if (!this.rendition) {
-    console.log("Rendition is not available.");
+    this.openSnackBar('Rendition is not available.');
+    console.log('Rendition is not available.');
     return '';
   }
 
-  const location = this.rendition.currentLocation();
-  if (!location || !location.start || !location.start.cfi) {
-    console.log("No location displayed or CFI is not available.");
+  try {
+    const contents = this.rendition.getContents();
+    if (contents.length === 0) {
+      this.openSnackBar('No content available.');
+      console.log('No content available.');
+      return '';
+    }
+
+    let fullText = '';
+    for (const content of contents) {
+      if (content && typeof content.textContent === 'function') {
+        const text = await content.textContent();
+        fullText += text;
+      }
+    }
+
+    if (fullText) {
+      this.openSnackBar('Texto da página obtido com sucesso.');
+      console.log('Texto da página obtido com sucesso:', fullText);
+      return fullText.trim();
+    } else {
+      this.openSnackBar('Falha ao obter texto da página.');
+      return '';
+    }
+  } catch (error) {
+    console.error('Erro ao tentar obter o texto da Current page:', error);
+    this.openSnackBar('Erro ao tentar obter o texto da Current page.');
     return '';
   }
-
-  const range = await this.book.getRange(location.start.cfi);
-  if (!range) {
-    console.error("Error getting range:");
-    return '';
-  }
-
-  return range.toString().trim();
 }
 
+
+// updateAndGenerateAudio
+async updateAndGenerateAudio() {
+  this.currentPageText = await this.getCurrentPageText();
+  console.log('Texto atualizado para geração de áudio:', this.currentPageText);
+  if (this.currentPageText) {
+    this.generateAudio(this.currentPageText);
+  } else {
+    console.log('Nenhum texto disponível para gerar áudio.');
+  }
+}
 
 //toggleLayout
   toggleLayout() {
@@ -275,6 +302,33 @@ async questionToOpenAI(question: string) {
       this.rendition.display(currentLocation.start.cfi);
     }
   }
+
+  async updateCurrentPageTextAndLocation() {
+    // Atualiza o texto da Current page
+    this.currentPageText = await this.getCurrentPageText();
+    console.log("Texto da Current page:", this.currentPageText);
+
+    // Atualiza a localização atual (número da página e total de páginas)
+    const currentLocation = this.rendition.currentLocation();
+    if (currentLocation && currentLocation.start && currentLocation.start.cfi) {
+        // Encontrar o índice do CFI atual nas localizações geradas
+        const pageIndex = this.book.locations.locationFromCfi(currentLocation.start.cfi);
+        if (pageIndex !== undefined) {
+            this.currentPage = pageIndex + 1; // ePub.js pode usar índices base 0, então adicione 1 para ter base 1
+        } else {
+            console.log("CFI atual não encontrado nas localizações.");
+        }
+    } else {
+        console.log("Não foi possível determinar a localização atual.");
+    }
+
+    // Exibe informações atualizadas no console ou na UI
+    console.log(`Current page: ${this.currentPage} / ${this.totalPages}`);
+    // Atualiza a UI com a nova Current page, se necessário
+    // Exemplo: this.updatePageIndicator(this.currentPage, this.totalPages);
+    // Ou use uma função para exibir o texto da Current page no Snackbar
+    this.openSnackBar(`Current page: ${this.currentPage} / ${this.totalPages}`);
+}
 
   /* ==================SNACK BAR==================== */
   openSnackBar(textDisplay: string) {
