@@ -17,9 +17,9 @@ export class CoursesService {
 
   constructor(private http: HttpClient) { }
 
-  getCoursesByStudentId(_id: string): Observable<any> {
-    const url = `https://priming-1532995a3138.herokuapp.com/student/v2/${_id}/courses`;
-    console.log('Chamando API para obter cursos do estudante com ID:', _id);
+  getCoursesByStudentId(): Observable<any> {
+    const url = `https://priming-1532995a3138.herokuapp.com/student/v2/65c6b529c2c6b863b27a3172/courses`;
+    console.log('Chamando API para obter cursos do estudante com ID:');
     return this.http.get<any>(url).pipe(first());
   }
 

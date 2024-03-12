@@ -219,14 +219,14 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
 
      // Inicialização direta
 
-      this.coursesService.getCoursesByStudentId('65c5d833c2c6b863b26ae1df').subscribe(cursos => {
-      console.log("CURSOS»»»»"+cursos); // Verifique os dados aqui
-      this.dataSource.data = cursos; // Certifique-se de que está atribuindo os dados corretamente
-      this.cdRef.detectChanges(); // Força a detecção de mudanças
-  });
+      //this.coursesService.getCoursesByStudentId('65c5d833c2c6b863b26ae1df').subscribe(cursos => {
+        this.coursesService.getCoursesByStudentId().subscribe(cursos => {
+          console.log("CURSOS»»»»", cursos); // Verifique os dados aqui
+          this.dataSource.data = cursos; // Atribui os cursos ao dataSource da tabela
+          this.cdRef.detectChanges(); // Força a detecção de mudanças, se necessário
+        });
 
-    const studentId = '_id';
-    this.courses$ = this.coursesService.getCoursesByStudentId(studentId);
+    this.courses$ = this.coursesService.getCoursesByStudentId();
 
     // Definindo colunas dinamicamente com base na entidade Course (exemplo simplificado)
     this.displayedColumns = this.getColumnsFromCourseEntity();
