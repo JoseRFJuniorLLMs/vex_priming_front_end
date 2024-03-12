@@ -103,8 +103,7 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   /* ==================COURSES SERVICES==================== */
 
   courses$!: Observable<Course[]>;
-  //displayedColumns : string[] = ['_id', 'name', 'objective', 'category', 'level', 'price', 'status', 'content', 'lessons', 'description'];
-  displayedColumns: string[] = ['name', 'level', 'objective', 'status'];
+  displayedColumns: string[] = ['_id', 'level', 'name', 'content', 'objective', 'status', 'category', 'price', 'lessons'];
 
   /* ==================VIEWCHILD==================== */
   @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
@@ -219,13 +218,14 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
    this.analyzeText();
 
      // Inicialização direta
-  this.displayedColumns = ['_id', 'name', 'objective', 'category', 'level', 'price', 'status', 'content', 'lessons'];
-  //this.displayedColumns = ['name', 'level', 'objective', 'status'];
-  this.coursesService.getCoursesByStudentId('65c6b529c2c6b863b27a3172').subscribe(cursos => {
-    this.dataSource = new MatTableDataSource(cursos);
+
+      this.coursesService.getCoursesByStudentId('65c5d833c2c6b863b26ae1df').subscribe(cursos => {
+      console.log("CURSOS»»»»"+cursos); // Verifique os dados aqui
+      this.dataSource.data = cursos; // Certifique-se de que está atribuindo os dados corretamente
+      this.cdRef.detectChanges(); // Força a detecção de mudanças
   });
 
-    const studentId = 'student_id';
+    const studentId = '_id';
     this.courses$ = this.coursesService.getCoursesByStudentId(studentId);
 
     // Definindo colunas dinamicamente com base na entidade Course (exemplo simplificado)
@@ -244,7 +244,7 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
 
    /* ==================COLUMNS COURSE==================== */
   private getColumnsFromCourseEntity(): string[] {
-      return ['_id', 'name', 'objective', 'category'];
+        return ['_id', 'level', 'name', 'content', 'objective', 'status', 'category', 'price', 'lessons']
   }
 
   /* ==================OnDESTROY==================== */
@@ -253,49 +253,7 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
   }
 
   /*questionToOpenAI CONSOME API DA OPEN IA, recebe question, retorna messages */
-  /* async questionToOpenAI(question: string) {
-    this.isLoading = true;
-    try {
-      const headers = new HttpHeaders({
-        "Authorization": `Bearer ${gpt4.gptApiKey}`,
-        "Content-Type": "application/json"
-      });
-
-      const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
-        messages: [{ role: 'user', content: "repeat this word:" + question +",more 3 priming sentences, children's phrases that contain the word" }],
-        //messages: [{ role: 'user', content: "repeat this word:" + question }],
-        temperature: 0.0,//0.5
-        max_tokens: 1000,//4000
-        model: "gpt-4",
-      }, { headers }).toPromise();
-      if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
-        throw new Error("Resposta da API não contém dados válidos.");
-      }
-
-      this.chatMessage = response.choices[0].message.content;
-      // Calcula o tempo necessário para exibir o texto
-      const displayTime = this.displayTextWordByWord(this.chatMessage);
-
-      // Define um atraso para iniciar a reprodução do áudio, baseado no tempo de exibição do texto
-      setTimeout(() => {
-        // Função que carrega e reproduz o áudio
-        this.generateAudio();
-      }, displayTime);
-
-      // Opção de exibir a mensagem em um Snackbar imediatamente,
-      //this.openSnackBar(this.chatMessage);
-
-    } catch (error) {
-      // Tratamento de erros
-      this.errorText = "Falha ao obter resposta da API: " + (error as Error).message;
-    } finally {
-      // Sempre será executado após a tentativa ou captura de bloco
-      this.isLoading = false;
-    }
-  }
- */
-
-  async questionToOpenAI(question: string, selection: 'phrase' | 'text' | 'word') {
+    async questionToOpenAI(question: string, selection: 'phrase' | 'text' | 'word') {
     this.isLoading = true;
     try {
       const headers = {

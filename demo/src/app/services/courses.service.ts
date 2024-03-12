@@ -17,9 +17,9 @@ export class CoursesService {
 
   constructor(private http: HttpClient) { }
 
-  getCoursesByStudentId(student_id: string): Observable<any> {
-    const url = `https://priming-1532995a3138.herokuapp.com/student/v2/${student_id}/courses`;
-    console.log('Chamando API para obter cursos do estudante com ID:', student_id);
+  getCoursesByStudentId(_id: string): Observable<any> {
+    const url = `https://priming-1532995a3138.herokuapp.com/student/v2/${_id}/courses`;
+    console.log('Chamando API para obter cursos do estudante com ID:', _id);
     return this.http.get<any>(url).pipe(first());
   }
 
@@ -31,16 +31,16 @@ export class CoursesService {
     );
   }
 
-  loadById(id: string) {
+  loadById(_id: string) {
     if (this.cache.length > 0) {
-      const record = this.cache.find(course => `${course._id}` === `${id}`);
-      return record != null ? of(record) : this.getById(id);
+      const record = this.cache.find(course => `${course._id}` === `${_id}`);
+      return record != null ? of(record) : this.getById(_id);
     }
-    return this.getById(id);
+    return this.getById(_id);
   }
 
-  private getById(id: string) {
-    return this.http.get<Course>(`${this.API}/${id}`).pipe(first());
+  private getById(_id: string) {
+    return this.http.get<Course>(`${this.API}/${_id}`).pipe(first());
   }
 
   save(record: Partial<Course>) {
@@ -58,7 +58,7 @@ export class CoursesService {
     return this.http.post<Course>(this.API, record).pipe(first());
   }
 
-  remove(id: string) {
-    return this.http.delete<Course>(`${this.API}/${id}`).pipe(first());
+  remove(_id: string) {
+    return this.http.delete<Course>(`${this.API}/${_id}`).pipe(first());
   }
 }

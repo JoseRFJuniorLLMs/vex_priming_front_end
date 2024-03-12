@@ -1,13 +1,14 @@
-import { Lesson } from '../lesson/lesson';
+//import { Lesson } from '../lesson/lesson';
 
 export interface Course {
     _id: string;
-    name?: string;
-    objective?: string;
-    content?: string[];
-    category?: string;
     level?: string;
-    price?: string;
+    name?: string;
+    content?: string[];
+    objective?: string;
     status?: string;
-    lessons?: Lesson[];
+    category?: string;
+    price?: string;
+    //lessons?: Lesson[];
+    lessons?: string[];
   }

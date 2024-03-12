@@ -252,60 +252,63 @@
 
               <!-- Coluna para '_id' -->
               <ng-container matColumnDef="_id">
-                <th mat-header-cell *matHeaderCellDef> Id </th>
+                <th mat-header-cell *matHeaderCellDef> _id </th>
                 <td mat-cell *matCellDef="let course"> {{ course._id || 'Não disponível'}} </td>
               </ng-container>
 
-              <!-- Coluna Nome do Curso -->
+              <!-- Coluna Name do Curso -->
               <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef> Nome </th>
+                <th mat-header-cell *matHeaderCellDef> Name </th>
                 <td mat-cell *matCellDef="let course"> {{ course.name || 'Não disponível'}} </td>
               </ng-container>
 
-              <!-- Coluna Objetivo do Curso -->
-              <ng-container matColumnDef="objective">
-                <th mat-header-cell *matHeaderCellDef> Objetivo </th>
-                <td mat-cell *matCellDef="let course"> {{ course.objective || 'Não disponível'}} </td>
-              </ng-container>
-
-              <!-- Coluna Categoria do Curso -->
-              <ng-container matColumnDef="category">
-                <th mat-header-cell *matHeaderCellDef> Categoria </th>
-                <td mat-cell *matCellDef="let course"> {{ course.category || 'Não disponível'}} </td>
-              </ng-container>
-
-              <!-- Coluna para 'level' -->
+              <!-- Coluna para 'Level' -->
               <ng-container matColumnDef="level">
-                <th mat-header-cell *matHeaderCellDef> Nível </th>
+                <th mat-header-cell *matHeaderCellDef> Level </th>
                 <td mat-cell *matCellDef="let course"> {{ course.level || 'Não disponível'}} </td>
               </ng-container>
 
-              <!-- Coluna para 'price' -->
+              <!-- Coluna Objective do Curso -->
+              <ng-container matColumnDef="objective">
+                <th mat-header-cell *matHeaderCellDef> Objective </th>
+                <td mat-cell *matCellDef="let course"> {{ course.objective || 'Não disponível'}} </td>
+              </ng-container>
+
+              <!-- Coluna Category do Curso -->
+              <ng-container matColumnDef="category">
+                <th mat-header-cell *matHeaderCellDef> Category </th>
+                <td mat-cell *matCellDef="let course"> {{ course.category || 'Não disponível'}} </td>
+              </ng-container>
+
+
+
+              <!-- Coluna para 'Price' -->
               <ng-container matColumnDef="price">
-                <th mat-header-cell *matHeaderCellDef> Preço </th>
+                <th mat-header-cell *matHeaderCellDef> Price </th>
                 <td mat-cell *matCellDef="let course"> {{ course.price || 'Não disponível'}} </td>
               </ng-container>
 
-              <!-- Coluna para 'status' -->
+              <!-- Coluna para 'content' -->
+              <ng-container matColumnDef="content">
+                <th mat-header-cell *matHeaderCellDef> Content </th>
+                <td mat-cell *matCellDef="let course"> {{ course.content || 'Não disponível'}} </td>
+              </ng-container>
+
+              <!-- Coluna para 'Status' -->
               <ng-container matColumnDef="status">
                 <th mat-header-cell *matHeaderCellDef> Status </th>
                 <td mat-cell *matCellDef="let course"> {{ course.status || 'Não disponível'}} </td>
               </ng-container>
 
-              <!-- Coluna para 'content' -->
-              <ng-container matColumnDef="content">
-                <th mat-header-cell *matHeaderCellDef> Conteúdo (Qtd) </th>
-                <td mat-cell *matCellDef="let course"> {{ course.content.length || 'Não disponível'}} itens </td>
-              </ng-container>
 
               <!-- Coluna para visualizar 'lessons' -->
-              <!--              <ng-container matColumnDef="lessons">
+                <ng-container matColumnDef="lessons">
                 <th mat-header-cell *matHeaderCellDef> Lições </th>
                 <td mat-cell *matCellDef="let course">
-                  <button mat-button (click)="openLessonsDialog(course.lessons)">Ver Lições ({{course.lessons.length ||
+                  <button mat-button>Ver Lições ({{course.lessons.length ||
                     'Não disponível'}})</button>
                 </td>
-              </ng-container> -->
+              </ng-container>  -->
 
               <!-- Cabeçalho e linhas da tabela -->
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -420,4 +423,71 @@
   </vex-page-layout-content>
 </vex-page-layout>
 
+
+<div class="p-6">
+
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <!-- Coluna para '_id' -->
+    <ng-container matColumnDef="_id">
+      <th mat-header-cell *matHeaderCellDef> _id </th>
+      <td mat-cell *matCellDef="let course"> {{ course._id || 'Não disponível'}} </td>
+    </ng-container>
+
+    <!-- Coluna Name do Curso -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let course"> {{ course.name || 'Não disponível'}} </td>
+    </ng-container>
+
+    <!-- Coluna para 'Level' -->
+    <ng-container matColumnDef="level">
+      <th mat-header-cell *matHeaderCellDef> Level </th>
+      <td mat-cell *matCellDef="let course"> {{ course.level || 'Não disponível'}} </td>
+    </ng-container>
+
+    <!-- Coluna Objective do Curso -->
+    <ng-container matColumnDef="objective">
+      <th mat-header-cell *matHeaderCellDef> Objective </th>
+      <td mat-cell *matCellDef="let course"> {{ course.objective || 'Não disponível'}} </td>
+    </ng-container>
+
+    <!-- Coluna Category do Curso -->
+    <ng-container matColumnDef="category">
+      <th mat-header-cell *matHeaderCellDef> Category </th>
+      <td mat-cell *matCellDef="let course"> {{ course.category || 'Não disponível'}} </td>
+    </ng-container>
+
+    <!-- Coluna para 'Price' -->
+    <ng-container matColumnDef="price">
+      <th mat-header-cell *matHeaderCellDef> Price </th>
+      <td mat-cell *matCellDef="let course"> {{ course.price || 'Não disponível'}} </td>
+    </ng-container>
+
+    <!-- Coluna para 'content' -->
+    <ng-container matColumnDef="content">
+      <th mat-header-cell *matHeaderCellDef> Content </th>
+      <td mat-cell *matCellDef="let course"> {{ course.content || 'Não disponível'}} </td>
+    </ng-container>
+
+    <!-- Coluna para 'Status' -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let course"> {{ course.status || 'Não disponível'}} </td>
+    </ng-container>
+
+    <!-- Coluna para visualizar 'lessons' -->
+      <ng-container matColumnDef="lessons">
+      <th mat-header-cell *matHeaderCellDef> lessons </th>
+      <td mat-cell *matCellDef="let course">
+        <button mat-button>View lessons ({{course.lessons.length ||
+          'Não disponível'}})</button>
+      </td>
+    </ng-container>  -->
+
+    <!-- Cabeçalho e linhas da tabela -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
 
