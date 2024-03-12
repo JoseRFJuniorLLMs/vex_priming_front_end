@@ -567,7 +567,7 @@ handleMouseUp(event: MouseEvent) {
     const openAIKey = gpt4.gptApiKey;
     const url = "https://api.openai.com/v1/audio/speech";
     const body = {
-      model: "tts-1",
+      model: "tts-1-hd",//tts-1-hd, tts-1
       voice: this.getRandomVoice(),
       input: this.chatMessage
     };

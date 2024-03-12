@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { MatBadgeModule } from '@angular/material/badge';
@@ -28,6 +28,7 @@ interface ResponseData {
   imports: [MatBadgeModule, MatCardModule, MatIconModule, MatSelectModule, FormsModule, MatTooltipModule]
 
 })
+
 export class BookComponent implements OnInit, AfterViewInit {
 
   /* ==================VIEWCHILD==================== */
@@ -39,7 +40,9 @@ export class BookComponent implements OnInit, AfterViewInit {
   public isPlaying: boolean = false;
   public currentPageText: string = '';
 
-   book: any;
+  //bookText: string = 'To Leon Werth I apologize to the children for dedicating this book to a grown-up. I have a good excuse: this grown-up is the best friend I have in the world. I have another good excuse: this grown-up can understand everything, even childrens books. I have a third good excuse: this grown-up lives in France where he is hungry and cold. He needs to be comforted. If all these excuses are not enough, I will then dedicate this book to the child who became that grown-up. All grown-ups were first children. (But few of them remember it.) So I correct my dedication:  To Leon Werth when he was a little boy.';
+
+  book: any;
   rendition: any;
   selectedText: string = '';
   totalPages: number = 0;
@@ -52,17 +55,20 @@ export class BookComponent implements OnInit, AfterViewInit {
   chatMessage: any;
   errorText = '';
   imageDisplayed: boolean = false;
-
   wordDuration: number = 0;
   wordsArray: string[] = [];
+  selectedLayoutOption = 'paginated';
 
-  selectedLayoutOption = 'default';
+  voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
 
   constructor(private http: HttpClient, private _snackBar: MatSnackBar,) {}
 
   ngOnInit() {
     this.initializeBook();
 
+    setTimeout(() => {
+      this.generateAudio(this.currentPageText);
+    }, 1000); // Ajuste o tempo conforme necessário
   }
 
   //initializeBook
@@ -71,42 +77,63 @@ export class BookComponent implements OnInit, AfterViewInit {
       this.book = ePub("../../assets/epub/TheLittlePrince.epub");
       await this.book.ready;
       this.rendition = this.book.renderTo("area-de-exibicao");
-      await this.book.locations.generate();
-      this.totalPages = this.book.locations.length(); // Atualiza o total de páginas
-      this.rendition.display();
 
-      // Adicionando um ouvinte para o evento 'relocated' com tipo 'any' para o parâmetro 'location'
-      this.rendition.on('relocated', async (location: any) => {
-        // Chamada para a função que captura o texto da página atual
-        this.currentPageText = await this.getCurrentPageText();
-        // Agora você tem o texto da página atual em this.currentPageText
-        // Você pode fazer o que precisar com ele aqui
-        console.log(this.currentPageText);
+      await this.book.locations.generate(1024); // Gera localizações CFI para cada 1024 caracteres.
+
+      this.totalPages = this.book.locations.length(); // Atualiza o total de páginas.
+
+      // Exibe o conteúdo inicial e atualiza a página corrente.
+      this.rendition.display().then(() => this.updateCurrentPage());
+
+      // Adicionando um ouvinte para o evento 'relocated'.
+      this.rendition.on('relocated', (location: any) => {
+        this.updateCurrentPage();
       });
     } catch (error) {
       console.error("Error loading or rendering book: ", error);
     }
   }
 
-  //getCurrentPageText
-  async getCurrentPageText(): Promise<string> {
-    if (!this.rendition) {
-      return '';
+  //updateCurrentPage
+  updateCurrentPage() {
+    const currentLocation = this.rendition.currentLocation();
+    if (currentLocation && currentLocation.start && currentLocation.start.cfi) {
+        // Encontrar o índice do CFI atual nas localizações geradas
+        const pageIndex = this.book.locations.locationFromCfi(currentLocation.start.cfi);
+        this.currentPage = pageIndex + 1; // ePub.js pode usar índices base 0, então adicione 1 para ter base 1
+        console.log(`Página Atual: ${this.currentPage} / ${this.totalPages}`);
+        this.openSnackBar(`Página Atual: ${this.currentPage} / ${this.totalPages}`);
+    } else {
+        console.log("Não foi possível determinar a localização atual.");
     }
-    const currentContents = this.rendition.getContents();
-    if (currentContents.length === 0) {
-      return ''; // Verifica se há algum conteúdo retornado
-    }
+}
 
-    let text = '';
-    currentContents.forEach((content: any) => {
-      text += content.document.body.textContent || ''; // Concatena o texto de cada conteúdo
-    });
 
-    return text;
+
+// Assumindo que esta função é chamada dentro do evento `relocated`
+async getCurrentPageText(): Promise<string> {
+  if (!this.rendition) {
+    console.log("Rendition is not available.");
+    return '';
   }
 
-  //toggleLayout
+  const location = this.rendition.currentLocation();
+  if (!location || !location.start || !location.start.cfi) {
+    console.log("No location displayed or CFI is not available.");
+    return '';
+  }
+
+  const range = await this.book.getRange(location.start.cfi);
+  if (!range) {
+    console.error("Error getting range:");
+    return '';
+  }
+
+  return range.toString().trim();
+}
+
+
+//toggleLayout
   toggleLayout() {
     return () => {
       this.rendition.spread = (this.rendition.spread === "none") ? "always" : "none";
@@ -154,32 +181,34 @@ async questionToOpenAI(question: string) {
       });
 
       const response: ResponseData | undefined = await this.http.post<ResponseData>(gpt4.gptUrl, {
-        messages: [{ role: 'user', content: "repeat this word:" + question +",more 3 priming sentences, children's phrases that contain the word" }],
+        messages: [{ role: 'user', content: "repeat this tex:" + question}],
         //messages: [{ role: 'user', content: "repeat this word:" + question }],
         temperature: 0.0,//0.5
         max_tokens: 1000,//4000
         model: "gpt-4",
       }, { headers }).toPromise();
       if (!response || !response.choices || response.choices.length === 0 || !response.choices[0].message) {
+        this.openSnackBar("Resposta da API não contém dados válidos.");
         throw new Error("Resposta da API não contém dados válidos.");
       }
 
       this.chatMessage = response.choices[0].message.content;
       // Calcula o tempo necessário para exibir o texto
-      const displayTime = this.displayTextWordByWord(this.chatMessage);
       const currentPageText = await this.getCurrentPageText();
       // Define um atraso para iniciar a reprodução do áudio, baseado no tempo de exibição do texto
       setTimeout(() => {
         // Função que carrega e reproduz o áudio
         this.generateAudio(currentPageText);
-      }, displayTime);
+      });
 
       // Opção de exibir a mensagem em um Snackbar imediatamente,
-      this.openSnackBar(this.chatMessage);
+      this.openSnackBar("questionTo OpenAI«««"+this.chatMessage);
 
     } catch (error) {
       // Tratamento de erros
+      this.openSnackBar("Falha ao obter resposta da API: " + (error as Error).message);
       this.errorText = "Falha ao obter resposta da API: " + (error as Error).message;
+
     } finally {
       // Sempre será executado após a tentativa ou captura de bloco
       this.isLoading = false;
@@ -256,154 +285,68 @@ async questionToOpenAI(question: string) {
     });
   }
 
-  /* ==================DISPLAY WORD BY WORD AND SHOW IMAGE==================== */
-  displayTextWordByWord(text: string): number {
-    const words = text.split(' ');
-    const displayElement = document.getElementById('textDisplay');
-    if (!displayElement) return 0; // Se o elemento não existir, retorna 0.
-
-    let i = 0;
-    displayElement.textContent = ''; // Inicializa o conteúdo do displayElement como vazio.
-
-    const wordDisplayInterval = 900; // Intervalo em milissegundos
-    const totalTime = words.length * wordDisplayInterval;
-
-    const intervalId = setInterval(() => {
-      if (i < words.length) {
-        displayElement.innerText += words[i] + ' ';
-        i++;
-      } else {
-        clearInterval(intervalId);
-        // Após exibir todas as palavras, limpa o texto e insere a imagem.
-        //displayElement.innerHTML = '<img src="/assets/img/logo/priming.png" alt="Priming Logo" style="max-width: 100%; height: auto;">';
-        this.imageDisplayed = true; // Imagem exibida, atualize a flag
-      }
-    }, wordDisplayInterval);
-
-    return totalTime;
-  }
 
   /* ==================GERA AUDIO==================== */
-/*   generateAudio(): void {
+  generateAudio(text: string): void {
     // Verifica se já está gerando áudio para evitar duplicação
     if (this.isGeneratingAudio) return;
 
-    // Indica que o processo de geração de áudio começou
     this.isGeneratingAudio = true;
 
-    if (!this.chatMessage) {
-      console.error('No chatMessage to generate audio from.');
-      this.openSnackBar("No chatMessage to generate audio from.");
-      // Restaura o estado para permitir novas gerações de áudio
+    // Verifica se o texto foi fornecido
+    if (!text) {
+      console.error('No text provided to generate audio from.');
+      this.openSnackBar("No text provided to generate audio from.");
       this.isGeneratingAudio = false;
       return;
     }
 
+    // Define a chave API e a URL da API
     const openAIKey = gpt4.gptApiKey;
     const url = "https://api.openai.com/v1/audio/speech";
-    const body = {
-      model: "tts-1",
-      voice: this.getRandomVoice(),
-      input: this.chatMessage
-    };
 
-    const headers = new HttpHeaders({
-      "Authorization": `Bearer ${openAIKey}`
+    // Configura o corpo da requisição
+    const body = JSON.stringify({
+      model: "tts-1-hd",
+      voice: this.getRandomVoice(),
+      input: text
+      //"model": "tts-1-hd",//tts-1-hd, tts-1
+      //"voice": "alloy",//voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+      //"input": this.bookText
     });
 
+    // Configura os cabeçalhos da requisição
+    const headers = new HttpHeaders({
+      "Authorization": `Bearer ${openAIKey}`,
+      "Content-Type": "application/json"
+    });
+
+    // Faz a requisição POST para gerar o áudio
     this.http.post(url, body, { headers, responseType: "blob" }).subscribe(
       response => {
+        // Cria uma URL a partir do Blob de áudio recebido
         const audioBlob = new Blob([response], { type: 'audio/wav' });
         const audioUrl = URL.createObjectURL(audioBlob);
-
-        // Define as funções listener que serão usadas nos eventos 'ready' e 'finish'
-        const onReady = () => {
-          this.waveform.play();
-        };
-
-        const onFinish = () => {
-          // Ações adicionais após a conclusão do áudio
-          this.isGeneratingAudio = false;
-          //this.playSound('../../../../assets/audio/music.mp3');
-          this.openDialog(this.chatMessage);
-          this.openSnackBar(this.chatMessage);
-          // Limpa os listeners após seu uso
-          this.waveform.un('ready', onReady);
-          this.waveform.un('finish', onFinish);
-        };
-
-        // Limpa quaisquer listeners anteriores (necessário se a função for chamada múltiplas vezes)
-        this.waveform.un('ready', onReady);
-        this.waveform.un('finish', onFinish);
-
-        // Carrega o áudio no WaveSurfer e define os listeners
+        this.openSnackBar("Faz a requisição POST para gerar o áudio");
+        // Carrega o áudio no WaveSurfer e configura eventos para reprodução
         this.waveform.load(audioUrl);
-        this.waveform.on('ready', onReady);
-        this.waveform.on('finish', onFinish);
+        this.waveform.on('ready', () => {
+          this.waveform.play();
+          this.openSnackBar(" this.waveform.play();");
+        });
+
+        this.waveform.on('finish', () => {
+          // Restaura o estado ao terminar de reproduzir o áudio
+          this.isGeneratingAudio = false;
+        });
       },
       error => {
+        // Trata erros na requisição
         console.error("Error generating audio:", error);
-        // Restaura o estado em caso de erro
+        this.openSnackBar("Error generating audio");
         this.isGeneratingAudio = false;
       }
     );
-  } */
-
-  // Função para gerar áudio a partir do texto selecionado ou da página atual.
-generateAudio(text: string): void {
-  // Verifica se já está gerando áudio para evitar duplicação
-  if (this.isGeneratingAudio) return;
-
-  // Indica que o processo de geração de áudio começou
-  this.isGeneratingAudio = true;
-
-  // Garante que haja texto para gerar áudio
-  if (!text) {
-    console.error('No text provided for audio generation.');
-    this.openSnackBar("No text provided for audio generation.");
-    this.isGeneratingAudio = false;
-    return;
-  }
-
-  // Configuração da requisição para a API de TTS
-  const body = {
-    model: "text:to:speech:model", // Substitua pelo modelo correto da sua API de TTS
-    input: text,
-    // Adicione quaisquer outros parâmetros necessários pela sua API de TTS aqui
-  };
-
-  const headers = new HttpHeaders({
-    "Authorization": `Bearer ${gpt4.gptApiKey}`, // Substitua pelo seu token de API
-    "Content-Type": "application/json"
-  });
-
-  const ttsApiUrl = "https://api.openai.com/v1/audio/speech"; // Substitua pela URL correta da sua API de TTS
-
-  // Envio da requisição para a API de TTS
-  this.http.post(ttsApiUrl, body, { headers, responseType: "blob" }).subscribe(
-    response => {
-      const audioBlob = new Blob([response], { type: 'audio/wav' });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      this.waveform.load(audioUrl); // Carrega o áudio no WaveSurfer para reprodução
-      this.isGeneratingAudio = false;
-    },
-    error => {
-      console.error("Error generating audio:", error);
-      this.isGeneratingAudio = false;
-    }
-  );
-}
-
-
-
-  getRandomVoice() {
-    throw new Error('Method not implemented.');
-  }
-  playSound(arg0: string) {
-    throw new Error('Method not implemented.');
-  }
-  openDialog(chatMessage: any) {
-    throw new Error('Method not implemented.');
   }
 
   /* ==================WAVESURFER==================== */
@@ -413,7 +356,7 @@ generateAudio(text: string): void {
       container: this.waveformEl.nativeElement,
       /*  url: 'https://storage.googleapis.com/priming_text_wav/ABOVE.wav', */
 
-      url: '../../assets/audio/ABOVE.wav',
+     // url: '../../assets/audio/ABOVE.wav',
       waveColor: '#d3d3d3',
       progressColor: 'rgb(0, 0, 0)',
       /*       waveColor: 'rgb(200, 0, 200)',
@@ -435,12 +378,17 @@ generateAudio(text: string): void {
     });
 
     this.waveform.on('audioprocess', () => {
-      this.updateTextDisplayBasedOnAudio();
+
     });
   this.waveform.setVolume(0.1); // 10/100
   this.waveform.on('audioprocess', (currentTime) => this.updatePlaybackHint(currentTime));
   this.waveform.on('pause', () => this.hidePlaybackHint());
   this.waveform.on('finish', () => this.hidePlaybackHint());
+
+  setTimeout(() => {
+    this.generateAudio(this.currentPageText);
+  }, 1000);
+
   }
 
   events() {
@@ -459,31 +407,11 @@ generateAudio(text: string): void {
     })
   }
 
-  /* ==================ATUALIZA O TEXTO BASEADO NO AUDIO==================== */
-  updateTextDisplayBasedOnAudio(): void {
-    // Verifica se a imagem já foi exibida. Se sim, não faz nada para evitar sobrepor a imagem.
-    if (this.imageDisplayed) {
-      return;
-    }
-
-    // Se a imagem ainda não foi exibida, continua com a lógica de atualizar o texto baseado no progresso do áudio.
-    const currentTime = this.waveform.getCurrentTime(); // Obtém o tempo atual do áudio.
-    const expectedWords = Math.floor(currentTime / this.wordDuration); // Calcula quantas palavras deveriam ter sido faladas até o momento.
-
-    // Atualiza o displayElement para mostrar as palavras até o ponto esperado.
-    const displayElement = document.getElementById('textDisplay');
-    if (displayElement) {
-      // Atualiza o texto no displayElement com as palavras correspondentes ao tempo atual do áudio.
-      displayElement.textContent = this.wordsArray.slice(0, expectedWords).join(' ');
-    }
-  }
-
-   /* ==================UPDATE CURRENT TIME==================== */
+  /* ==================UPDATE CURRENT TIME==================== */
   updatePlaybackHint(currentTime: number) {
     const minutes = Math.floor(currentTime / 60);
     const seconds = Math.floor(currentTime % 60);
     const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
     const hintElement = document.getElementById('playback-hint');
     if (hintElement) {
         hintElement.textContent = `Tempo: ${formattedTime}`;
@@ -492,29 +420,21 @@ generateAudio(text: string): void {
 }
 
    /* ==================UPDATE PLAY BACK HINT==================== */
-hidePlaybackHint() {
+  hidePlaybackHint() {
   const hintElement = document.getElementById('playback-hint');
   if (hintElement) {
       hintElement.style.display = 'none';
   }
 }
 
-/* ==================AO SELECIONAR O TEXTO==================== */
-@HostListener('document:mouseup', ['$event'])
-handleMouseUp(event: MouseEvent) {
-  const selection = window.getSelection();
-  if (selection) {
-    const selectedText = selection.toString().trim();
-    if (selectedText.length > 0) {
-      this.openSnackBar(`Texto selecionado: ${selectedText}`);
-      this.questionToOpenAI(selectedText); // Chama questionToOpenAI com o texto selecionado
-      this.openDialog(selectedText);
-      console.log("SELECIONADO:"+selectedText)
-    }
+  /* ==================VOZ ALEATORIA==================== */
+  getRandomVoice(): string {
+    const randomIndex = Math.floor(Math.random() * this.voices.length);
+    this.openSnackBar("Voz: " + this.voices[randomIndex]);
+    return this.voices[randomIndex];
+
   }
-}
 
-
-
+/* ==================AO SELECIONAR O TEXTO==================== */
 
 }//fim
