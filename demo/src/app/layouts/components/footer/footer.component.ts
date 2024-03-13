@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ShareBottomSheetComponent } from './../../../pages/dashboards/components/share-bottom-sheet/share-bottom-sheet.component';
 
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -18,7 +17,11 @@ import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-s
 import { MatDialog } from '@angular/material/dialog';
 
 import { RsvpreaderComponent } from 'src/app/pages/dashboards/components/rsvpreader/rsvpreader.component';
+import { ShareBottomBookComponent } from 'src/app/pages/dashboards/components/share-bottom-book/share-bottom-book.component';
+import { ShareBottomGpt4Component } from 'src/app/pages/dashboards/components/share-bottom-gpt4/share-bottom-gpt4.component';
 import { ShareBottomWimHofComponent } from '../../../../../src/app/pages/dashboards/components/share-bottom-wim-hof/share-bottom-wim-hof.component';
+import { ShareBottomSheetComponent } from './../../../pages/dashboards/components/share-bottom-sheet/share-bottom-sheet.component';
+
 
 @Component({
   selector: 'vex-footer',
@@ -42,12 +45,23 @@ import { ShareBottomWimHofComponent } from '../../../../../src/app/pages/dashboa
     ShareBottomWimHofComponent,
     ShareBottomSheetComponent,
     MatBottomSheetModule,
-
+    ShareBottomGpt4Component,
+    ShareBottomBookComponent,
+    RsvpreaderComponent
   ]
 })
 export class FooterComponent implements OnInit, OnDestroy {
 
-  constructor(private cdr: ChangeDetectorRef, private _bottomSheet: MatBottomSheet, private dialog: MatDialog) { }
+  @Output() openConfig = new EventEmitter();
+  @Output() openBottomConfig = new EventEmitter();
+
+  showButton: boolean = false;
+  result?: string;
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private _bottomSheet: MatBottomSheet,
+    private dialog: MatDialog) { }
 
   displayTime: string = '30:00';
   displayTimeMin: string = '30';
@@ -180,7 +194,7 @@ openBothConfigs() { //shared
 }
 
 openBothConfigsBook() { //boooks
-  this._bottomSheet.open(ShareBottomWimHofComponent);
+  this._bottomSheet.open(ShareBottomBookComponent);
 }
 
 openBothConfigsShadowing() { //shadowing
@@ -191,8 +205,12 @@ openBothConfigsRSVP() { //rsvp
   this._bottomSheet.open(RsvpreaderComponent);
 }
 
-openBothConfigsWimHof() {//wom hoff
+openBothConfigsWimHof() {//wim hof
   this._bottomSheet.open(ShareBottomWimHofComponent);
+}
+
+openBothConfigsGpt() {//gpt
+  this._bottomSheet.open(ShareBottomGpt4Component);
 }
 
 openBothConfigsZettelkasten() {//zettelkasten
