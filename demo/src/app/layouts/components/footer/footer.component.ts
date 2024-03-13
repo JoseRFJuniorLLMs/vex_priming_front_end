@@ -201,8 +201,10 @@ openBothConfigsShadowing() { //shadowing
   this._bottomSheet.open(ShareBottomWimHofComponent);
 }
 
-openBothConfigsRSVP() { //rsvp
-  this._bottomSheet.open(RsvpreaderComponent);
+openBothConfigsRSVP() { // RSVP
+/*   this._bottomSheet.open(RsvpreaderComponent, {
+    data: { text: this.selected }
+  }); */
 }
 
 openBothConfigsWimHof() {//wim hof

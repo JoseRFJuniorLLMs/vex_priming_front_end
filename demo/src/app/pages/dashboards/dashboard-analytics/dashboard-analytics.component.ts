@@ -50,11 +50,13 @@ import WaveSurfer from 'wavesurfer.js';
 import { WordComponent } from '../components/word/word.component';
 
 import { Course } from 'src/app/model/course/course';
+import { SharedDataService } from 'src/app/services/sahred-data.service';
 import { CoursesService } from '../../../services/courses.service';
 import { BookComponent } from '../../apps/book/book.component';
 import { GraphComponent } from '../../apps/graph/graph.component';
 import { PageLayoutDemoComponent } from '../../ui/page-layouts/page-layout-demo/page-layout-demo.component';
 import { DialogExampleComponent } from '../components/dialog/dialog-example.component';
+import { RsvpreaderComponent } from '../components/rsvpreader/rsvpreader.component';
 import { ImagemPopupComponent } from './imagem-popup.component';
 
 // Interface para descrever a estrutura da resposta da API
@@ -97,7 +99,8 @@ interface ResponseData {
     VexHighlightDirective,
     WordComponent,
     BookComponent,
-    GraphComponent
+    GraphComponent,
+    RsvpreaderComponent
   ]
 })
 
@@ -112,7 +115,7 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
 
     /* ==================VIEWCHILD==================== */
   @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
-
+  @ViewChild(RsvpreaderComponent) rsvpReader!: RsvpreaderComponent;
   /* ==================VARIAVEIS==================== */
   private waveform!: WaveSurfer;
   private subscription: Subscription = new Subscription;
@@ -181,11 +184,12 @@ hashtags: string[] = []; // Hashtags
 musicFiles = ['ABOVE.wav', 'ADVANCE.wav', 'FULL.wav','FULL2.wav','music.mp3', 'PRIMING.wav'];
 dataSource = new MatTableDataSource<Course>();
 isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('isExpanded');
-selectedChip: 'phrase' | 'text' | 'word' | null = null;
+selectedChip: 'phrase' | 'text' | 'word' | 'srvp' | null = null;
 
 volume: number = 50; // Valor inicial para o volume
 speed: number = 100; // Valor inicial para a velocidade
 
+showRSVPReader: boolean = false;
 
 //==========================fim de declaracoes=============================//
 
@@ -195,12 +199,23 @@ speed: number = 100; // Valor inicial para a velocidade
     private _snackBar: MatSnackBar,
     private dialog: MatDialog,
     private coursesService : CoursesService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private sharedDataService: SharedDataService
   ) {
     this.readyListener = () => {};
     this.finishListener = () => {};
   }
 
+  /* ==================SRVP==================== */
+  someMethodThatSelectsText(text: string) {
+    this.sharedDataService.setSelectedText(text);
+  }
+
+  toggleRSVPReader() {
+    this.showRSVPReader = !this.showRSVPReader;
+  }
+
+  /* ==================abrirPopup==================== */
   abrirPopup() {
     this.dialog.open(ImagemPopupComponent, {
       // Configurações, se necessário (ex: width, height)
@@ -286,11 +301,10 @@ speed: number = 100; // Valor inicial para a velocidade
       } else if (selection === 'text') {
         this.openSnackBar("Text");
         contentMessage += 'and provide stories using memory palace memorization technique, for children with the word.';
-      } else { // 'word'
+      } else if (selection === 'word') {
         this.openSnackBar("Word");
         contentMessage += ', ';
       }
-
       const response = await this.http.post<any>(gpt4.gptUrl, {
         messages: [{ role: 'user', content: contentMessage }],
         temperature: 0.0,
@@ -314,7 +328,7 @@ speed: number = 100; // Valor inicial para a velocidade
   }
 
   /* ==================SELECTION PHASE TEXT WORD==================== */
-  onSelection(selection: 'phrase' | 'text' | 'word') {
+  onSelection(selection: 'phrase' | 'text' | 'word' | 'srvp') {
     this.selectedChip = this.selectedChip === selection ? null : selection;
     this.openSnackBar(selection);
   }
@@ -526,14 +540,22 @@ handleMouseUp(event: MouseEvent) {
     if (this.selectedChip && selection.toString().trim() !== '') {
       this.selectedText = selection.toString();
       this.openSnackBar(`Added '${this.selectedChip}' as the selection type`);
-      this.questionToOpenAI(this.selectedText, this.selectedChip);
+
+      // Aqui você adiciona a lógica específica para quando srvp é selecionado
+      if (this.selectedChip === 'srvp') {
+        this.rsvpReader.text = this.selectedText; // Atualiza o texto no RsvpreaderComponent
+        // Removido para prevenir início automático: this.rsvpReader.startReading();
+      } else {
+        // Sua lógica existente para outros chips, possivelmente incluindo questionToOpenAI
+        this.questionToOpenAI(this.selectedText, this.selectedChip);
+      }
     } else if (range && !range.collapsed) {
       // Se a seleção for vazia, mas range.collapsed for falso, indica que houve uma tentativa de seleção
       this.playSound('../../../../assets/audio/SELECT.wav');
     }
-    // Se range.collapsed for verdadeiro, indica um clique sem movimento de seleção, então não faz nada
   }
 }
+
 
 /* ==================GERA AUDIO==================== */
   generateAudio(): void {

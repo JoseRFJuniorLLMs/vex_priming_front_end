@@ -17,10 +17,11 @@
   letter-spacing: 2px;
 }
 
-.highlight {
+::ng-deep .highlight {
   color: #e63946; /* Cor de destaque */
   font-weight: bold; /* Negrito para maior destaque */
 }
+
 
 .controls {
   display: flex;

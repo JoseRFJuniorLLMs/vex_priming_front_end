@@ -23,6 +23,7 @@
   </div>
 </div>
 
+<rsvpreader *ngIf="showRSVPReader" [text]="selectedText"></rsvpreader>
 
 <!-- <div *ngIf="mostrarImagem" class="video-wrapper">
   <video autoplay muted loop playsinline>
@@ -116,7 +117,10 @@
                     <mat-icon svgIcon="mat:image_search"></mat-icon>
                   </mat-chip-option>
 
-                  <mat-chip-option disabled #chipWord value="rsvp" matTooltip="SRVP Option Selected!" color="primary">
+                  <mat-chip-option #chipWord value="rsvp" [selected]="selectedChip === 'srvp'"
+                  (click)="onSelection('srvp')"
+                  (click)="toggleRSVPReader()"
+                  matTooltip="SRVP Option Selected!" color="primary">
                     SRVP
                     <mat-icon svgIcon="mat:flash_on"></mat-icon>
                   </mat-chip-option>
@@ -420,3 +424,5 @@
     </div>
   </vex-page-layout-content>
 </vex-page-layout>
+
+

@@ -1,36 +1,46 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-
 import { MatButtonModule } from '@angular/material/button';
-
+import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { EMPTY, Subscription } from 'rxjs';
+import { SharedDataService } from 'src/app/services/sahred-data.service';
 
 @Component({
-  selector: 'vex-rsvpreader',
+  selector: 'rsvpreader',
   standalone: true,
   templateUrl: './rsvpreader.component.html',
   styleUrls: ['./rsvpreader.component.scss'],
-  imports: [MatIconModule,CommonModule, FormsModule, MatTooltipModule, MatButtonModule ]
+  imports: [MatIconModule, CommonModule, FormsModule, MatTooltipModule, MatButtonModule]
 })
 export class RsvpreaderComponent {
-  text = 'Red, Blue,Yellow,Green,Black,White,Gray,Orange,,Purple,Pink,Brown,Cyan,Magenta, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sundayone, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen, fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty, twenty-one, twenty-two, twenty-three, twenty-four, twenty-five, twenty-six, twenty-seven, twenty-eight, twenty-nine, thirty, one hundred, two hundred, three hundred, four hundred, five hundred, six hundred, seven hundred, eight hundred, nine hundred, one thousand,January, February, March, April, May, June, July, August, September, October, November, December, Sofa, Table, Chair, Bed, Lamp, Desk, Dresser, Bookshelf, Coffee Table, Nightstand, Mirror, Rug, Television, Clock, Pillow, Blanket, Fridge, Oven, Microwave, Toaster, Blender, Washing Machine, Dryer, Dishwasher, Vacuum Cleaner, Iron, Fan, Heater, Curtains, Trash Can,                    Passport, Ticket, Suitcase, Backpack, Map, Hotel, Flight, Airport, Destination, Itinerary, Tourist, Guidebook, Reservation, Currency, Visa, Sunglasses, Camera, Beach, Mountain, City, Country, Adventure, Explore, Souvenir, Transportation, Schedule, Landmark, Culture, Cuisine, Traveler,Mom, Dad, Yes, No, Please, Thank you, Sorry, Hello, Goodbye, Friend, Play, Toy, Game, Ball, Dog, Cat, School, Book, Read, Write, Color, Draw, Paint, Sing, Dance, Jump, Run, Candy, Cookie, Cake, Juice, Milk, Water, Bed, Sleep, Bath, Brush,,Happy, Sad, Scared, Love, Hug, Kiss, Birthday, Party, Park, Bike, Slide, Swing, Swim, Fish, Bear, Doll, Car, Truck, Bus, Plane, Train, Sun, Moon, Star, Sky, Cloud, Rain, Snow, Tree, Flower, Grass, Rock, Sand, Sea, River, Mountain, Forest, Animal, Bird, Chicken, Duck, Horse, Cow, Pig,,Sheep, Elephant, Lion, Tiger, Monkey, Zoo, Playground, Slide, Swing, Climber, Ball, Bat, Soccer, Football, Basketball, Baseball, Tennis, Golf, Ice cream, Chocolate, Pizza, Burger, Sandwich, Salad, Fruit, Apple, Banana, Orange, Strawberry, Cherry, Grape, Lemon, Melon, Peach, Pear,Pineapple, Tomato, Vegetable, Carrot, Potato, Onion, Lettuce, Cucumber, Peas, Corn, Bean, Rice, Pasta, Bread, Cheese, Egg, Meat, Chicken, Fish, Juice, Water, Milk, Tea, Coffee, Soda, Story, Book, Movie';
+  @Input() text: string = '';
+  selectedText: string = '';
   words: string[] = [];
   currentWord = '';
   currentWordFormatted: SafeHtml | undefined;
   currentIndex = 0;
   readingInterval: any;
   intervalSpeed = 200;
+  private textSubscription: Subscription = EMPTY.subscribe();
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(private sharedDataService: SharedDataService, private sanitizer: DomSanitizer) {}
+
+  ngOnChanges(): void {
     this.words = this.text.split(',').map(word => word.trim());
+    this.currentIndex = 0;
+  }
+
+  ngOnDestroy() {
+    this.textSubscription.unsubscribe();
+    this.stopReading();
   }
 
   startReading() {
     if (this.readingInterval) {
-      return;
+      return; // Impede a criação de múltiplos intervalos se já estiver lendo
     }
 
     this.readingInterval = setInterval(() => {
@@ -39,10 +49,11 @@ export class RsvpreaderComponent {
         this.currentWord = word;
         this.currentWordFormatted = this.formatWord(word);
       } else {
-        this.stopReading();
+        this.stopReading(); // Para a leitura quando todas as palavras forem lidas
       }
     }, this.intervalSpeed);
   }
+
 
   stopReading() {
     clearInterval(this.readingInterval);
@@ -64,7 +75,6 @@ export class RsvpreaderComponent {
       const formattedWord = `${word.substring(0, middleIndex)}<span class="highlight">${word[middleIndex]}</span>${word.substring(middleIndex + 1)}`;
       return this.sanitizer.bypassSecurityTrustHtml(formattedWord);
     }
-    return word;
+    return this.sanitizer.bypassSecurityTrustHtml(word);
   }
-
 }
