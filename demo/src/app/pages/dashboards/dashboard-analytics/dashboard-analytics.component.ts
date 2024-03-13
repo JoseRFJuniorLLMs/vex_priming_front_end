@@ -494,22 +494,31 @@ displayFullText(text: string): void {
     audio.play().catch(error => console.error("Erro ao tocar o som:", error));
   }
 
-  /* ==================AO SELECIONAR O TEXTO==================== */
-  @HostListener('document:mouseup', ['$event'])
+/* ==================AO SELECIONAR O TEXTO==================== */
+@HostListener('document:mouseup', ['$event'])
 handleMouseUp(event: MouseEvent) {
   const selection = window.getSelection();
   if (this.isDialogOpen) {
     this.openSnackBar("Do not do anything if a dialog is open");
     return; // Do not do anything if a dialog is open
   }
-  if (this.selectedChip && selection && selection.toString().trim() !== '') {
-    this.selectedText = selection.toString();
-    this.openSnackBar(`Added '${this.selectedChip}' as the selection type`);
-    this.questionToOpenAI(this.selectedText, this.selectedChip);
-  } else {
-    this.openSnackBar("Please select an option (text, phrase, or word) before making a selection.");
+  // Verifica se existe alguma seleção de texto
+  if (selection && selection.rangeCount > 0) {
+    const range = selection.getRangeAt(0);
+    // Verifica se a seleção de texto não é vazia
+    if (this.selectedChip && selection.toString().trim() !== '') {
+      this.selectedText = selection.toString();
+      this.openSnackBar(`Added '${this.selectedChip}' as the selection type`);
+      this.questionToOpenAI(this.selectedText, this.selectedChip);
+    } else if (range && !range.collapsed) {
+      // Se a seleção for vazia, mas range.collapsed for falso, indica que houve uma tentativa de seleção
+      this.playSound('../../../../assets/audio/SELECT.wav');
+    }
+    // Se range.collapsed for verdadeiro, indica um clique sem movimento de seleção, então não faz nada
   }
 }
+
+
 
   /* ==================GERA AUDIO==================== */
    generateAudio(): void {
