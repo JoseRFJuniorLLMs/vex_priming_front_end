@@ -105,9 +105,11 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   /* ==================COURSES SERVICES==================== */
 
   courses$!: Observable<Course[]>;
-  displayedColumns: string[] = ['_id', 'level', 'name', 'content', 'objective', 'status', 'category', 'price', 'lessons'];
+  //displayedColumns: string[] = ['_id', 'level', 'name', 'content', 'objective', 'status', 'category', 'price', 'lessons'];
+  displayedColumns: string[] = ['_id', 'level', 'name', 'content', 'objective', 'status', 'category', 'price', 'lessons', 'expandToggle'];
+  //displayedColumns: string[] = ['_id', 'level', 'name', 'content', 'objective', 'status', 'category', 'price', 'expandToggle'];
 
-  /* ==================VIEWCHILD==================== */
+    /* ==================VIEWCHILD==================== */
   @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
 
   /* ==================VARIAVEIS==================== */
@@ -174,8 +176,11 @@ mentions: string[] = []; // Menções (@usuario)
 hashtags: string[] = []; // Hashtags
 
 musicFiles = ['ABOVE.wav', 'ADVANCE.wav', 'FULL.wav','FULL2.wav','music.mp3', 'PRIMING.wav'];
+dataSource = new MatTableDataSource<Course>();
+isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('isExpanded');
+selectedChip: 'phrase' | 'text' | 'word' | null = null;
 
-  selectedChip: 'phrase' | 'text' | 'word' | null = null;
+//==========================fim de declaracoes=============================//
 
   /* ==================CONTRUTOR==================== */
   constructor(
@@ -212,12 +217,10 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
     });
   }
 
-  dataSource = new MatTableDataSource<Course>();
-
   /* ==================OnINIT==================== */
   ngOnInit(): void {
 
-   this.analyzeText();
+  this.analyzeText();
 
      // Inicialização direta
 
@@ -241,7 +244,9 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
     if (screenfull.isEnabled) {
       screenfull.request();
     }
+
     this.speechRecognition.continuous = true;
+
   }
 
    /* ==================COLUMNS COURSE==================== */
@@ -467,7 +472,6 @@ displayFullText(text: string): void {
     const randomIndex = Math.floor(Math.random() * this.voices.length);
     this.openSnackBar("Voz: " + this.voices[randomIndex]);
     return this.voices[randomIndex];
-
   }
 
   /* ==================SNACK BAR==================== */
@@ -506,7 +510,6 @@ handleMouseUp(event: MouseEvent) {
     this.openSnackBar("Please select an option (text, phrase, or word) before making a selection.");
   }
 }
-
 
   /* ==================GERA AUDIO==================== */
    generateAudio(): void {

@@ -1,4 +1,4 @@
-//import { Lesson } from '../lesson/lesson';
+import { Lesson } from '../lesson/lesson';
 
 export interface Course {
     _id: string;
@@ -9,6 +9,6 @@ export interface Course {
     status?: string;
     category?: string;
     price?: string;
-    //lessons?: Lesson[];
-    lessons?: string[];
+    lessons?: Lesson[];
+    //lessons?: string[];
   }
