@@ -14,7 +14,14 @@
     <source src="../../../../assets/priming.mp4" type="video/mp4">
   </video>
 </div>-->
-
+<div class="container p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+  <div class="loading-indicator" *ngIf="isLoading">
+    <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+  </div>
+  <div class="error-message" *ngIf="errorText">
+    <p>{{ errorText }}</p>
+  </div>
+</div>
 
 <vex-page-layout mode="card">
 
@@ -33,41 +40,6 @@
 
         <mat-step>
           <ng-template matStepLabel>Course</ng-template>
-        </mat-step>
-
-        <mat-step>
-          <ng-template matStepLabel>Lesson</ng-template>
-        </mat-step>
-
-        <mat-step>
-          <ng-template matStepLabel>Lesson Done</ng-template>
-        </mat-step>
-
-        <mat-step>
-          <ng-template matStepLabel>Text</ng-template>
-        </mat-step>
-
-        <mat-step>
-          <ng-template matStepLabel>Phase</ng-template>
-        </mat-step>
-
-        <mat-step>
-          <ng-template matStepLabel>YouTube</ng-template>
-        </mat-step>
-
-        <mat-step>
-          <ng-template matStepLabel>Graph</ng-template>
-        </mat-step>
-
-      </mat-horizontal-stepper>
-    </div>
-
-    <div class="card">
-
-      <mat-tab-group>
-
-
-        <mat-tab label="Priming Course">
           <div class="p-2">
             <div class="pane2">
 
@@ -77,14 +49,12 @@
                 md:grid-cols-2
                 gap-2">
 
-
                 <!-- Waveform -->
 
                 <div #waveform autoplay matTooltip="Time Current: {{currentTime}}" style="cursor: pointer;"
                   [style.left]="progressPercentage + '%'">
                   <div class="time-indicator" [style.left]="progressPercentage + '%'">
                   </div>
-
 
                   <mat-chip-listbox aria-label="Fish selection">
 
@@ -119,7 +89,6 @@
                       <mat-icon svgIcon="mat:pause_circle"></mat-icon>
                     </button>
 
-
                     <!--                     <button mat-icon-button matTooltip="Download file Waveform {{currentTime}}" color="primary"
                       (click)="toggleMediaControls()">
                       <mat-icon *ngIf="mediaControlIcon === 'mat:sports_esports'"
@@ -129,7 +98,6 @@
                     </button> -->
 
                   </mat-chip-listbox>
-
 
                   <!-- Volume com ícone -->
 
@@ -174,9 +142,19 @@
                     <mat-icon svgIcon="mat:fact_check"></mat-icon>
                   </mat-chip-option>
 
+                <mat-chip-option disabled #chipWord value="image"
+                  matTooltip="Image Option Selected!" color="primary">
+                 Image
+                 <mat-icon svgIcon="mat:image_search"></mat-icon>
+                </mat-chip-option>
+
+                  <mat-chip-option disabled #chipWord value="rsvp"
+                   matTooltip="SRVP Option Selected!" color="primary">
+                  SRVP
+                  <mat-icon svgIcon="mat:flash_on"></mat-icon>
+                 </mat-chip-option>
 
                   <!-- inicio -->
-
 
                   <mat-list-item>
                     <img matTooltip="alloy" alt="alloy" matListItemAvatar src="assets/img/avatars/1.jpg" />
@@ -189,7 +167,6 @@
                   </mat-list-item>
 
                   <!-- fim -->
-
 
                   <!-- Quick Line Chart -->
                   <vex-widget-quick-line-chart #chatContainer icon="mat:pageview"
@@ -228,20 +205,48 @@
                     [(ngModel)]="questionText" placeholder="What is your doubt ?"></textarea>
                 </div> -->
 
-
               </div>
               <div>
               </div>
-              <div class="container p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="loading-indicator" *ngIf="isLoading">
-                  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
-                </div>
-                <div class="error-message" *ngIf="errorText">
-                  <p>{{ errorText }}</p>
-                </div>
-              </div>
             </div>
           </div>
+        </mat-step>
+
+        <mat-step>
+          <ng-template matStepLabel>Lesson</ng-template>
+        </mat-step>
+
+        <mat-step>
+          <ng-template matStepLabel>Text</ng-template>
+        </mat-step>
+
+        <mat-step>
+          <ng-template matStepLabel>Phase</ng-template>
+        </mat-step>
+
+        <mat-step>
+          <ng-template matStepLabel>YouTube</ng-template>
+        </mat-step>
+
+        <mat-step>
+          <ng-template matStepLabel>Graph</ng-template>
+
+          <div class="p-6">
+            <span class="material-symbols-outlined">
+              <graph-component> </graph-component>
+            </span>
+          </div>
+
+        </mat-step>
+      </mat-horizontal-stepper>
+    </div>
+
+    <div class="card">
+
+      <mat-tab-group>
+
+        <mat-tab label="Priming Course">
+
         </mat-tab>
 
         <mat-tab label="Priming Lesson">
@@ -293,7 +298,9 @@
               <ng-container matColumnDef="lessons">
                 <th mat-header-cell *matHeaderCellDef> Lessons </th>
                 <td mat-cell *matCellDef="let course">
-                  <!-- Aqui, você pode optar por mostrar um ícone, uma contagem de lições, ou ambos -->
+                  <span class="material-symbols-outlined">
+                    schema
+                    </span>
                   <mat-icon>book</mat-icon> {{ course.lessons?.length || '0' }}
                 </td>
               </ng-container>
@@ -444,11 +451,7 @@
           </div>
         </mat-tab>
         <mat-tab label="Priming Graph View">
-          <div class="p-6">
-            <span class="material-symbols-outlined">
-              <graph-component> </graph-component>
-            </span>
-          </div>
+
         </mat-tab>
 
         <!--         <ng-container matColumnDef="lessons">
