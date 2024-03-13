@@ -23,6 +23,15 @@
   </div>
 </div>
 
+
+<!-- <div *ngIf="mostrarImagem" class="video-wrapper">
+  <video autoplay muted loop playsinline>
+    <source src="../../../../assets/priming.mp4" type="video/mp4">
+  </video>
+</div>
+
+<img *ngIf="mostrarImagem" src="assets/img/logo/priming.png" alt="Priming">
+ -->
 <vex-page-layout mode="card">
 
   <vex-page-layout-content class="container">
@@ -30,6 +39,7 @@
     <div @fadeInUp class="card overflow-hidden">
 
       <mat-horizontal-stepper #stepper="matHorizontalStepper" [linear]="true">
+
         <ng-template matStepperIcon="edit">
           <mat-icon svgIcon="mat:done_all"></mat-icon>
         </ng-template>
@@ -40,14 +50,16 @@
 
         <mat-step>
           <ng-template matStepLabel>Course</ng-template>
+          <!-- PAGINA INICIAL INICIO -->
+
           <div class="p-2">
             <div class="pane2">
 
               <div class="container p-2
-                grid grid-cols-2
-                sm:grid-cols-2
-                md:grid-cols-2
-                gap-2">
+      grid grid-cols-2
+      sm:grid-cols-2
+      md:grid-cols-2
+      gap-2">
 
                 <!-- Waveform -->
 
@@ -56,62 +68,20 @@
                   <div class="time-indicator" [style.left]="progressPercentage + '%'">
                   </div>
 
-                  <mat-chip-listbox aria-label="Fish selection">
+                  <button mat-icon-button matTooltip="Play Waveform
+          {{currentTime}}" color="primary" (click)="playAudio()">
+                    <mat-icon svgIcon="mat:play_arrow"></mat-icon>
+                  </button>
 
-                    <!--  <mat-chip-option id="phase" value="phrase" matTooltip="phrase {{currentTime}}" color="primary"
-                      (selectionChange)="onSelection('phrase', $event)">Phrase
-                      <mat-icon svgIcon="mat:checklist"></mat-icon>
-                    </mat-chip-option>
+                  <button mat-icon-button matTooltip="Stop Waveform {{currentTime}}" color="primary"
+                    (click)="stopAudio()">
+                    <mat-icon svgIcon="mat:stop"></mat-icon>
+                  </button>
 
-                    <mat-chip-option id="text" value="text" matTooltip="text {{currentTime}}" color="primary"
-                      (selectionChange)="onSelection('text', $event)">Text
-                      <mat-icon svgIcon="mat:menu_book"></mat-icon>
-                    </mat-chip-option>
-
-                    <mat-chip-option id="word" value="word" matTooltip="word {{currentTime}}" color="primary"
-                      (selectionChange)="onSelection('word', $event)">Word
-                      <mat-icon svgIcon="mat:fact_check"></mat-icon>
-                    </mat-chip-option>
- -->
-
-                    <button mat-icon-button matTooltip="Play Waveform
-                    {{currentTime}}" color="primary" (click)="playAudio()">
-                      <mat-icon svgIcon="mat:play_arrow"></mat-icon>
-                    </button>
-
-                    <button mat-icon-button matTooltip="Stop Waveform {{currentTime}}" color="primary"
-                      (click)="stopAudio()">
-                      <mat-icon svgIcon="mat:stop"></mat-icon>
-                    </button>
-
-                    <button mat-icon-button matTooltip="Pause Waveform {{currentTime}}" color="primary"
-                      (click)="pauseAudio()">
-                      <mat-icon svgIcon="mat:pause_circle"></mat-icon>
-                    </button>
-
-                    <!--                     <button mat-icon-button matTooltip="Download file Waveform {{currentTime}}" color="primary"
-                      (click)="toggleMediaControls()">
-                      <mat-icon *ngIf="mediaControlIcon === 'mat:sports_esports'"
-                        svgIcon="mat:sports_esports"></mat-icon>
-                      <mat-icon *ngIf="mediaControlIcon === 'mat:cloud_download'"
-                        svgIcon="mat:cloud_download"></mat-icon>
-                    </button> -->
-
-                  </mat-chip-listbox>
-
-                  <!-- Volume com ícone -->
-
-                  <mat-icon svgIcon="mat:volume_up"></mat-icon>
-                  <mat-slider id="1" color="primary" discrete [max]="100" [min]="0" [step]="1" showTickMarks
-                    (input)="onVolumeChange($event)"><input matSliderThumb value="10" />
-                  </mat-slider>
-
-                  <!-- Velocidade com ícone -->
-
-                  <mat-icon svgIcon="mat:speed"></mat-icon>
-                  <mat-slider id="2" color="warn" discrete [max]="200" [min]="50" [step]="10" showTickMarks
-                    (input)="onSpeedChange($event)"><input matSliderThumb value="100" />
-                  </mat-slider>
+                  <button mat-icon-button matTooltip="Pause Waveform {{currentTime}}" color="primary"
+                    (click)="pauseAudio()">
+                    <mat-icon svgIcon="mat:pause_circle"></mat-icon>
+                  </button>
 
                   <div id="playback-hint"
                     style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: black; color: white; padding: 8px 12px; border-radius: 4px; display: none;">
@@ -121,7 +91,6 @@
                 </div>
 
                 <!-- Selection -->
-
                 <div>
 
                   <mat-chip-option #chipPhrase value="phrase" [selected]="selectedChip === 'phrase'"
@@ -169,48 +138,30 @@
                   <!-- Quick Line Chart -->
                   <vex-widget-quick-line-chart #chatContainer icon="mat:pageview"
                     iconClass="text-primary-900 bg-primary-900/10" label="Red, Blue,Yellow,Green,Black,White,Gray,Orange,,Purple,Pink,Brown,Cyan,Magenta
-                    Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sundayone, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen, fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty, twenty-one, twenty-two, twenty-three, twenty-four, twenty-five, twenty-six, twenty-seven, twenty-eight, twenty-nine, thirty
-                    one hundred, two hundred, three hundred, four hundred, five hundred, six hundred, seven hundred, eight hundred, nine hundred, one thousand,January, February, March, April, May, June, July, August, September, October, November, December
-                    Sofa, Table, Chair, Bed, Lamp, Desk, Dresser, Bookshelf, Coffee Table, Nightstand, Mirror, Rug, Television, Clock, Pillow, Blanket, Fridge, Oven, Microwave, Toaster, Blender, Washing Machine, Dryer, Dishwasher, Vacuum Cleaner, Iron, Fan, Heater, Curtains, Trash Can
-                    Passport, Ticket, Suitcase, Backpack, Map, Hotel, Flight, Airport, Destination, Itinerary, Tourist, Guidebook, Reservation, Currency, Visa, Sunglasses, Camera, Beach, Mountain, City, Country, Adventure, Explore, Souvenir, Transportation, Schedule, Landmark, Culture, Cuisine, Traveler
-                    Mom, Dad, Yes, No, Please, Thank you, Sorry, Hello, Goodbye, Friend, Play, Toy, Game, Ball, Dog, Cat, School, Book, Read, Write, Color, Draw, Paint, Sing, Dance, Jump, Run, Candy, Cookie, Cake, Juice, Milk, Water, Bed, Sleep, Bath, Brush,
-                    Happy, Sad, Scared, Love, Hug, Kiss, Birthday, Party, Park, Bike, Slide, Swing, Swim, Fish, Bear, Doll, Car, Truck, Bus, Plane, Train, Sun, Moon, Star, Sky, Cloud, Rain, Snow, Tree, Flower, Grass, Rock, Sand, Sea, River, Mountain, Forest, Animal, Bird, Chicken, Duck, Horse, Cow, Pig,
-                    Sheep, Elephant, Lion, Tiger, Monkey, Zoo, Playground, Slide, Swing, Climber, Ball, Bat, Soccer, Football, Basketball, Baseball, Tennis, Golf, Ice cream, Chocolate, Pizza, Burger, Sandwich, Salad, Fruit, Apple, Banana, Orange, Strawberry, Cherry, Grape, Lemon, Melon, Peach, Pear,
-                    Pineapple, Tomato, Vegetable, Carrot, Potato, Onion, Lettuce, Cucumber, Peas, Corn, Bean, Rice, Pasta, Bread, Cheese, Egg, Meat, Chicken, Fish, Juice, Water, Milk, Tea, Coffee, Soda, Story, Book, Movie
-                  " value="{{ chatMessage }}">
+          Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sundayone, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen, fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty, twenty-one, twenty-two, twenty-three, twenty-four, twenty-five, twenty-six, twenty-seven, twenty-eight, twenty-nine, thirty
+          one hundred, two hundred, three hundred, four hundred, five hundred, six hundred, seven hundred, eight hundred, nine hundred, one thousand,January, February, March, April, May, June, July, August, September, October, November, December
+          Sofa, Table, Chair, Bed, Lamp, Desk, Dresser, Bookshelf, Coffee Table, Nightstand, Mirror, Rug, Television, Clock, Pillow, Blanket, Fridge, Oven, Microwave, Toaster, Blender, Washing Machine, Dryer, Dishwasher, Vacuum Cleaner, Iron, Fan, Heater, Curtains, Trash Can
+          Passport, Ticket, Suitcase, Backpack, Map, Hotel, Flight, Airport, Destination, Itinerary, Tourist, Guidebook, Reservation, Currency, Visa, Sunglasses, Camera, Beach, Mountain, City, Country, Adventure, Explore, Souvenir, Transportation, Schedule, Landmark, Culture, Cuisine, Traveler
+          Mom, Dad, Yes, No, Please, Thank you, Sorry, Hello, Goodbye, Friend, Play, Toy, Game, Ball, Dog, Cat, School, Book, Read, Write, Color, Draw, Paint, Sing, Dance, Jump, Run, Candy, Cookie, Cake, Juice, Milk, Water, Bed, Sleep, Bath, Brush,
+          Happy, Sad, Scared, Love, Hug, Kiss, Birthday, Party, Park, Bike, Slide, Swing, Swim, Fish, Bear, Doll, Car, Truck, Bus, Plane, Train, Sun, Moon, Star, Sky, Cloud, Rain, Snow, Tree, Flower, Grass, Rock, Sand, Sea, River, Mountain, Forest, Animal, Bird, Chicken, Duck, Horse, Cow, Pig,
+          Sheep, Elephant, Lion, Tiger, Monkey, Zoo, Playground, Slide, Swing, Climber, Ball, Bat, Soccer, Football, Basketball, Baseball, Tennis, Golf, Ice cream, Chocolate, Pizza, Burger, Sandwich, Salad, Fruit, Apple, Banana, Orange, Strawberry, Cherry, Grape, Lemon, Melon, Peach, Pear,
+          Pineapple, Tomato, Vegetable, Carrot, Potato, Onion, Lettuce, Cucumber, Peas, Corn, Bean, Rice, Pasta, Bread, Cheese, Egg, Meat, Chicken, Fish, Juice, Water, Milk, Tea, Coffee, Soda, Story, Book, Movie
+        " value="{{ chatMessage }}">
                   </vex-widget-quick-line-chart>
 
                 </div>
-                <!-- Quick Line Chart -->
-                <!--  <vex-widget-quick-line-chart id="textDisplay" #chatContainer icon="mat:pageview"
-                  iconClass="text-primary-600 bg-primary-600/10" label="Result" value="{{ chatMessage }}">
-                  <div class="loading-indicator" *ngIf="isLoading">
-                    <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
-                  </div>
-                </vex-widget-quick-line-chart> -->
 
-                <!-- Widget -->
-                <!--    <vex-widget-assistant class="sm:col-span-1">
-                </vex-widget-assistant> -->
-
-                <!-- Text Area for Question Input -->
-                <!--                 <div class="question-form">
-                  <div class="loading-indicator" *ngIf="isLoading">
-                    <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
-                  </div>
-                  <textarea matTooltip="Priming GPT Help Text Area" (paste)="questionToOpenAI(questionText)"
-                    (keyup.enter)="questionToOpenAI(questionText)" cols="100" rows="15" type="text"
-                    [(ngModel)]="questionText" placeholder="What is your doubt ?"></textarea>
-                </div> -->
-
-              </div>
-              <div>
               </div>
             </div>
           </div>
+
+
+
         </mat-step>
 
-    <!--     <mat-step>
+        <!-- PAGINA INICIAL FIM -->
+
+        <!--     <mat-step>
           <ng-template matStepLabel>Lesson</ng-template>
         </mat-step> -->
 
@@ -244,6 +195,7 @@
       <mat-tab-group>
 
         <mat-tab label="Priming Course">
+
 
         </mat-tab>
 

@@ -55,6 +55,7 @@ import { BookComponent } from '../../apps/book/book.component';
 import { GraphComponent } from '../../apps/graph/graph.component';
 import { PageLayoutDemoComponent } from '../../ui/page-layouts/page-layout-demo/page-layout-demo.component';
 import { DialogExampleComponent } from '../components/dialog/dialog-example.component';
+import { ImagemPopupComponent } from './imagem-popup.component';
 
 // Interface para descrever a estrutura da resposta da API
 interface ResponseData {
@@ -148,6 +149,8 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   private readyListener: () => void;
   private finishListener: () => void;
 
+  mostrarImagem = true;
+
 //NLP
 // Manipulação de Texto
 textNLP: string = 'After a long day at work, she quickly went home to relax and prepare for the busy day ahead.';
@@ -180,6 +183,10 @@ dataSource = new MatTableDataSource<Course>();
 isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('isExpanded');
 selectedChip: 'phrase' | 'text' | 'word' | null = null;
 
+volume: number = 50; // Valor inicial para o volume
+speed: number = 100; // Valor inicial para a velocidade
+
+
 //==========================fim de declaracoes=============================//
 
   /* ==================CONTRUTOR==================== */
@@ -194,6 +201,12 @@ selectedChip: 'phrase' | 'text' | 'word' | null = null;
     this.finishListener = () => {};
   }
 
+  abrirPopup() {
+    this.dialog.open(ImagemPopupComponent, {
+      // Configurações, se necessário (ex: width, height)
+    });
+  }
+
   /* ==================openDialog==================== */
   openDialog(textDisplay: string): void {
     this.isDialogOpen = true;
@@ -203,12 +216,12 @@ selectedChip: 'phrase' | 'text' | 'word' | null = null;
       this.dialogRef.close();
     }
 
-// Abre o novo diálogo e armazena sua referência
-this.dialogRef = this.dialog.open(DialogExampleComponent, {
+  // Abre o novo diálogo e armazena sua referência
+  this.dialogRef = this.dialog.open(DialogExampleComponent, {
   width: '900px',
   height: '800px',
   data: { texto: textDisplay }
-});
+  });
 
     // Quando o diálogo for fechado, limpa a referência
     this.dialogRef.afterClosed().subscribe(() => {
@@ -219,10 +232,8 @@ this.dialogRef = this.dialog.open(DialogExampleComponent, {
 
   /* ==================OnINIT==================== */
   ngOnInit(): void {
-
+  this.abrirPopup();
   this.analyzeText();
-
-     // Inicialização direta
 
       //this.coursesService.getCoursesByStudentId('65c5d833c2c6b863b26ae1df').subscribe(cursos => {
         this.coursesService.getCoursesByStudentId().subscribe(cursos => {
@@ -488,7 +499,7 @@ displayFullText(text: string): void {
     });
   }
 
-   /* ==================ALARME==================== */
+ /* ==================ALARME==================== */
   playSound(soundUrl: string) {
     const audio = new Audio(soundUrl);
     audio.play().catch(error => console.error("Erro ao tocar o som:", error));
@@ -497,11 +508,17 @@ displayFullText(text: string): void {
 /* ==================AO SELECIONAR O TEXTO==================== */
 @HostListener('document:mouseup', ['$event'])
 handleMouseUp(event: MouseEvent) {
+  // Verifica se o evento foi disparado por um slider de volume ou velocidade
+  if (event.target && (event.target as HTMLElement).tagName === 'INPUT' && (event.target as HTMLInputElement).type === 'range') {
+    return; // Ignora a lógica de seleção de texto se o evento veio de um slider
+  }
+
   const selection = window.getSelection();
   if (this.isDialogOpen) {
     this.openSnackBar("Do not do anything if a dialog is open");
     return; // Do not do anything if a dialog is open
   }
+
   // Verifica se existe alguma seleção de texto
   if (selection && selection.rangeCount > 0) {
     const range = selection.getRangeAt(0);
@@ -518,10 +535,8 @@ handleMouseUp(event: MouseEvent) {
   }
 }
 
-
-
-  /* ==================GERA AUDIO==================== */
-   generateAudio(): void {
+/* ==================GERA AUDIO==================== */
+  generateAudio(): void {
     // Verifica se já está gerando áudio para evitar duplicação
     if (this.isGeneratingAudio) return;
 
@@ -613,26 +628,54 @@ handleMouseUp(event: MouseEvent) {
   return totalTime;
 }
 
-  onVolumeChange(event: Event): void {
-    // O evento é um Event genérico, então precisamos fazer um cast para acessar as propriedades específicas do slider
-    const slider = event.target as HTMLInputElement;
-    const newVolume = Number(slider.value); // Converte o valor para número, já que o valor de um input é sempre uma string
-    if (!isNaN(newVolume)) { // Verifica se newVolume é um número válido
-      const normalizedVolume = newVolume / 100; // Transforma o volume de 0-100 para 0-1
-      this.waveform.setVolume(normalizedVolume); // Atualiza o volume do WaveSurfer
-      this.openSnackBar("Update volume WaveSurfer."+normalizedVolume);
-    }
+/* ==================VOLUME==================== */
+onVolumeChange(event: Event): void {
+  const slider = event.target as HTMLInputElement;
+  const newVolume = Number(slider.value);
+  if (!isNaN(newVolume)) {
+    const normalizedVolume = newVolume / 100;
+    this.waveform.setVolume(normalizedVolume);
+    this.cdRef.detectChanges();
+    this.openSnackBar("Update volume WaveSurfer."+normalizedVolume);
   }
+}
 
-  onSpeedChange(event: Event): void {
-    const slider = event.target as HTMLInputElement;
-    const newSpeed = Number(slider.value) / 100; // Convertendo para uma escala de 0.5 a 2
-    if (this.waveform && !isNaN(newSpeed)) {
-      this.waveform.setPlaybackRate(newSpeed);
-      this.openSnackBar("Speed Change."+newSpeed);
-    }
+/* ==================VELOCIDADE==================== */
+onSpeedChange(event: Event): void {
+  const slider = event.target as HTMLInputElement;
+  const newSpeed = Number(slider.value) / 100;
+  if (this.waveform && !isNaN(newSpeed)) {
+    this.waveform.setPlaybackRate(newSpeed);
+    this.openSnackBar("Speed Change."+newSpeed);
   }
+}
 
+// testes volume
+/* diminuirVolume() {
+  // Diminui o volume. Certifique-se de não ir abaixo do mínimo permitido.
+  this.waveform.setVolume(Math.max(this.waveform.getVolume() - 0.1, 0)); // Exemplo: diminuir 10%
+  this.openSnackBar("Volume Diminuído.");
+}
+
+aumentarVolume() {
+  // Aumenta o volume. Certifique-se de não exceder o máximo permitido.
+  this.waveform.setVolume(Math.min(this.waveform.getVolume() + 0.1, 1)); // Exemplo: aumentar 10%
+  this.openSnackBar("Volume Aumentado.");
+}
+
+diminuirVelocidade() {
+  // Diminui a velocidade. Certifique-se de não ir abaixo do mínimo permitido.
+  this.waveform.setPlaybackRate(Math.max(this.waveform.getPlaybackRate() - 0.1, 0.5)); // Exemplo
+  this.openSnackBar("Velocidade Diminuída.");
+}
+
+aumentarVelocidade() {
+  // Aumenta a velocidade. Certifique-se de não exceder o máximo permitido.
+  this.waveform.setPlaybackRate(Math.min(this.waveform.getPlaybackRate() + 0.1, 2)); // Exemplo
+  this.openSnackBar("Velocidade Aumentada.");
+}
+ */
+/* ==================updatePlaybackHint==================== */
   updatePlaybackHint(currentTime: number) {
     const minutes = Math.floor(currentTime / 60);
     const seconds = Math.floor(currentTime % 60);

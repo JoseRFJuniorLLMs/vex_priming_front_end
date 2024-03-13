@@ -1,5 +1,17 @@
 <div class="rsvp-container">
-  <h1 class="text-display">{{ currentWord }}</h1>
-  <button (click)="startReading()"><i class="fa fa-play"></i> Iniciar</button>
-  <button (click)="stopReading()"><i class="fa fa-stop"></i> Parar</button>
+  <h1 class="text-display" [innerHTML]="currentWordFormatted || 'Clique em Start para começar a leitura'"></h1>
+  <div class="controls">
+    <button mat-fab color="primary" (click)="startReading()" matTooltip="Start">
+      <i class="fa fa-play" style="font-size: 24px;"></i>
+    </button>
+    <button mat-fab color="warn" (click)="stopReading()" matTooltip="Stop">
+      <i class="fa fa-stop" style="font-size: 24px;"></i>
+    </button>
+    <button mat-fab (click)="adjustSpeed(100)" matTooltip="More">
+      <i class="fa fa-angle-double-right" style="font-size: 24px;"></i>
+    </button>
+    <button mat-fab (click)="adjustSpeed(300)" matTooltip="Slow">
+      <i class="fa fa-angle-right" style="font-size: 24px;"></i>
+    </button>
+  </div>
 </div>
