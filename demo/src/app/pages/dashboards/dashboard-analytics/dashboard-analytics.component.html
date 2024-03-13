@@ -142,17 +142,15 @@
                     <mat-icon svgIcon="mat:fact_check"></mat-icon>
                   </mat-chip-option>
 
-                <mat-chip-option disabled #chipWord value="image"
-                  matTooltip="Image Option Selected!" color="primary">
-                 Image
-                 <mat-icon svgIcon="mat:image_search"></mat-icon>
-                </mat-chip-option>
+                  <mat-chip-option disabled #chipWord value="image" matTooltip="Image Option Selected!" color="primary">
+                    Image
+                    <mat-icon svgIcon="mat:image_search"></mat-icon>
+                  </mat-chip-option>
 
-                  <mat-chip-option disabled #chipWord value="rsvp"
-                   matTooltip="SRVP Option Selected!" color="primary">
-                  SRVP
-                  <mat-icon svgIcon="mat:flash_on"></mat-icon>
-                 </mat-chip-option>
+                  <mat-chip-option disabled #chipWord value="rsvp" matTooltip="SRVP Option Selected!" color="primary">
+                    SRVP
+                    <mat-icon svgIcon="mat:flash_on"></mat-icon>
+                  </mat-chip-option>
 
                   <!-- inicio -->
 
@@ -212,9 +210,9 @@
           </div>
         </mat-step>
 
-        <mat-step>
+    <!--     <mat-step>
           <ng-template matStepLabel>Lesson</ng-template>
-        </mat-step>
+        </mat-step> -->
 
         <mat-step>
           <ng-template matStepLabel>Text</ng-template>
@@ -300,7 +298,7 @@
                 <td mat-cell *matCellDef="let course">
                   <span class="material-symbols-outlined">
                     schema
-                    </span>
+                  </span>
                   <mat-icon>book</mat-icon> {{ course.lessons?.length || '0' }}
                 </td>
               </ng-container>
@@ -317,7 +315,8 @@
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let course; columns: displayedColumns;"></tr>
-              <tr mat-row *matRowDef="let course; columns: ['expandedDetail']; when: isExpansionDetailRow" [class.expanded-detail]="course.isExpanded"></tr>
+              <tr mat-row *matRowDef="let course; columns: ['expandedDetail']; when: isExpansionDetailRow"
+                [class.expanded-detail]="course.isExpanded"></tr>
 
               <ng-template #tplRowDetail let-row>
                 <td [attr.colspan]="displayedColumns.length">
@@ -347,7 +346,11 @@
                         <td>{{ lesson.text }}</td>
                         <td>{{ lesson.phrase }}</td>
                         <td>{{ lesson.dictionary }}</td>
-                        <td><ul><li *ngFor="let word of lesson.list_word_text">{{ word }}</li></ul></td>
+                        <td>
+                          <ul>
+                            <li *ngFor="let word of lesson.list_word_text">{{ word }}</li>
+                          </ul>
+                        </td>
                         <td>{{ lesson.start }}</td>
                         <td>{{ lesson.end }}</td>
                         <td>{{ lesson.status }}</td>
@@ -465,7 +468,3 @@
     </div>
   </vex-page-layout-content>
 </vex-page-layout>
-
-
-
-

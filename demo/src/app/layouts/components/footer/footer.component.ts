@@ -17,6 +17,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 
+import { RsvpreaderComponent } from 'src/app/pages/dashboards/components/rsvpreader/rsvpreader.component';
 import { ShareBottomWimHofComponent } from '../../../../../src/app/pages/dashboards/components/share-bottom-wim-hof/share-bottom-wim-hof.component';
 
 @Component({
@@ -174,7 +175,28 @@ stopProgressBar(): void {
   this.progress = 0;
 }
 
-openBothConfigs() {
+openBothConfigs() { //shared
   this._bottomSheet.open(ShareBottomWimHofComponent);
 }
+
+openBothConfigsBook() { //boooks
+  this._bottomSheet.open(ShareBottomWimHofComponent);
+}
+
+openBothConfigsShadowing() { //shadowing
+  this._bottomSheet.open(ShareBottomWimHofComponent);
+}
+
+openBothConfigsRSVP() { //rsvp
+  this._bottomSheet.open(RsvpreaderComponent);
+}
+
+openBothConfigsWimHof() {//wom hoff
+  this._bottomSheet.open(ShareBottomWimHofComponent);
+}
+
+openBothConfigsZettelkasten() {//zettelkasten
+  this._bottomSheet.open(ShareBottomWimHofComponent);
+}
+
 }
