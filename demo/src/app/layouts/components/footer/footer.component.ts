@@ -52,6 +52,8 @@ import { ShareBottomSheetComponent } from './../../../pages/dashboards/component
 })
 export class FooterComponent implements OnInit, OnDestroy {
 
+  //chatMessage: string = this.data.texto;
+
   @Output() openConfig = new EventEmitter();
   @Output() openBottomConfig = new EventEmitter();
 
@@ -61,7 +63,9 @@ export class FooterComponent implements OnInit, OnDestroy {
   constructor(
     private cdr: ChangeDetectorRef,
     private _bottomSheet: MatBottomSheet,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    //@Inject(MAT_DIALOG_DATA) public data: { texto: string },
+    ) { }
 
   displayTime: string = '30:00';
   displayTimeMin: string = '30';
@@ -201,11 +205,12 @@ openBothConfigsShadowing() { //shadowing
   this._bottomSheet.open(ShareBottomWimHofComponent);
 }
 
-openBothConfigsRSVP() { // RSVP
-/*   this._bottomSheet.open(RsvpreaderComponent, {
+/* openBothConfigsRSVP() { // RSVP
+  this._bottomSheet.open(RsvpreaderComponent, {
     data: { text: this.selected }
-  }); */
-}
+  });
+  this._bottomSheet.open(RsvpreaderComponent);
+} */
 
 openBothConfigsWimHof() {//wim hof
   this._bottomSheet.open(ShareBottomWimHofComponent);

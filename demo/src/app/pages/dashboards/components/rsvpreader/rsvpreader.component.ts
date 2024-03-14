@@ -1,21 +1,48 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { EMPTY, Subscription } from 'rxjs';
-import { SharedDataService } from 'src/app/services/sahred-data.service';
+//import { SharedDataService } from 'src/app/services/sahred-data.service';
+import { DialogExampleComponent } from '../dialog/dialog-example.component';
+
+import { MatCardModule } from '@angular/material/card';
+import { MatRippleModule } from '@angular/material/core';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatToolbarModule } from '@angular/material/toolbar';
+
 
 @Component({
   selector: 'rsvpreader',
   standalone: true,
   templateUrl: './rsvpreader.component.html',
   styleUrls: ['./rsvpreader.component.scss'],
-  imports: [MatIconModule, CommonModule, FormsModule, MatTooltipModule, MatButtonModule]
+  imports: [
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatRippleModule,
+    MatTooltipModule,
+    MatCardModule,
+    MatToolbarModule,
+    MatStepperModule,
+    MatProgressBarModule,
+    MatDividerModule,
+  ]
 })
-export class RsvpreaderComponent {
+export class RsvpreaderComponent implements OnInit{
+
+  chatMessage: string = this.data.texto;
   @Input() text: string = '';
   selectedText: string = '';
   words: string[] = [];
@@ -26,7 +53,16 @@ export class RsvpreaderComponent {
   intervalSpeed = 200;
   private textSubscription: Subscription = EMPTY.subscribe();
 
-  constructor(private sharedDataService: SharedDataService, private sanitizer: DomSanitizer) {}
+  constructor(
+    //private sharedDataService: SharedDataService,
+    private sanitizer: DomSanitizer,
+    @Inject(MAT_DIALOG_DATA) public data: { texto: string },
+    private dialogRef: MatDialogRef<DialogExampleComponent>,
+    ) {}
+
+  ngOnInit() {
+      this.words = this.chatMessage.split(' ');
+  }
 
   ngOnChanges(): void {
     this.words = this.text.split(',').map(word => word.trim());

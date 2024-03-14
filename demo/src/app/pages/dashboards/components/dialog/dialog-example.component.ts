@@ -37,8 +37,6 @@ import gpt4 from '../../../../../../gpt4.json';
     MatTooltipModule,
     MatCardModule,
     MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
     HttpClientModule,
     MatStepperModule,
     MatProgressBarModule,

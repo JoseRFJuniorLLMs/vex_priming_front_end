@@ -222,8 +222,8 @@ showRSVPReader: boolean = false;
     });
   }
 
-  /* ==================openDialog==================== */
-  openDialog(textDisplay: string): void {
+  /* ==================openDialog Speach==================== */
+  openDialogSpeach(textDisplay: string): void {
     this.isDialogOpen = true;
     // Verifica se já existe um diálogo aberto
     if (this.dialogRef) {
@@ -244,6 +244,29 @@ showRSVPReader: boolean = false;
       this.isDialogOpen = false; // Resetar quando o diálogo é fechado
     });
   }
+
+    /* ==================openDialog SRVP==================== */
+    openDialogSRVP(textDisplay: string): void {
+      this.isDialogOpen = true;
+      // Verifica se já existe um diálogo aberto
+      if (this.dialogRef) {
+        // Fecha o diálogo atual antes de abrir um novo
+        this.dialogRef.close();
+      }
+
+    // Abre o novo diálogo e armazena sua referência
+    this.dialogRef = this.dialog.open(RsvpreaderComponent, {
+    width: '900px',
+    height: '800px',
+    data: { texto: textDisplay }
+    });
+
+      // Quando o diálogo for fechado, limpa a referência
+      this.dialogRef.afterClosed().subscribe(() => {
+        this.dialogRef = null;
+        this.isDialogOpen = false; // Resetar quando o diálogo é fechado
+      });
+    }
 
   /* ==================OnINIT==================== */
   ngOnInit(): void {
@@ -520,7 +543,7 @@ displayFullText(text: string): void {
   }
 
 /* ==================AO SELECIONAR O TEXTO==================== */
-@HostListener('document:mouseup', ['$event'])
+/* @HostListener('document:mouseup', ['$event'])
 handleMouseUp(event: MouseEvent) {
   // Verifica se o evento foi disparado por um slider de volume ou velocidade
   if (event.target && (event.target as HTMLElement).tagName === 'INPUT' && (event.target as HTMLInputElement).type === 'range') {
@@ -552,6 +575,38 @@ handleMouseUp(event: MouseEvent) {
     } else if (range && !range.collapsed) {
       // Se a seleção for vazia, mas range.collapsed for falso, indica que houve uma tentativa de seleção
       this.playSound('../../../../assets/audio/SELECT.wav');
+    }
+  }
+}
+ */
+@HostListener('document:mouseup', ['$event'])
+handleMouseUp(event: MouseEvent) {
+  // Verifica se o evento foi disparado por um slider de volume ou velocidade
+  if (event.target && (event.target as HTMLElement).tagName === 'INPUT' && (event.target as HTMLInputElement).type === 'range') {
+    return; // Ignora a lógica de seleção de texto se o evento veio de um slider
+  }
+
+  const selection = window.getSelection();
+  if (this.isDialogOpen) {
+    this.openSnackBar("Do not do anything if a dialog is open");
+    return; // Não faz nada se um diálogo já está aberto
+  }
+
+  // Verifica se existe alguma seleção de texto
+  if (selection && selection.rangeCount > 0) {
+    // Verifica se a seleção de texto não é vazia
+    const selectedText = selection.toString().trim();
+    if (this.selectedChip && selectedText !== '') {
+      this.openSnackBar(`Added '${this.selectedChip}' as the selection type`);
+
+      // Especificamente quando "srvp" é selecionado
+      if (this.selectedChip === 'srvp') {
+        // Chama o método para abrir o diálogo SRVP com o texto selecionado
+        this.openDialogSRVP(selectedText);
+      } else {
+        // Sua lógica existente para outros chips
+        this.questionToOpenAI(selectedText, this.selectedChip);
+      }
     }
   }
 }
@@ -599,7 +654,7 @@ handleMouseUp(event: MouseEvent) {
           // Ações adicionais após a conclusão do áudio
           this.isGeneratingAudio = false;
           this.playSound('../../../../assets/audio/toc.wav');
-          this.openDialog(this.chatMessage);
+          this.openDialogSpeach(this.chatMessage);
           this.openSnackBar(this.chatMessage);
           // Limpa os listeners após seu uso
           this.waveform.un('ready', onReady);
