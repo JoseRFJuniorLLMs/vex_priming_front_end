@@ -579,6 +579,7 @@ handleMouseUp(event: MouseEvent) {
   }
 }
  */
+
 @HostListener('document:mouseup', ['$event'])
 handleMouseUp(event: MouseEvent) {
   // Verifica se o evento foi disparado por um slider de volume ou velocidade
@@ -594,19 +595,24 @@ handleMouseUp(event: MouseEvent) {
 
   // Verifica se existe alguma seleção de texto
   if (selection && selection.rangeCount > 0) {
+    const range = selection.getRangeAt(0);
     // Verifica se a seleção de texto não é vazia
-    const selectedText = selection.toString().trim();
-    if (this.selectedChip && selectedText !== '') {
+    if (this.selectedChip && selection.toString().trim() !== '') {
+      this.selectedText = selection.toString();
       this.openSnackBar(`Added '${this.selectedChip}' as the selection type`);
 
-      // Especificamente quando "srvp" é selecionado
+      // Aqui você adiciona a lógica específica para quando srvp é selecionado
       if (this.selectedChip === 'srvp') {
-        // Chama o método para abrir o diálogo SRVP com o texto selecionado
-        this.openDialogSRVP(selectedText);
+        this.rsvpReader.text = this.selectedText; // Atualiza o texto no RsvpreaderComponent
+        // Removido para prevenir início automático: this.rsvpReader.startReading();
       } else {
-        // Sua lógica existente para outros chips
-        this.questionToOpenAI(selectedText, this.selectedChip);
+        // Sua lógica existente para outros chips, possivelmente incluindo questionToOpenAI
+        this.questionToOpenAI(this.selectedText, this.selectedChip);
       }
+    } else if (range && !range.collapsed) {
+      // Se a seleção for vazia, mas range.collapsed for falso, indica que houve uma tentativa de seleção
+      this.playSound('../../../../assets/audio/SELECT.wav');
+      this.openSnackBar("Please select an option (srvp / word / text / phrase)");
     }
   }
 }
