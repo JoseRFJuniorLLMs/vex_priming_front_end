@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -102,7 +103,8 @@ interface ResponseData {
     WordComponent,
     BookComponent,
     GraphComponent,
-    RsvpreaderComponent
+    RsvpreaderComponent,
+    MatSlideToggleModule
   ]
 })
 
@@ -122,7 +124,7 @@ export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
   private waveform!: WaveSurfer;
   private subscription: Subscription = new Subscription;
   public isPlaying: boolean = false;
-  voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+  //voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
   //voices: string[] = ['alloy'];
   //speechRecognition: any;
   isTranscribing = false;
@@ -193,6 +195,12 @@ speed: number = 100; // Valor inicial para a velocidade
 
 showRSVPReader: boolean = false;
 
+voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+voiceSelection: string = 'defaultVoice'; // Valor inicial para voz selecionada
+selectedVoice: string = ''; // Adiciona a declaração para 'selectedVoice'
+
+
+
 //==========================fim de declaracoes=============================//
 
   /* ==================CONTRUTOR==================== */
@@ -211,6 +219,12 @@ showRSVPReader: boolean = false;
   }
 
 //================================================
+
+  // Método para atualizar voiceSelection com base na escolha do usuário
+  updateVoiceSelection(voice: string) {
+    this.voiceSelection = voice;
+  }
+
 openDialogX(textDisplay: string): void {
   this.isDialogOpen = true;
   if (this.dialogRef) {
@@ -368,6 +382,70 @@ openDialogX(textDisplay: string): void {
     } finally {
       this.isLoading = false;
     }
+  }
+
+
+ /*  async questionToOpenAI(question: string, selection: 'phrase' | 'text' | 'word', voiceSelection: string) {
+    this.isLoading = true;
+    try {
+      const contentMessage = this.buildContentMessage(question, selection, voiceSelection);
+      const response = await this.postToOpenAI(contentMessage);
+
+      if (this.responseIsValid(response)) {
+        this.handleResponse(response);
+      } else {
+        throw new Error("Resposta da API não contém dados válidos.");
+      }
+    } catch (error) {
+      this.handleError(error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  private buildContentMessage(question: string, selection: string, voiceSelection: string): string {
+    let message = `repeat this ${selection} in ${voiceSelection} voice: ${question}`;
+    switch (selection) {
+      case 'phrase':
+        message += ', and provide more sentences that contain the word simple and children';
+        break;
+      case 'text':
+        message += ' and provide stories using memory palace memorization technique, for children with the word.';
+        break;
+      case 'word':
+        // Adicionar lógica específica para 'word', se necessário.
+        break;
+    }
+    return message;
+  }
+
+  private async postToOpenAI(contentMessage: string) {
+    const headers = {
+      "Authorization": `Bearer ${gpt4.gptApiKey}`,
+      "Content-Type": "application/json",
+    };
+    return await this.http.post<any>(gpt4.gptUrl, {
+      messages: [{ role: 'user', content: contentMessage }],
+      temperature: 0.0,
+      max_tokens: 300,
+      model: "gpt-4",
+    }, { headers }).toPromise();
+  }
+
+  private responseIsValid(response: any): boolean {
+    return response && response.choices && response.choices.length > 0 && response.choices[0].message;
+  }
+ */
+  private handleResponse(response: any) {
+    this.chatMessage = response.choices[0].message.content;
+    const displayTime = this.displayTextWordByWord(this.chatMessage);
+    // Agora `generateAudio` é chamado corretamente com `selectedVoice` como argumento
+    setTimeout(() => this.generateAudio(), displayTime);
+  }
+
+  private handleError(error: any) {
+    this.errorText = "Falha ao obter resposta da API (OPEN IA): " + (error as Error).message;
+    this.openSnackBar(this.errorText);
   }
 
   /* ==================SELECTION PHASE TEXT WORD==================== */
@@ -600,9 +678,12 @@ handleMouseUp(event: MouseEvent) {
 }
 
 /* ==================GERA AUDIO==================== */
-  generateAudio(): void {
+generateAudio(): void {
     // Verifica se já está gerando áudio para evitar duplicação
-    if (this.isGeneratingAudio) return;
+    if (!this.chatMessage || !this.selectedVoice) {
+    console.log("Nenhuma mensagem de chat ou voz selecionada.");
+    return;
+  }
 
     // Indica que o processo de geração de áudio começou
     this.isGeneratingAudio = true;
@@ -618,7 +699,8 @@ handleMouseUp(event: MouseEvent) {
     const url = "https://api.openai.com/v1/audio/speech";
     const body = {
       model: "tts-1-hd",//tts-1-hd, tts-1
-      voice: this.getRandomVoice(),
+      //voice: this.getRandomVoice(),
+      voice: this.selectedVoice,
       input: this.chatMessage
     };
 
@@ -757,6 +839,13 @@ hidePlaybackHint() {
         hintElement.style.display = 'none';
     }
 }
+
+selectVoice(voice: string): void {
+  this.voiceSelection = voice;
+  this.selectedVoice = voice; // Ajuste conforme necessário.
+  this.openSnackBar(`Voice selected: ${voice}`); // Para depuração
+}
+
 
 /* ==================analyzeText==================== */
 analyzeText() {

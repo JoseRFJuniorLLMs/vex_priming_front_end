@@ -1,4 +1,3 @@
-
 <!-- <button (click)="openDialogX('Texto para ser exibido')">Abrir Diálogo</button> -->
 
 <!-- <vex-secondary-toolbar current="Dashboards">
@@ -17,6 +16,8 @@
     <source src="../../../../assets/priming.mp4" type="video/mp4">
   </video>
 </div>-->
+
+
 <div class="container p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
   <div class="loading-indicator" *ngIf="isLoading">
     <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
@@ -59,92 +60,122 @@
           <div class="p-1">
             <div class="pane1">
 
-            <!--   <div class="container p-2
+              <!--   <div class="container p-2
                           grid grid-cols-2
                           sm:grid-cols-2
                           md:grid-cols-2
                           gap-2"> -->
 
-                <!-- Waveform -->
+              <!-- Waveform -->
 
-                <div #waveform autoplay matTooltip="Time Current: {{currentTime}}" style="cursor: pointer;"
-                  [style.left]="progressPercentage + '%'">
-                  <div class="time-indicator" [style.left]="progressPercentage + '%'">
-                  </div>
-
-                  <button mat-icon-button matTooltip="Play Waveform
-          {{currentTime}}" color="primary" (click)="playAudio()">
-                    <mat-icon svgIcon="mat:play_arrow"></mat-icon>
-                  </button>
-
-                  <button mat-icon-button matTooltip="Stop Waveform {{currentTime}}" color="primary"
-                    (click)="stopAudio()">
-                    <mat-icon svgIcon="mat:stop"></mat-icon>
-                  </button>
-
-                  <button mat-icon-button matTooltip="Pause Waveform {{currentTime}}" color="primary"
-                    (click)="pauseAudio()">
-                    <mat-icon svgIcon="mat:pause_circle"></mat-icon>
-                  </button>
-
-                  <div id="playback-hint"
-                    style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: black; color: white; padding: 8px 12px; border-radius: 4px; display: none;">
-                    Tempo: 00:00
-                  </div>
-
+              <div #waveform autoplay matTooltip="Time Current: {{currentTime}}" style="cursor: pointer;"
+                [style.left]="progressPercentage + '%'">
+                <div class="time-indicator" [style.left]="progressPercentage + '%'">
                 </div>
 
-                <!-- Selection -->
-                <div>
+                <button mat-icon-button matTooltip="Play Waveform
+                  {{currentTime}}" color="primary" (click)="playAudio()">
+                  <mat-icon svgIcon="mat:play_arrow"></mat-icon>
+                </button>
 
-                  <mat-chip-option #chipPhrase value="phrase" [selected]="selectedChip === 'phrase'"
-                    (click)="onSelection('phrase')" matTooltip="Priming Phrase Option Selected!" color="primary">
-                    Phrase
-                    <mat-icon svgIcon="mat:speaker_notes"></mat-icon>
+                <button mat-icon-button matTooltip="Stop Waveform {{currentTime}}" color="primary"
+                  (click)="stopAudio()">
+                  <mat-icon svgIcon="mat:stop"></mat-icon>
+                </button>
+
+                <button mat-icon-button matTooltip="Pause Waveform {{currentTime}}" color="primary"
+                  (click)="pauseAudio()">
+                  <mat-icon svgIcon="mat:pause_circle"></mat-icon>
+                </button>
+
+                <div id="playback-hint"
+                  style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: black; color: white; padding: 8px 12px; border-radius: 4px; display: none;">
+                  Tempo: 00:00
+                </div>
+
+              </div>
+
+              <div>
+
+                <mat-chip-option #chipPhrase value="phrase" [selected]="selectedChip === 'phrase'"
+                  (click)="onSelection('phrase')" matTooltip="Priming Phrase Option Selected!" color="primary">
+                  Phrase
+                  <mat-icon svgIcon="mat:speaker_notes"></mat-icon>
+                </mat-chip-option>
+
+                <!-- POMODORO 90 -->
+                <!--   <a class="action flex-none" disabled
+  matTooltip="Pomodoro Technique is a time management method developed by Francesco Cirillo. It’s designed to enhance productivity and focus by breaking work into manageable intervals.»»»»Pomodoro 90: {{ displayTime }}"
+  color="primary" id="get-vex4" mat-flat-button>
+  <mat-slide-toggle color="warn" [checked]="selected === 'get-vex4'"
+    (change)="onToggleChange('get-vex4')"></mat-slide-toggle>
+  <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" svgIcon="mat:alarm_on"></mat-icon>
+  <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2"
+    [svgIcon]="selected === 'get-vex4' ? 'mat:military_tech' : 'mat:settings_accessibility'"></mat-icon>
+</a>
+ -->
+                <mat-chip-option #chipText value="text" color="warn" [selected]="selectedChip === 'text'"
+                  (click)="onSelection('text')" matTooltip="Priming Text Option Selected!">
+                  Text
+                  <mat-icon svgIcon="mat:menu_book"></mat-icon>
+                </mat-chip-option>
+
+                <mat-chip-option #chipWord value="word" color="warn" [selected]="selectedChip === 'word'"
+                  (click)="onSelection('word')" matTooltip="Priming Word Option Selected!">
+                  Word
+                  <mat-icon svgIcon="mat:fact_check"></mat-icon>
+                </mat-chip-option>
+
+                <mat-chip-option disabled #chipWord value="image" color="warn" matTooltip="Image Option Selected!">
+                  Image
+                  <mat-icon svgIcon="mat:image_search"></mat-icon>
+                </mat-chip-option>
+
+                <mat-chip-option #chipWord value="rsvp" color="warn" [selected]="selectedChip === 'srvp'"
+                  (click)="onSelection('srvp')" (click)="toggleRSVPReader()"
+                  matTooltip="RSVP, the technique of : Rapid Serial Visual Presentation, is a method used to present visual information, such as words or images, in a quick sequence, one after the other, at the same visual fixation point. This technique is often used in psychological research on visual processing and attention, as well as in practical applications to improve speed."
+                  color="primary">
+                  SRVP
+                  <mat-icon svgIcon="mat:flash_on"></mat-icon>
+                </mat-chip-option>
+
+                <!-- inicio -->
+
+
+                <mat-chip-listbox aria-label="Voice selection">
+                  <mat-chip-option color="warn" (click)="selectVoice('alloy')" [selected]="voiceSelection === 'alloy'">
+                    <img matTooltip="Alloy" alt="Alloy" matChipAvatar src="assets/img/avatars/1.jpg" /> Alloy
                   </mat-chip-option>
 
-                  <mat-chip-option #chipText value="text" [selected]="selectedChip === 'text'"
-                    (click)="onSelection('text')" matTooltip="Priming Text Option Selected!" color="primary">
-                    Text
-                    <mat-icon svgIcon="mat:menu_book"></mat-icon>
+                  <mat-chip-option color="warn" (click)="selectVoice('echo')" [selected]="voiceSelection === 'echo'">
+                    <img matTooltip="Echo" alt="Echo" matChipAvatar src="assets/img/avatars/2.jpg" /> Echo
                   </mat-chip-option>
 
-                  <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'"
-                    (click)="onSelection('word')" matTooltip="Priming Word Option Selected!" color="primary">
-                    Word
-                    <mat-icon svgIcon="mat:fact_check"></mat-icon>
+                  <mat-chip-option color="warn" (click)="selectVoice('fable')" [selected]="voiceSelection === 'fable'">
+                    <img matTooltip="Fable" alt="Fable" matChipAvatar src="assets/img/avatars/3.jpg" /> Fable
                   </mat-chip-option>
 
-                  <mat-chip-option disabled #chipWord value="image" matTooltip="Image Option Selected!" color="primary">
-                    Image
-                    <mat-icon svgIcon="mat:image_search"></mat-icon>
+                  <mat-chip-option color="warn" (click)="selectVoice('onyx')" [selected]="voiceSelection === 'onyx'">
+                    <img matTooltip="Onyx" alt="Onyx" matChipAvatar src="assets/img/avatars/4.jpg" /> Onyx
                   </mat-chip-option>
 
-                  <mat-chip-option #chipWord value="rsvp" [selected]="selectedChip === 'srvp'"
-                  (click)="onSelection('srvp')"
-                  (click)="toggleRSVPReader()"
-                  matTooltip="RSVP, the technique of : Rapid Serial Visual Presentation, is a method used to present visual information, such as words or images, in a quick sequence, one after the other, at the same visual fixation point. This technique is often used in psychological research on visual processing and attention, as well as in practical applications to improve speed." color="primary">
-                    SRVP
-                    <mat-icon svgIcon="mat:flash_on"></mat-icon>
+                  <mat-chip-option color="warn" (click)="selectVoice('nova')" [selected]="voiceSelection === 'nova'">
+                    <img matTooltip="Nova" alt="Nova" matChipAvatar src="assets/img/avatars/5.jpg" /> Nova
                   </mat-chip-option>
 
-                  <!-- inicio -->
+                  <mat-chip-option color="warn" (click)="selectVoice('shimmer')" [selected]="voiceSelection === 'shimmer'">
+                    <img matTooltip="Shimmer" alt="Shimmer" matChipAvatar src="assets/img/avatars/6.jpg" /> Shimmer
+                  </mat-chip-option>
+                </mat-chip-listbox>
 
-                  <mat-list-item>
-                    <img matTooltip="alloy" alt="alloy" matListItemAvatar src="assets/img/avatars/1.jpg" />
-                    <img matTooltip="onyx" alt="onyx" matListItemAvatar src="assets/img/avatars/2.jpg" />
-                    <img matTooltip="fable" alt="fable" matListItemAvatar src="assets/img/avatars/3.jpg" />
-                    <img matTooltip="nova" alt="nova" matListItemAvatar src="assets/img/avatars/4.jpg" />
-                    <img matTooltip="echo" alt="echo" matListItemAvatar src="assets/img/avatars/5.jpg" />
-                    <!--  <img matTooltip="shimmer" alt="shimmer" matListItemAvatar src="assets/img/avatars/5.jpg" /> -->
 
-                  </mat-list-item>
 
-                  <!-- fim -->
 
-                  <!-- Quick Line Chart -->
-                  <vex-widget-quick-line-chart #chatContainer icon="mat:pageview"
-                    iconClass="text-primary-900 bg-primary-900/10" label="
+                <!-- fim -->
+
+                <!-- Quick Line Chart -->
+                <vex-widget-quick-line-chart #chatContainer icon="mat:pageview"
+                  iconClass="text-primary-900 bg-primary-900/10" label="
 
                     Word:
 
@@ -189,21 +220,21 @@
 Asterisk, asterisk, the art of above and below, an expedition into the unexpected. In a world where gravity reigns supreme, two words emerged as the unlikely protagonists of an extraordinary journey. Above and below seemingly polar opposites embarked on an adventure that would challenge their very definitions. One warm summer day above, the ever-optimistic skydweller decided it was time to venture beyond its lofty abode. With a daring leap, it descended, leaving behind the sun-kissed clouds. As above touched the Earth, a mischievous grin spread across its face, for it was ready to explore the world from a new perspective. Meanwhile, below, the calm and composed Earthdweller felt a longing to break free from its subterráne home. With a resolute determination, it began to climb, leaving behind the dark subterráne caverns. As below reached the surface, its eyes widened in awe at the vast expanse of the sky it never knew existed. Above and below, now on common ground, embarked on a series of hilarious encounters. Above discovered the joy of rolling down grassy hills, while below marveled at the sensation of floating on water. They giggled as they switched places, above finding itself underground and below soaring high in the sky.
 Their journey took them to extraordinary places, from towering mountains to sandy beaches. They met curious creatures and encountered unforeseen obstacles. But through it all, they shared an unbreakable bond, knowing that even in their contrasting natures, they had found the perfect travel companions. As the sun began to set on their extraordinary escapade, above and below stood side by side, their laughter echoing through the air. They had learned that sometimes the best adventures come from stepping out of your comfort zone and embracing the unexpected. And in the end, they realized that even though they were above and below, they had found a connection that would forever link them together.
                     " value="{{ chatMessage }}">
-                  </vex-widget-quick-line-chart>
-                  <div class="p-6">
-                    <img src="assets/img/logo/above.png" alt="ABOVE">
-                    <p>
-                  </div>
-
-                  <div class="p-6">
-                    <img src="assets/img/logo/above2.png" alt="ABOVE">
-                    <p>
-                  </div>
-                  <div class="p-6">
-                    <img src="assets/img/logo/above3.png" alt="ABOVE">
-                    <p>
-                  </div>
+                </vex-widget-quick-line-chart>
+                <div class="p-6">
+                  <img src="assets/img/logo/above.png" alt="ABOVE">
+                  <p>
                 </div>
+
+                <div class="p-6">
+                  <img src="assets/img/logo/above2.png" alt="ABOVE">
+                  <p>
+                </div>
+                <div class="p-6">
+                  <img src="assets/img/logo/above3.png" alt="ABOVE">
+                  <p>
+                </div>
+              </div>
 
               <!-- </div> -->
             </div>
@@ -429,22 +460,22 @@ Their journey took them to extraordinary places, from towering mountains to sand
         </mat-tab>
         <mat-tab label="Priming Word List">
           <div class="p-6">
-            <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'" (click)="onSelection('word')"
-              matTooltip="Priming Word Option Selected!" color="primary">
+            <mat-chip-option #chipWord value="word" color="warn" [selected]="selectedChip === 'word'"
+              (click)="onSelection('word')" matTooltip="Priming Word Option Selected!" color="primary">
               Word
               <mat-icon svgIcon="mat:fact_check"></mat-icon>
             </mat-chip-option>
 
-            <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'" (click)="onSelection('word')"
-              matTooltip="Priming Gamer Option Selected!" color="primary">
+            <mat-chip-option #chipWord value="word" color="warn" [selected]="selectedChip === 'word'"
+              (click)="onSelection('word')" matTooltip="Priming Gamer Option Selected!" color="primary">
               Game
               <mat-icon svgIcon="mat:videogame_asset"></mat-icon>
               <!--  <mat-icon fontSet="material-icons" fontIcon="home"></mat-icon> -->
               <mat-icon fontSet="fontawesome" fontIcon="fa-home"></mat-icon>
             </mat-chip-option>
 
-            <mat-chip-option #chipWord value="word" [selected]="selectedChip === 'word'" (click)="onSelection('word')"
-              matTooltip="Priming Gamer Option Selected!" color="primary">
+            <mat-chip-option #chipWord value="word" color="warn" [selected]="selectedChip === 'word'"
+              (click)="onSelection('word')" matTooltip="Priming Gamer Option Selected!" color="primary">
               Game
               <mat-icon svgIcon="mat:videogame_asset"></mat-icon>
             </mat-chip-option>
@@ -468,5 +499,3 @@ Their journey took them to extraordinary places, from towering mountains to sand
     </div>
   </vex-page-layout-content>
 </vex-page-layout>
-
-
