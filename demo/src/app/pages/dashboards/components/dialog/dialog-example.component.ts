@@ -18,8 +18,11 @@ import { HighlightModule } from 'ngx-highlightjs';
 import { QuillEditorComponent } from 'ngx-quill';
 
 import nlp from 'compromise';
+import { Subject } from 'rxjs';
 import WaveSurfer from 'wavesurfer.js';
 import gpt4 from '../../../../../../gpt4.json';
+
+declare var SpeechRecognition: any;
 
 @Component({
   selector: 'app-dialog-example',
@@ -47,6 +50,7 @@ import gpt4 from '../../../../../../gpt4.json';
 })
 
 export class DialogExampleComponent implements OnInit {
+
   @ViewChild('spectrogram') spectrogramEl: ElementRef | undefined;
   @ViewChild('waveform') waveformEl!: ElementRef;
   @ViewChild('stepper') stepper!: MatStepper;
@@ -67,38 +71,59 @@ export class DialogExampleComponent implements OnInit {
   currentWordIndex: number = 0;
   words: string[] = [];
 
-//NLP
-// Manipulação de Texto
-textNLP: string = '';
-pronouns: string[] = []; // Pronome
-verbs: string[] = []; // Verbo
-nouns: string[] = []; // Substantivo
-adjectives: string[] = []; // Adjetivo
-adverbs: string[] = []; // Advérbio
-people: string[] = []; // Pessoas
-places: string[] = []; // Lugares
-organizations: string[] = []; // Organizações
-dates: string[] = []; // Datas
-values: string[] = []; // Valores
+  //NLP
+  // Manipulação de Texto
+  textNLP: string = '';
+  pronouns: string[] = []; // Pronome
+  verbs: string[] = []; // Verbo
+  nouns: string[] = []; // Substantivo
+  adjectives: string[] = []; // Adjetivo
+  adverbs: string[] = []; // Advérbio
+  people: string[] = []; // Pessoas
+  places: string[] = []; // Lugares
+  organizations: string[] = []; // Organizações
+  dates: string[] = []; // Datas
+  values: string[] = []; // Valores
 
-// Adicionando novas variáveis para funcionalidades adicionais
-phrases: any[] = []; // Frases
-clauses: string[] = []; // Cláusulas
-negations: string[] = []; // Negativas
-questions: string[] = []; // Perguntas
-quotes: string[] = []; // Citações
-acronyms: string[] = []; // Siglas
-emails: string[] = []; // E-mails
-urls: string[] = []; // URLs
-emojis: string[] = []; // Emojis
-mentions: string[] = []; // Menções (@usuario)
-hashtags: string[] = []; // Hashtags
+  // Adicionando novas variáveis para funcionalidades adicionais
+  phrases: any[] = []; // Frases
+  clauses: string[] = []; // Cláusulas
+  negations: string[] = []; // Negativas
+  questions: string[] = []; // Perguntas
+  quotes: string[] = []; // Citações
+  acronyms: string[] = []; // Siglas
+  emails: string[] = []; // E-mails
+  urls: string[] = []; // URLs
+  emojis: string[] = []; // Emojis
+  mentions: string[] = []; // Menções (@usuario)
+  hashtags: string[] = []; // Hashtags
+
+  private recognition: any;
+  public transcript = new Subject<string>();
 
   constructor(
     private http: HttpClient,
     @Inject(MAT_DIALOG_DATA) public data: { texto: string },
-    private dialogRef: MatDialogRef<DialogExampleComponent>,
-  ) { }
+    private dialogRef: MatDialogRef<DialogExampleComponent>
+  ) {
+    /* this.initializeRecognition(); */
+  }
+
+  private initializeRecognition(): void {
+    this.recognition = new SpeechRecognition();
+    this.recognition.lang = 'en-US';
+    this.recognition.continuous = false;
+    this.recognition.interimResults = false;
+
+    this.recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
+      const transcript = event.results[0][0].transcript;
+      this.transcript.next(transcript);
+    };
+
+    this.recognition.onerror = (event: { error: any; }) => {
+      console.error('Erro de reconhecimento de voz:', event.error);
+    };
+  }
 
   ngOnInit() {
     this.words = this.chatMessage.split(' ');
@@ -131,79 +156,59 @@ hashtags: string[] = []; // Hashtags
     this.setupWaveSurferEvents();
   }
 
-    /* ==================VOZ ALEATORIA==================== */
-    getRandomVoice(): string {
-      const randomIndex = Math.floor(Math.random() * this.voices.length);
-      return this.voices[randomIndex];
+  /* ==================VOZ ALEATORIA==================== */
+  getRandomVoice(): string {
+    const randomIndex = Math.floor(Math.random() * this.voices.length);
+    return this.voices[randomIndex];
+  }
+
+  /* ==================GERADOR DE AUDIO==================== */
+  generateAudio(): void {
+    if (this.isGeneratingAudio) return;
+    this.isGeneratingAudio = true;
+
+    if (!this.chatMessage) {
+      console.error('No chatMessage to generate audio from.');
+      this.isGeneratingAudio = false;
+      return;
     }
 
-    /* ==================GERADOR DE AUDIO==================== */
-    generateAudio(): void {
-      if (this.isGeneratingAudio) return;
-      this.isGeneratingAudio = true;
+    const openAIKey = gpt4.gptApiKey;
+    const url = "https://api.openai.com/v1/audio/speech";
+    const body = {
+      model: "tts-1",
+      voice: this.getRandomVoice(),
+      input: this.chatMessage
+    };
 
-      if (!this.chatMessage) {
-        console.error('No chatMessage to generate audio from.');
-        this.isGeneratingAudio = false;
-        return;
-      }
+    const headers = new HttpHeaders({
+      "Authorization": `Bearer ${openAIKey}`,
+      "Content-Type": "application/json"
+    });
 
-      const openAIKey = gpt4.gptApiKey;
-      const url = "https://api.openai.com/v1/audio/speech";
-      const body = {
-        model: "tts-1",
-        voice: this.getRandomVoice(),
-        input: this.chatMessage
-      };
+    this.http.post(url, body, { headers, responseType: "blob" }).subscribe(
+      response => {
+        const audioBlob = new Blob([response], { type: 'audio/wav' });
+        const audioUrl = URL.createObjectURL(audioBlob);
 
-      const headers = new HttpHeaders({
-        "Authorization": `Bearer ${openAIKey}`,
-        "Content-Type": "application/json"
-      });
-
-      this.http.post(url, body, { headers, responseType: "blob" }).subscribe(
-        response => {
-          const audioBlob = new Blob([response], { type: 'audio/wav' });
-          const audioUrl = URL.createObjectURL(audioBlob);
-
-          if (this.waveSurfer) {
-            this.waveSurfer.load(audioUrl);
-            this.waveSurfer.on('ready', () => {
-              this.waveSurfer?.play();
-              this.isAudioReady = true; // Marca o áudio como pronto para reprodução
-            });
-          }
-
-          this.isGeneratingAudio = false;
-        },
-        error => {
-          console.error("Error generating audio:", error);
-          this.isGeneratingAudio = false;
+        if (this.waveSurfer) {
+          this.waveSurfer.load(audioUrl);
+          this.waveSurfer.on('ready', () => {
+            this.waveSurfer?.play();
+            this.isAudioReady = true; // Marca o áudio como pronto para reprodução
+          });
         }
-      );
-    }
 
-// =================TRANSCRICAO DO AUDIO================//
-transcribeAudio(audioBlob: Blob) {
-  const openAIKey = gpt4.gptApiKey;
-  const url = 'https://api.openai.com/v1/whisper';
-  const formData = new FormData();
-  formData.append('file', audioBlob);
-  const headers = new HttpHeaders({
-    'Authorization': `Bearer ${openAIKey}`,
-  });
-  this.http.post(url, formData, { headers, observe: 'response', responseType: 'json' })
-    .subscribe(
-      (response: any) => {
-        const transcribedText = response.body.text;
-        console.log('TEXTO:', transcribedText); // Alterado de console.error para console.log
-        this.data.texto += (this.data.texto ? " " : "") + transcribedText;
+        this.isGeneratingAudio = false;
       },
       error => {
-        console.error('Error transcribing audio:', error);
+        console.error("Error generating audio:", error);
+        this.isGeneratingAudio = false;
       }
     );
-}
+  }
+
+  // =================TRANSCRICAO DO AUDIO================//
 
 
   setupWaveSurferEvents(): void {
@@ -266,7 +271,7 @@ transcribeAudio(audioBlob: Blob) {
     }
   }
 
- stopRecording(): void {
+/*   stopRecording(): void {
     if (!this.mediaRecorder) {
       return;
     }
@@ -286,7 +291,37 @@ transcribeAudio(audioBlob: Blob) {
       }
 
       this.loadAudio(this.audioUrl); // Carregue o áudio para reprodução direta
-      this.transcribeAudio(audioBlob); // Inicie a transcrição do áudio
+      //this.transcribeAudio(audioBlob); // Inicie a transcrição do áudio
+
+      // Lembre-se de limpar/resetar os audioChunks para uma nova gravação
+      this.audioChunks = [];
+    };
+
+    // Adicione manuseio de erro conforme necessário
+  } */
+
+  stopRecording(): void {
+    if (!this.mediaRecorder) {
+      return;
+    }
+
+    this.mediaRecorder.stop(); // Pare a gravação
+    this.isRecording = false; // Atualize o estado de gravação
+
+    this.mediaRecorder.onstop = () => {
+      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+      if (this.audioUrl) {
+        URL.revokeObjectURL(this.audioUrl); // Libere a URL anterior, se houver
+      }
+      this.audioUrl = URL.createObjectURL(audioBlob); // Crie uma nova URL
+
+      if (this.waveSurfer) {
+        this.waveSurfer.load(this.audioUrl); // Carregue o áudio no WaveSurfer
+      }
+
+      this.loadAudio(this.audioUrl); // Carregue o áudio para reprodução direta
+      this.initializeRecognition();
+      this.startTranscription(); // Inicie a transcrição do áudio
 
       // Lembre-se de limpar/resetar os audioChunks para uma nova gravação
       this.audioChunks = [];
@@ -296,14 +331,6 @@ transcribeAudio(audioBlob: Blob) {
   }
 
 
-  transcribeCurrentAudio() {
-    if (this.audioChunks.length > 0) {
-      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
-      this.transcribeAudio(audioBlob);
-    } else {
-      console.error('Nenhum áudio para transcrever');
-    }
-  }
 
   loadAudio(url: string): void {
     this.audio = new Audio(url);
@@ -339,14 +366,14 @@ transcribeAudio(audioBlob: Blob) {
         return;
       }
 
- // Atualiza o HTML exibido com a palavra atual destacada
- const highlightedText = this.words.slice(0, this.currentWordIndex + 1).join(' ');
- this.updateDisplayedHtml(highlightedText);
+      // Atualiza o HTML exibido com a palavra atual destacada
+      const highlightedText = this.words.slice(0, this.currentWordIndex + 1).join(' ');
+      this.updateDisplayedHtml(highlightedText);
 
- // Move para a próxima palavra
- this.currentWordIndex++;
-}, 400); // Intervalo de 1 segundo entre cada palavra (ajuste conforme necessário)
-}
+      // Move para a próxima palavra
+      this.currentWordIndex++;
+    }, 400); // Intervalo de 1 segundo entre cada palavra (ajuste conforme necessário)
+  }
 
   pauseSound(): void {
     if (this.audio && !this.audio.paused) {
@@ -366,12 +393,24 @@ transcribeAudio(audioBlob: Blob) {
   }
 
 
-performAnalysis(): void {
-  // Atualiza textNLP com o valor de chatMessage
-  this.textNLP = this.chatMessage;
-  // Agora chama analyzeText para processar o texto
-  this.analyzeText();
-}
+  performAnalysis(): void {
+    // Atualiza textNLP com o valor de chatMessage
+    this.textNLP = this.chatMessage;
+    // Agora chama analyzeText para processar o texto
+    this.analyzeText();
+  }
+
+  startTranscription(): void {
+    this.recognition.start();
+  }
+
+  stopTranscription(): void {
+    this.recognition.stop();
+  }
+
+  getTranscript(): Subject<string> {
+    return this.transcript;
+  }
 
   analyzeText() {
     const doc = nlp(this.chatMessage);
