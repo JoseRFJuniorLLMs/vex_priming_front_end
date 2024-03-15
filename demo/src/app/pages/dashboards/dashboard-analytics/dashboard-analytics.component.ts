@@ -51,6 +51,7 @@ import { WordComponent } from '../components/word/word.component';
 
 import { Course } from 'src/app/model/course/course';
 import { SharedDataService } from 'src/app/services/sahred-data.service';
+import { TextToSpeechService } from 'src/app/services/text-to-speech.service';
 import { CoursesService } from '../../../services/courses.service';
 import { BookComponent } from '../../apps/book/book.component';
 import { GraphComponent } from '../../apps/graph/graph.component';
@@ -200,7 +201,8 @@ showRSVPReader: boolean = false;
     private dialog: MatDialog,
     private coursesService : CoursesService,
     private cdRef: ChangeDetectorRef,
-    private sharedDataService: SharedDataService
+    private sharedDataService: SharedDataService,
+    private textToSpeechService: TextToSpeechService
   ) {
     this.readyListener = () => {};
     this.finishListener = () => {};
@@ -495,6 +497,7 @@ displayFullText(text: string): void {
   playAudio() {
     this.waveform.play();
     this.openSnackBar("waveform: Play");
+    this.textToSpeechService.speak(this.chatMessage);// Legenda do Chome
   }
 
   /* ==================PAUSE AUDIO==================== */
@@ -756,6 +759,7 @@ aumentarVelocidade() {
     }
 }
 
+/* ==================hidePlaybackHint==================== */
 hidePlaybackHint() {
     const hintElement = document.getElementById('playback-hint');
     if (hintElement) {
@@ -763,6 +767,7 @@ hidePlaybackHint() {
     }
 }
 
+/* ==================analyzeText==================== */
 analyzeText() {
   const doc = nlp(this.textNLP);
   // Análise básica
