@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 
@@ -10,6 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -44,7 +46,9 @@ declare var SpeechRecognition: any;
     MatStepperModule,
     MatProgressBarModule,
     MatDividerModule,
-    HighlightModule
+    HighlightModule,
+    MatProgressSpinnerModule,
+    CommonModule
 
   ]
 })
@@ -56,6 +60,8 @@ export class DialogExampleComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
 
   longText = ``;
+  errorText = '';
+  isLoading = false;
   mediaRecorder?: MediaRecorder;
   audioChunks: any[] = [];
   isRecording = false;
@@ -143,7 +149,6 @@ export class DialogExampleComponent implements OnInit {
   ngAfterViewInit(): void {
     this.waveSurfer = WaveSurfer.create({
       container: this.waveformEl.nativeElement,
-      /* url: '../../assets/audio/ABOVE.wav', */
       waveColor: '#d3d3d3',
       progressColor: '#0000FF',
       cursorColor: '#0000FF',
@@ -195,6 +200,7 @@ export class DialogExampleComponent implements OnInit {
     });
 
     this.http.post(url, body, { headers, responseType: "blob" }).subscribe(
+
       response => {
         const audioBlob = new Blob([response], { type: 'audio/wav' });
         const audioUrl = URL.createObjectURL(audioBlob);
@@ -272,12 +278,14 @@ export class DialogExampleComponent implements OnInit {
   startRecording(): void {
     if (!this.isRecording) {
       this.activateMicrophone();
+      this.isLoading = true;
       this.isRecording = true; // Ensure the recording state is updated
     }
   }
 
   // ================= Stop Recording ================//
   stopRecording(): void {
+    this.isLoading = false;
     if (!this.mediaRecorder) {
       console.error('Tentativa de parar a gravação, mas o MediaRecorder não está definido.');
       return;
