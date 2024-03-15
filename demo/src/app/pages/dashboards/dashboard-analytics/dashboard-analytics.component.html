@@ -97,78 +97,72 @@
 
               <div>
 
-                <mat-chip-option #chipPhrase value="phrase" [selected]="selectedChip === 'phrase'"
-                  (click)="onSelection('phrase')" matTooltip="Priming Phrase Option Selected!" color="primary">
-                  Phrase
-                  <mat-icon svgIcon="mat:speaker_notes"></mat-icon>
-                </mat-chip-option>
-
-                <!-- POMODORO 90 -->
-                <!--   <a class="action flex-none" disabled
-  matTooltip="Pomodoro Technique is a time management method developed by Francesco Cirillo. It’s designed to enhance productivity and focus by breaking work into manageable intervals.»»»»Pomodoro 90: {{ displayTime }}"
-  color="primary" id="get-vex4" mat-flat-button>
-  <mat-slide-toggle color="warn" [checked]="selected === 'get-vex4'"
-    (change)="onToggleChange('get-vex4')"></mat-slide-toggle>
-  <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2" svgIcon="mat:alarm_on"></mat-icon>
-  <mat-icon class="icon-sm ltr:mr-2 rtl:ml-2"
-    [svgIcon]="selected === 'get-vex4' ? 'mat:military_tech' : 'mat:settings_accessibility'"></mat-icon>
-</a>
- -->
-                <mat-chip-option #chipText value="text" color="warn" [selected]="selectedChip === 'text'"
-                  (click)="onSelection('text')" matTooltip="Priming Text Option Selected!">
-                  Text
-                  <mat-icon svgIcon="mat:menu_book"></mat-icon>
-                </mat-chip-option>
-
-                <mat-chip-option #chipWord value="word" color="warn" [selected]="selectedChip === 'word'"
-                  (click)="onSelection('word')" matTooltip="Priming Word Option Selected!">
-                  Word
-                  <mat-icon svgIcon="mat:fact_check"></mat-icon>
-                </mat-chip-option>
-
-                <mat-chip-option disabled #chipWord value="image" color="warn" matTooltip="Image Option Selected!">
-                  Image
-                  <mat-icon svgIcon="mat:image_search"></mat-icon>
-                </mat-chip-option>
-
-                <mat-chip-option #chipWord value="rsvp" color="warn" [selected]="selectedChip === 'srvp'"
-                  (click)="onSelection('srvp')" (click)="toggleRSVPReader()"
-                  matTooltip="RSVP, the technique of : Rapid Serial Visual Presentation, is a method used to present visual information, such as words or images, in a quick sequence, one after the other, at the same visual fixation point. This technique is often used in psychological research on visual processing and attention, as well as in practical applications to improve speed."
-                  color="primary">
-                  SRVP
-                  <mat-icon svgIcon="mat:flash_on"></mat-icon>
-                </mat-chip-option>
 
                 <!-- inicio -->
 
+                <mat-card>Voice
+                  <mat-card-content>
 
-                <mat-chip-listbox aria-label="Voice selection">
-                  <mat-chip-option color="warn" (click)="selectVoice('alloy')" [selected]="voiceSelection === 'alloy'">
-                    <img matTooltip="Alloy" alt="Alloy" matChipAvatar src="assets/img/avatars/1.jpg" /> Alloy
-                  </mat-chip-option>
+                    <mat-chip-listbox aria-label="Voice selection">
+                      <mat-chip-option color="warn" matTooltip="Priming Alloy Option Selected!" (click)="selectVoice('alloy')" [selected]="voiceSelection === 'alloy'">
+                        <img matTooltip="Alloy" alt="Alloy" matChipAvatar src="assets/img/avatars/1.jpg" /> Alloy
+                      </mat-chip-option>
+                      <mat-divider></mat-divider>
+                      <mat-chip-option color="warn" matTooltip="Priming Echo Option Selected!" (click)="selectVoice('echo')" [selected]="voiceSelection === 'echo'">
+                        <img matTooltip="Echo" alt="Echo" matChipAvatar src="assets/img/avatars/2.jpg" /> Echo
+                      </mat-chip-option>
+                      <mat-divider></mat-divider>
+                      <mat-chip-option color="warn" matTooltip="Priming Fable Option Selected!" (click)="selectVoice('fable')" [selected]="voiceSelection === 'fable'">
+                        <img matTooltip="Fable" alt="Fable" matChipAvatar src="assets/img/avatars/3.jpg" /> Fable
+                      </mat-chip-option>
+                      <mat-divider></mat-divider>
+                      <mat-chip-option color="warn" matTooltip="Priming Onyx Option Selected!" (click)="selectVoice('onyx')" [selected]="voiceSelection === 'onyx'">
+                        <img matTooltip="Onyx" alt="Onyx" matChipAvatar src="assets/img/avatars/4.jpg" /> Onyx
+                      </mat-chip-option>
+                      <mat-divider></mat-divider>
+                      <mat-chip-option color="warn" matTooltip="Priming Nova Option Selected!" (click)="selectVoice('nova')" [selected]="voiceSelection === 'nova'">
+                        <img matTooltip="Nova" alt="Nova" matChipAvatar src="assets/img/avatars/5.jpg" /> Nova
+                      </mat-chip-option>
+                      <mat-divider></mat-divider>
+                      <mat-chip-option color="warn" matTooltip="Priming Shimmer Option Selected!" (click)="selectVoice('shimmer')"
+                        [selected]="voiceSelection === 'shimmer'">
+                        <img matTooltip="Shimmer" alt="Shimmer" matChipAvatar src="assets/img/avatars/6.jpg" /> Shimmer
+                      </mat-chip-option>
+                    </mat-chip-listbox>
 
-                  <mat-chip-option color="warn" (click)="selectVoice('echo')" [selected]="voiceSelection === 'echo'">
-                    <img matTooltip="Echo" alt="Echo" matChipAvatar src="assets/img/avatars/2.jpg" /> Echo
-                  </mat-chip-option>
+                    <mat-chip-option #chipPhrase value="phrase" [selected]="selectedChip === 'phrase'"
+                      (click)="onSelection('phrase')" matTooltip="Priming Phrase Option Selected!" color="primary">
+                      Phrase
+                      <mat-icon svgIcon="mat:speaker_notes"></mat-icon>
+                    </mat-chip-option>
+                    <mat-chip-option #chipText value="text" color="warn" [selected]="selectedChip === 'text'"
+                      (click)="onSelection('text')" matTooltip="Priming Text Option Selected!">
+                      Text
+                      <mat-icon svgIcon="mat:menu_book"></mat-icon>
+                    </mat-chip-option>
 
-                  <mat-chip-option color="warn" (click)="selectVoice('fable')" [selected]="voiceSelection === 'fable'">
-                    <img matTooltip="Fable" alt="Fable" matChipAvatar src="assets/img/avatars/3.jpg" /> Fable
-                  </mat-chip-option>
+                    <mat-chip-option #chipWord value="word" color="warn" [selected]="selectedChip === 'word'"
+                      (click)="onSelection('word')" matTooltip="Priming Word Option Selected!">
+                      Word
+                      <mat-icon svgIcon="mat:fact_check"></mat-icon>
+                    </mat-chip-option>
 
-                  <mat-chip-option color="warn" (click)="selectVoice('onyx')" [selected]="voiceSelection === 'onyx'">
-                    <img matTooltip="Onyx" alt="Onyx" matChipAvatar src="assets/img/avatars/4.jpg" /> Onyx
-                  </mat-chip-option>
+                    <mat-chip-option disabled #chipWord value="image" color="warn" matTooltip="Image Option Selected!">
+                      Image
+                      <mat-icon svgIcon="mat:image_search"></mat-icon>
+                    </mat-chip-option>
 
-                  <mat-chip-option color="warn" (click)="selectVoice('nova')" [selected]="voiceSelection === 'nova'">
-                    <img matTooltip="Nova" alt="Nova" matChipAvatar src="assets/img/avatars/5.jpg" /> Nova
-                  </mat-chip-option>
+                    <mat-chip-option #chipWord value="rsvp" color="warn" [selected]="selectedChip === 'srvp'"
+                      (click)="onSelection('srvp')" (click)="toggleRSVPReader()"
+                      matTooltip="RSVP, the technique of : Rapid Serial Visual Presentation, is a method used to present visual information, such as words or images, in a quick sequence, one after the other, at the same visual fixation point. This technique is often used in psychological research on visual processing and attention, as well as in practical applications to improve speed."
+                      color="primary">
+                      SRVP
+                      <mat-icon svgIcon="mat:flash_on"></mat-icon>
+                    </mat-chip-option>
 
-                  <mat-chip-option color="warn" (click)="selectVoice('shimmer')" [selected]="voiceSelection === 'shimmer'">
-                    <img matTooltip="Shimmer" alt="Shimmer" matChipAvatar src="assets/img/avatars/6.jpg" /> Shimmer
-                  </mat-chip-option>
-                </mat-chip-listbox>
 
-
+                  </mat-card-content>
+                </mat-card>
 
 
                 <!-- fim -->
