@@ -60,6 +60,8 @@ import { DialogExampleComponent } from '../components/dialog/dialog-example.comp
 import { RsvpreaderComponent } from '../components/rsvpreader/rsvpreader.component';
 import { ImagemPopupComponent } from './imagem-popup.component';
 
+import { VexLayoutService } from '@vex/services/vex-layout.service';
+
 // Interface para descrever a estrutura da resposta da API
 interface ResponseData {
   choices?: { message: { content: string } }[];
@@ -108,22 +110,22 @@ interface ResponseData {
 export class DashboardAnalyticsComponent implements OnInit, AfterViewInit {
 
   /* ==================COURSES SERVICES==================== */
-
   courses$!: Observable<Course[]>;
   //displayedColumns: string[] = ['_id', 'level', 'name', 'content', 'objective', 'status', 'category', 'price', 'lessons'];
   displayedColumns: string[] = ['_id', 'level', 'name', 'content', 'objective', 'status', 'category', 'price', 'lessons', 'expandToggle'];
   //displayedColumns: string[] = ['_id', 'level', 'name', 'content', 'objective', 'status', 'category', 'price', 'expandToggle'];
 
-    /* ==================VIEWCHILD==================== */
+  /* ==================VIEWCHILD==================== */
   @ViewChild('waveform', { static: false }) waveformEl!: ElementRef<any>;
   @ViewChild(RsvpreaderComponent) rsvpReader!: RsvpreaderComponent;
+
   /* ==================VARIAVEIS==================== */
   private waveform!: WaveSurfer;
   private subscription: Subscription = new Subscription;
   public isPlaying: boolean = false;
   voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
   //voices: string[] = ['alloy'];
-  speechRecognition: any;
+  //speechRecognition: any;
   isTranscribing = false;
   textToSpeech!: string;
   audioBlob!: Blob;
@@ -202,12 +204,12 @@ showRSVPReader: boolean = false;
     private coursesService : CoursesService,
     private cdRef: ChangeDetectorRef,
     private sharedDataService: SharedDataService,
-    private textToSpeechService: TextToSpeechService
+    private textToSpeechService: TextToSpeechService,
+    private layoutService: VexLayoutService
   ) {
     this.readyListener = () => {};
     this.finishListener = () => {};
   }
-
 
 //================================================
 openDialogX(textDisplay: string): void {
@@ -266,7 +268,7 @@ openDialogX(textDisplay: string): void {
     });
   }
 
-    /* ==================openDialog SRVP==================== */
+  /* ==================openDialog SRVP==================== */
     openDialogSRVP(textDisplay: string): void {
       this.isDialogOpen = true;
       // Verifica se já existe um diálogo aberto
@@ -290,9 +292,10 @@ openDialogX(textDisplay: string): void {
     }
 
   /* ==================OnINIT==================== */
-  ngOnInit(): void {
-  this.abrirPopup();
-  this.analyzeText();
+    ngOnInit(): void {
+
+    this.abrirPopup();
+    this.analyzeText();
 
       //this.coursesService.getCoursesByStudentId('65c5d833c2c6b863b26ae1df').subscribe(cursos => {
         this.coursesService.getCoursesByStudentId().subscribe(cursos => {
@@ -315,7 +318,7 @@ openDialogX(textDisplay: string): void {
       screenfull.request();
     }
 
-    this.speechRecognition.continuous = true;
+    //this.speechRecognition.continuous = true;
 
   }
 
@@ -375,6 +378,7 @@ openDialogX(textDisplay: string): void {
   onSelection(selection: 'phrase' | 'text' | 'word' | 'srvp') {
     this.selectedChip = this.selectedChip === selection ? null : selection;
     this.openSnackBar(selection);
+    this.layoutService.collapseCloseSidenav();
   }
 
   /* ==================WAVESURFER==================== */

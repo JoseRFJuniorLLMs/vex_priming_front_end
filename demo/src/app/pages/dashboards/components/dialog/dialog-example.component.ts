@@ -101,13 +101,13 @@ export class DialogExampleComponent implements OnInit {
   private recognition: any;
   public transcript = new Subject<string>();
 
+  displayedContent: string = "";
+
   constructor(
     private http: HttpClient,
     @Inject(MAT_DIALOG_DATA) public data: { texto: string },
     private dialogRef: MatDialogRef<DialogExampleComponent>
-  ) {
-    /* this.initializeRecognition(); */
-  }
+  ) {}
 
   private initializeRecognition(): void {
     this.recognition = new SpeechRecognition();
@@ -208,9 +208,6 @@ export class DialogExampleComponent implements OnInit {
     );
   }
 
-  // =================TRANSCRICAO DO AUDIO================//
-
-
   setupWaveSurferEvents(): void {
     if (!this.waveSurfer) return;
 
@@ -271,35 +268,7 @@ export class DialogExampleComponent implements OnInit {
     }
   }
 
-/*   stopRecording(): void {
-    if (!this.mediaRecorder) {
-      return;
-    }
-
-    this.mediaRecorder.stop(); // Pare a gravação
-    this.isRecording = false; // Atualize o estado de gravação
-
-    this.mediaRecorder.onstop = () => {
-      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
-      if (this.audioUrl) {
-        URL.revokeObjectURL(this.audioUrl); // Libere a URL anterior, se houver
-      }
-      this.audioUrl = URL.createObjectURL(audioBlob); // Crie uma nova URL
-
-      if (this.waveSurfer) {
-        this.waveSurfer.load(this.audioUrl); // Carregue o áudio no WaveSurfer
-      }
-
-      this.loadAudio(this.audioUrl); // Carregue o áudio para reprodução direta
-      //this.transcribeAudio(audioBlob); // Inicie a transcrição do áudio
-
-      // Lembre-se de limpar/resetar os audioChunks para uma nova gravação
-      this.audioChunks = [];
-    };
-
-    // Adicione manuseio de erro conforme necessário
-  } */
-
+  // ================= Stop Recording ================//
   stopRecording(): void {
     if (!this.mediaRecorder) {
       return;
@@ -320,17 +289,16 @@ export class DialogExampleComponent implements OnInit {
       }
 
       this.loadAudio(this.audioUrl); // Carregue o áudio para reprodução direta
-      this.initializeRecognition();
-      this.startTranscription(); // Inicie a transcrição do áudio
+      this.initializeRecognition(); // Inicie a transcrição do áudio
 
+      this.transcript.subscribe(transcript => {
+        this.displayedContent = transcript;
+      });
       // Lembre-se de limpar/resetar os audioChunks para uma nova gravação
       this.audioChunks = [];
     };
 
-    // Adicione manuseio de erro conforme necessário
   }
-
-
 
   loadAudio(url: string): void {
     this.audio = new Audio(url);
@@ -400,16 +368,16 @@ export class DialogExampleComponent implements OnInit {
     this.analyzeText();
   }
 
-  startTranscription(): void {
+  startTranscription() {
     this.recognition.start();
   }
 
-  stopTranscription(): void {
+  stopTranscription() {
     this.recognition.stop();
   }
 
-  getTranscript(): Subject<string> {
-    return this.transcript;
+  getTranscript() {
+    return this.transcript.asObservable();
   }
 
   analyzeText() {
