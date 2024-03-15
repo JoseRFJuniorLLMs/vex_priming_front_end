@@ -44,7 +44,6 @@ import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-tool
 
 import nlp from 'compromise';
 import { interval, Observable, Subscription } from 'rxjs';
-import screenfull from 'screenfull';
 import WaveSurfer from 'wavesurfer.js';
 //import { NlpService } from 'promise-nlp';
 import { WordComponent } from '../components/word/word.component';
@@ -309,17 +308,14 @@ openDialogX(textDisplay: string): void {
     // Definindo colunas dinamicamente com base na entidade Course (exemplo simplificado)
     this.displayedColumns = this.getColumnsFromCourseEntity();
 
-    this.waveform.play();
+    //this.waveform.play();
     this.subscription = interval(1000).subscribe(() => {
       this.getCurrentTime();
     });
 
-    if (screenfull.isEnabled) {
+/*     if (screenfull.isEnabled) {
       screenfull.request();
-    }
-
-    //this.speechRecognition.continuous = true;
-
+    } */
   }
 
    /* ==================COLUMNS COURSE==================== */
@@ -386,13 +382,9 @@ openDialogX(textDisplay: string): void {
     this.isPlaying = true;
     this.waveform = WaveSurfer.create({
       container: this.waveformEl.nativeElement,
-      /*  url: 'https://storage.googleapis.com/priming_text_wav/ABOVE.wav', */
-
       url: '../../assets/audio/micro-machines.wav',
       waveColor: '#d3d3d3',
       progressColor: 'rgb(0, 0, 0)',
-      /*       waveColor: 'rgb(200, 0, 200)',
-            progressColor: '#000000', */
       cursorColor: 'rgb(0, 0, 0)',
       cursorWidth: 5,
       minPxPerSec: 50,
@@ -468,8 +460,7 @@ displayFullText(text: string): void {
   const displayElement = document.getElementById('textDisplay');
   if (displayElement) {
       displayElement.textContent = text;
-      this.openSnackBar("Text: "+text);
-  }
+   }
 }
 
   /* ==================ATUALIZA O TEXTO BASEADO NO AUDIO==================== */
@@ -522,7 +513,6 @@ displayFullText(text: string): void {
     const minutes = Math.floor(currentTime / 60);
     const seconds = Math.floor(currentTime % 60);
     this.currentTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    this.openSnackBar(this.currentTime);
   }
 
   /* ==================CALCULA PORCENTAGEM DE PROGRESSO==================== */
@@ -530,7 +520,6 @@ displayFullText(text: string): void {
     const duration = this.waveform.getDuration();
     const currentTime = this.waveform.getCurrentTime();
     this.progressPercentage = (currentTime / duration) * 100;
-    this.openSnackBar("Progress: " + this.progressPercentage);
   }
 
   /* ==================MOSTRO OS CONTROLES DO VOLUME==================== */
@@ -619,7 +608,6 @@ handleMouseUp(event: MouseEvent) {
     this.isGeneratingAudio = true;
 
     if (!this.chatMessage) {
-      console.error('No chatMessage to generate audio from.');
       this.openSnackBar("No chatMessage to generate audio from.");
       // Restaura o estado para permitir novas gerações de áudio
       this.isGeneratingAudio = false;
@@ -653,7 +641,6 @@ handleMouseUp(event: MouseEvent) {
           this.isGeneratingAudio = false;
           this.playSound('../../../../assets/audio/toc.wav');
           this.openDialogSpeach(this.chatMessage);
-          this.openSnackBar(this.chatMessage);
           // Limpa os listeners após seu uso
           this.waveform.un('ready', onReady);
           this.waveform.un('finish', onFinish);

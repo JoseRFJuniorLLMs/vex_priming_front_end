@@ -115,8 +115,9 @@ export class DialogExampleComponent implements OnInit {
     this.recognition.continuous = false;
     this.recognition.interimResults = false;
 
-    this.recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
-      const transcript = event.results[0][0].transcript;
+    this.recognition.onresult = (event: any) => {
+      const last = event.results.length - 1;
+      const transcript = event.results[last][0].transcript;
       this.transcript.next(transcript);
     };
 
@@ -130,6 +131,13 @@ export class DialogExampleComponent implements OnInit {
     this.initWaveSurfer();
     this.playSound();
     this.performAnalysis();
+
+    this.transcript.subscribe({
+      next: (text) => {
+        this.displayedContent = text; // Atualiza o conteúdo exibido
+        console.log("AQUI»»»»»»»»»»»»»»»»:"+text); // Exibe o texto transcrito no console
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -271,34 +279,45 @@ export class DialogExampleComponent implements OnInit {
   // ================= Stop Recording ================//
   stopRecording(): void {
     if (!this.mediaRecorder) {
+      console.error('Tentativa de parar a gravação, mas o MediaRecorder não está definido.');
       return;
     }
 
-    this.mediaRecorder.stop(); // Pare a gravação
-    this.isRecording = false; // Atualize o estado de gravação
+    // Evento onstop movido para fora para garantir que só é definido uma vez e não a cada chamada de stopRecording.
+    this.mediaRecorder.onstop = this.handleRecordingStopped.bind(this);
 
-    this.mediaRecorder.onstop = () => {
-      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
-      if (this.audioUrl) {
-        URL.revokeObjectURL(this.audioUrl); // Libere a URL anterior, se houver
-      }
-      this.audioUrl = URL.createObjectURL(audioBlob); // Crie uma nova URL
-
-      if (this.waveSurfer) {
-        this.waveSurfer.load(this.audioUrl); // Carregue o áudio no WaveSurfer
-      }
-
-      this.loadAudio(this.audioUrl); // Carregue o áudio para reprodução direta
-      this.initializeRecognition(); // Inicie a transcrição do áudio
-
-      this.transcript.subscribe(transcript => {
-        this.displayedContent = transcript;
-      });
-      // Lembre-se de limpar/resetar os audioChunks para uma nova gravação
-      this.audioChunks = [];
-    };
-
+    // Pare a gravação e atualize o estado de gravação
+    this.mediaRecorder.stop();
+    this.isRecording = false;
   }
+
+  // Nova função para lidar com a lógica após a gravação ser parada
+private handleRecordingStopped(): void {
+  const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+
+  // Libere a URL anterior, se houver
+  if (this.audioUrl) {
+    URL.revokeObjectURL(this.audioUrl);
+  }
+
+  // Crie uma nova URL para o Blob de áudio e carregue-o para reprodução e visualização
+  this.audioUrl = URL.createObjectURL(audioBlob);
+
+  this.loadAndVisualizeAudio(this.audioUrl);
+
+  // Reset dos chunks de áudio para a próxima gravação
+  this.audioChunks = [];
+}
+
+// Função para carregar e visualizar o áudio
+private loadAndVisualizeAudio(audioUrl: string): void {
+  if (this.waveSurfer) {
+    this.waveSurfer.load(audioUrl);
+  }
+
+  // Substitua loadAudio por qualquer lógica necessária para reproduzir o áudio
+  this.loadAudio(audioUrl);
+}
 
   loadAudio(url: string): void {
     this.audio = new Audio(url);
@@ -368,8 +387,12 @@ export class DialogExampleComponent implements OnInit {
     this.analyzeText();
   }
 
-  startTranscription() {
-    this.recognition.start();
+  public startTranscription(): void {
+    if (this.recognition) {
+      this.recognition.start();
+    } else {
+      console.log('SpeechRecognition não está disponível.');
+    }
   }
 
   stopTranscription() {

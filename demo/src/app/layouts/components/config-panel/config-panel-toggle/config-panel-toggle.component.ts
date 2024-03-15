@@ -11,7 +11,6 @@ import { ShareBottomGpt4Component } from '../../../../pages/dashboards/component
 import { ShareBottomSheetComponent } from '../../../../pages/dashboards/components/share-bottom-sheet/share-bottom-sheet.component';
 import { ShareBottomWimHofComponent } from '../../../../pages/dashboards/components/share-bottom-wim-hof/share-bottom-wim-hof.component';
 
-import screenfull from 'screenfull';
 
 @Component({
   selector: 'vex-config-panel-toggle',
@@ -32,9 +31,6 @@ export class ConfigPanelToggleComponent implements OnInit {
   constructor(private _bottomSheet: MatBottomSheet, dialog: MatDialog) {}
 
   ngOnInit(): void {
-    if (screenfull.isEnabled) {
-      screenfull.request();
-    }
  }
 
   openBothConfigs() {
