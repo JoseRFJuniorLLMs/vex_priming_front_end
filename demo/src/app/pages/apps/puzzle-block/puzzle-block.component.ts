@@ -16,12 +16,13 @@ import { VexBreadcrumbsComponent } from '@vex/components/vex-breadcrumbs/vex-bre
 import { VexScrollbarComponent } from '@vex/components/vex-scrollbar/vex-scrollbar.component';
 import { VexSecondaryToolbarComponent } from '@vex/components/vex-secondary-toolbar/vex-secondary-toolbar.component';
 
+
+import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+
 import {
   CdkDrag,
-  CdkDragDrop,
-  CdkDropList,
-  moveItemInArray,
-  transferArrayItem,
+  CdkDropList
 } from '@angular/cdk/drag-drop';
 
 
@@ -65,32 +66,79 @@ import {
   ],
 })
 
+
 export class PuzzleBlockComponent {
+  audioChunks: any[] = [];
+  isRecording = false;
+  mediaRecorder?: MediaRecorder;
+  audioUrl: string | null = null;
 
-  colors = [
-    {name: 'Vermelho', imageUrl: 'assets/images/vermelho.jpg'},
-    {name: 'Azul', imageUrl: 'https://www.exemplourls.com/imagens/azul.png'},
-    {name: 'Verde', imageUrl: 'assets/images/verde.jpg'},
-    {name: 'Amarelo', imageUrl: 'https://www.outroexemplo.com/amarelo.gif'},
-    {name: 'Preto', imageUrl: 'assets/images/preto.jpg'},
-    {name: 'Branco', imageUrl: 'assets/images/branco.jpg'}
-  ];
-  matchedColors = [];
+  constructor(private http: HttpClient, public dialog: MatDialog) {}
 
-  drop(event: CdkDragDrop<{name: string, imageUrl: string}[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+  activateMicrophone(): void {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        this.mediaRecorder = new MediaRecorder(stream);
+        this.mediaRecorder.start();
+        this.audioChunks = [];
+        this.mediaRecorder.ondataavailable = event => {
+          this.audioChunks.push(event.data);
+        };
+      })
+      .catch(err => {
+        console.error('Não foi possível acessar o microfone', err);
+      });
+  }
+
+  startRecording(): void {
+    if (!this.isRecording) {
+      this.activateMicrophone();
+      this.isRecording = true;
     }
   }
 
+  stopRecording(): void {
+    if (!this.mediaRecorder) {
+      return;
+    }
+    this.mediaRecorder.stop();
+    this.isRecording = false;
+
+    this.mediaRecorder.onstop = () => {
+      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+      if (this.audioUrl) {
+        URL.revokeObjectURL(this.audioUrl);
+      }
+      this.audioUrl = URL.createObjectURL(audioBlob);
+      this.audioChunks = [];
+      this.enviarArquivoDeAudio(audioBlob); // Envia o áudio imediatamente após parar a gravação
+    };
+  }
+
+  enviarArquivoDeAudio(audioBlob: Blob): void {
+    const formData = new FormData();
+    formData.append('file', audioBlob);
+    this.http.post<any>('http://127.0.0.1/audio/transcribe/', formData)
+    .subscribe(
+      response => console.log('Resposta do servidor:', response),
+      error => console.error('Erro ao enviar arquivo de áudio:', error)
+    );
+  }
+
+  enviarArquivo() {
+    // Caminho onde seu arquivo de áudio é acessível após o deployment
+    const urlDoArquivo = '../../assets/audio/micro-machines.wav';
+    // Faz uma requisição GET para obter o arquivo como um Blob
+    this.http.get(urlDoArquivo, { responseType: 'blob' }).subscribe(blob => {
+      const formData = new FormData();
+      formData.append('file', blob, 'micro-machines.wav');
+
+      // Envia o Blob para a sua API
+      this.http.post('http://127.0.0.1:8000/audio/transcribe/', formData).subscribe(
+        resposta => console.log('Resposta do servidor:', resposta),
+        erro => console.error('Erro ao enviar arquivo:', erro)
+      );
+    });
+  }
 
 }
-
-

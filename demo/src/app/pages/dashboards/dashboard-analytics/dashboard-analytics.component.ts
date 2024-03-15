@@ -206,6 +206,25 @@ showRSVPReader: boolean = false;
     this.finishListener = () => {};
   }
 
+
+//================================================
+openDialogX(textDisplay: string): void {
+  this.isDialogOpen = true;
+  if (this.dialogRef) {
+    this.dialogRef.close();
+  }
+  this.dialogRef = this.dialog.open(DialogExampleComponent, {
+    width: '900px',
+    height: '800px',
+    data: { texto: textDisplay }
+  });
+
+  this.dialogRef.afterClosed().subscribe((result: any) => {
+    console.log('O diálogo foi fechado');
+    this.isDialogOpen = false;
+  });
+}
+//===============================================
   /* ==================SRVP==================== */
   someMethodThatSelectsText(text: string) {
     this.sharedDataService.setSelectedText(text);
@@ -363,7 +382,7 @@ showRSVPReader: boolean = false;
       container: this.waveformEl.nativeElement,
       /*  url: 'https://storage.googleapis.com/priming_text_wav/ABOVE.wav', */
 
-      url: '../../assets/audio/FULL.wav',
+      url: '../../assets/audio/micro-machines.wav',
       waveColor: '#d3d3d3',
       progressColor: 'rgb(0, 0, 0)',
       /*       waveColor: 'rgb(200, 0, 200)',

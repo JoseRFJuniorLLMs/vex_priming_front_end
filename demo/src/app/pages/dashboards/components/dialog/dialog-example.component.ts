@@ -183,28 +183,28 @@ hashtags: string[] = []; // Hashtags
       );
     }
 
-    transcribeAudio(audioBlob: Blob) {
-      const openAIKey = gpt4.gptApiKey;
-      const url = 'https://api.openai.com/v1/whisper';
-      const formData = new FormData();
-      formData.append('file', audioBlob);
+// =================TRANSCRICAO DO AUDIO================//
+transcribeAudio(audioBlob: Blob) {
+  const openAIKey = gpt4.gptApiKey;
+  const url = 'https://api.openai.com/v1/whisper';
+  const formData = new FormData();
+  formData.append('file', audioBlob);
+  const headers = new HttpHeaders({
+    'Authorization': `Bearer ${openAIKey}`,
+  });
+  this.http.post(url, formData, { headers, observe: 'response', responseType: 'json' })
+    .subscribe(
+      (response: any) => {
+        const transcribedText = response.body.text;
+        console.log('TEXTO:', transcribedText); // Alterado de console.error para console.log
+        this.data.texto += (this.data.texto ? " " : "") + transcribedText;
+      },
+      error => {
+        console.error('Error transcribing audio:', error);
+      }
+    );
+}
 
-      const headers = new HttpHeaders({
-        'Authorization': `Bearer ${openAIKey}`
-      });
-
-      this.http.post(url, formData, { headers, observe: 'response' }).subscribe(
-        (response: any) => {
-          const transcribedText = response.body.text;
-          console.error('TEXTO:', transcribedText);
-          this.data.texto += (this.data.texto ? " " : "") + transcribedText;
-
-        },
-        error => {
-          console.error('Error transcribing audio:', error);
-        }
-      );
-    }
 
   setupWaveSurferEvents(): void {
     if (!this.waveSurfer) return;
@@ -266,7 +266,7 @@ hashtags: string[] = []; // Hashtags
     }
   }
 
-  stopRecording(): void {
+ stopRecording(): void {
     if (!this.mediaRecorder) {
       return;
     }
@@ -294,6 +294,7 @@ hashtags: string[] = []; // Hashtags
 
     // Adicione manuseio de erro conforme necessário
   }
+
 
   transcribeCurrentAudio() {
     if (this.audioChunks.length > 0) {
