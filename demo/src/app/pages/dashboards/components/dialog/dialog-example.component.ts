@@ -20,11 +20,8 @@ import { HighlightModule } from 'ngx-highlightjs';
 import { QuillEditorComponent } from 'ngx-quill';
 
 import nlp from 'compromise';
-import { Subject } from 'rxjs';
 import WaveSurfer from 'wavesurfer.js';
 import gpt4 from '../../../../../../gpt4.json';
-
-declare var SpeechRecognition: any;
 
 @Component({
   selector: 'app-dialog-example',
@@ -42,6 +39,8 @@ declare var SpeechRecognition: any;
     MatTooltipModule,
     MatCardModule,
     MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
     HttpClientModule,
     MatStepperModule,
     MatProgressBarModule,
@@ -54,14 +53,11 @@ declare var SpeechRecognition: any;
 })
 
 export class DialogExampleComponent implements OnInit {
-
   @ViewChild('spectrogram') spectrogramEl: ElementRef | undefined;
   @ViewChild('waveform') waveformEl!: ElementRef;
   @ViewChild('stepper') stepper!: MatStepper;
 
   longText = ``;
-  errorText = '';
-  isLoading = false;
   mediaRecorder?: MediaRecorder;
   audioChunks: any[] = [];
   isRecording = false;
@@ -76,75 +72,48 @@ export class DialogExampleComponent implements OnInit {
   isAudioReady: boolean = false;
   currentWordIndex: number = 0;
   words: string[] = [];
+  isLoading: boolean = false;
 
-  //NLP
-  // Manipulação de Texto
-  textNLP: string = '';
-  pronouns: string[] = []; // Pronome
-  verbs: string[] = []; // Verbo
-  nouns: string[] = []; // Substantivo
-  adjectives: string[] = []; // Adjetivo
-  adverbs: string[] = []; // Advérbio
-  people: string[] = []; // Pessoas
-  places: string[] = []; // Lugares
-  organizations: string[] = []; // Organizações
-  dates: string[] = []; // Datas
-  values: string[] = []; // Valores
+//NLP
+// Manipulação de Texto
+textNLP: string = '';
+pronouns: string[] = []; // Pronome
+verbs: string[] = []; // Verbo
+nouns: string[] = []; // Substantivo
+adjectives: string[] = []; // Adjetivo
+adverbs: string[] = []; // Advérbio
+people: string[] = []; // Pessoas
+places: string[] = []; // Lugares
+organizations: string[] = []; // Organizações
+dates: string[] = []; // Datas
+values: string[] = []; // Valores
 
-  // Adicionando novas variáveis para funcionalidades adicionais
-  phrases: any[] = []; // Frases
-  clauses: string[] = []; // Cláusulas
-  negations: string[] = []; // Negativas
-  questions: string[] = []; // Perguntas
-  quotes: string[] = []; // Citações
-  acronyms: string[] = []; // Siglas
-  emails: string[] = []; // E-mails
-  urls: string[] = []; // URLs
-  emojis: string[] = []; // Emojis
-  mentions: string[] = []; // Menções (@usuario)
-  hashtags: string[] = []; // Hashtags
+// Adicionando novas variáveis para funcionalidades adicionais
+phrases: any[] = []; // Frases
+clauses: string[] = []; // Cláusulas
+negations: string[] = []; // Negativas
+questions: string[] = []; // Perguntas
+quotes: string[] = []; // Citações
+acronyms: string[] = []; // Siglas
+emails: string[] = []; // E-mails
+urls: string[] = []; // URLs
+emojis: string[] = []; // Emojis
+mentions: string[] = []; // Menções (@usuario)
+hashtags: string[] = []; // Hashtags
 
-  private recognition: any;
-  public transcript = new Subject<string>();
-
-  displayedContent: string = "";
-  transcriptionResult: string = '';
+errorText = "";
 
   constructor(
     private http: HttpClient,
     @Inject(MAT_DIALOG_DATA) public data: { texto: string },
-    private dialogRef: MatDialogRef<DialogExampleComponent>
-  ) {}
-
-  private initializeRecognition(): void {
-    this.recognition = new SpeechRecognition();
-    this.recognition.lang = 'en-US';
-    this.recognition.continuous = false;
-    this.recognition.interimResults = false;
-
-    this.recognition.onresult = (event: any) => {
-      const last = event.results.length - 1;
-      const transcript = event.results[last][0].transcript;
-      this.transcript.next(transcript);
-    };
-
-    this.recognition.onerror = (event: { error: any; }) => {
-      console.error('Erro de reconhecimento de voz:', event.error);
-    };
-  }
+    private dialogRef: MatDialogRef<DialogExampleComponent>,
+  ) { }
 
   ngOnInit() {
     this.words = this.chatMessage.split(' ');
     this.initWaveSurfer();
     this.playSound();
     this.performAnalysis();
-
-    this.transcript.subscribe({
-      next: (text) => {
-        this.displayedContent = text; // Atualiza o conteúdo exibido
-        console.log("AQUI»»»»»»»»»»»»»»»»:"+text); // Exibe o texto transcrito no console
-      }
-    });
   }
 
   ngAfterViewInit(): void {
@@ -170,58 +139,80 @@ export class DialogExampleComponent implements OnInit {
     this.setupWaveSurferEvents();
   }
 
-  /* ==================VOZ ALEATORIA==================== */
-  getRandomVoice(): string {
-    const randomIndex = Math.floor(Math.random() * this.voices.length);
-    return this.voices[randomIndex];
-  }
-
-  /* ==================GERADOR DE AUDIO==================== */
-  generateAudio(): void {
-    if (this.isGeneratingAudio) return;
-    this.isGeneratingAudio = true;
-
-    if (!this.chatMessage) {
-      console.error('No chatMessage to generate audio from.');
-      this.isGeneratingAudio = false;
-      return;
+    /* ==================VOZ ALEATORIA==================== */
+    getRandomVoice(): string {
+      const randomIndex = Math.floor(Math.random() * this.voices.length);
+      return this.voices[randomIndex];
     }
 
-    const openAIKey = gpt4.gptApiKey;
-    const url = "https://api.openai.com/v1/audio/speech";
-    const body = {
-      model: "tts-1",
-      voice: this.getRandomVoice(),
-      input: this.chatMessage
-    };
+    /* ==================GERADOR DE AUDIO==================== */
+    generateAudio(): void {
+      if (this.isGeneratingAudio) return;
+      this.isGeneratingAudio = true;
 
-    const headers = new HttpHeaders({
-      "Authorization": `Bearer ${openAIKey}`,
-      "Content-Type": "application/json"
-    });
-
-    this.http.post(url, body, { headers, responseType: "blob" }).subscribe(
-
-      response => {
-        const audioBlob = new Blob([response], { type: 'audio/wav' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-
-        if (this.waveSurfer) {
-          this.waveSurfer.load(audioUrl);
-          this.waveSurfer.on('ready', () => {
-            this.waveSurfer?.play();
-            this.isAudioReady = true; // Marca o áudio como pronto para reprodução
-          });
-        }
-
+      if (!this.chatMessage) {
+        console.error('No chatMessage to generate audio from.');
         this.isGeneratingAudio = false;
-      },
-      error => {
-        console.error("Error generating audio:", error);
-        this.isGeneratingAudio = false;
+        return;
       }
-    );
-  }
+
+      const openAIKey = gpt4.gptApiKey;
+      const url = "https://api.openai.com/v1/audio/speech";
+      const body = {
+        model: "tts-1",
+        voice: this.getRandomVoice(),
+        input: this.chatMessage
+      };
+
+      const headers = new HttpHeaders({
+        "Authorization": `Bearer ${openAIKey}`,
+        "Content-Type": "application/json"
+      });
+
+      this.http.post(url, body, { headers, responseType: "blob" }).subscribe(
+        response => {
+          const audioBlob = new Blob([response], { type: 'audio/wav' });
+          const audioUrl = URL.createObjectURL(audioBlob);
+
+          if (this.waveSurfer) {
+            this.waveSurfer.load(audioUrl);
+            this.waveSurfer.on('ready', () => {
+              this.waveSurfer?.play();
+              this.isAudioReady = true; // Marca o áudio como pronto para reprodução
+            });
+          }
+
+          this.isGeneratingAudio = false;
+        },
+        error => {
+          console.error("Error generating audio:", error);
+          this.isGeneratingAudio = false;
+        }
+      );
+    }
+
+    transcribeAudio(audioBlob: Blob) {
+      const openAIKey = gpt4.gptApiKey;
+      const url = 'https://api.openai.com/v1/whisper';
+      const formData = new FormData();
+      formData.append('file', audioBlob);
+
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${openAIKey}`
+      });
+
+      this.http.post(url, formData, { headers, observe: 'response' }).subscribe(
+        (response: any) => {
+          const transcribedText = response.body.text;
+          console.error('TEXTO:', transcribedText);
+          this.data.texto += (this.data.texto ? " " : "") + transcribedText;
+
+        },
+        error => {
+          console.error('Error transcribing audio:', error);
+        }
+      );
+    }
 
   setupWaveSurferEvents(): void {
     if (!this.waveSurfer) return;
@@ -256,10 +247,10 @@ export class DialogExampleComponent implements OnInit {
     this.displayedHtml = htmlContent;
   }
 
-/*   toggleRecording(): void {
+  toggleRecording(): void {
     this.isRecording ? this.stopRecording() : this.activateMicrophone();
     this.isRecording = !this.isRecording;
-  } */
+  }
 
   activateMicrophone(): void {
     navigator.mediaDevices.getUserMedia({ audio: true })
@@ -278,93 +269,49 @@ export class DialogExampleComponent implements OnInit {
 
   startRecording(): void {
     if (!this.isRecording) {
-      // Lógica para iniciar a gravação
       this.activateMicrophone();
-      this.isLoading = true;
       this.isRecording = true;
+      this.isLoading = true;
     }
   }
 
   stopRecording(): void {
-    if (this.isRecording) {
-      // Lógica para parar a gravação
-      if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
-        this.mediaRecorder.stop();
-        // Handle stopping logic here, e.g., process the recorded audio
-      } else {
-        console.error('Tentativa de parar a gravação, mas o MediaRecorder não está definido ou já está inativo.');
-      }
-      this.isLoading = false;
-      this.isRecording = false;
-    }
-  }
-
-  // ================= Stop Recording ================//
-/*   stopRecording(): void {
-    this.isLoading = false;
     if (!this.mediaRecorder) {
-      console.error('Tentativa de parar a gravação, mas o MediaRecorder não está definido.');
       return;
     }
 
-    // Evento onstop movido para fora para garantir que só é definido uma vez e não a cada chamada de stopRecording.
-    this.mediaRecorder.onstop = this.handleRecordingStopped.bind(this);
+    this.mediaRecorder.stop(); // Pare a gravação
+    this.isRecording = false; // Atualize o estado de gravação
 
-    // Pare a gravação e atualize o estado de gravação
-    this.mediaRecorder.stop();
-    this.isRecording = false;
-  }*/
+    this.mediaRecorder.onstop = () => {
+      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+      if (this.audioUrl) {
+        URL.revokeObjectURL(this.audioUrl); // Libere a URL anterior, se houver
+      }
+      this.audioUrl = URL.createObjectURL(audioBlob); // Crie uma nova URL
 
-  // Nova função para lidar com a lógica após a gravação ser parada
-/* private handleRecordingStopped(): void {
-  const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+      if (this.waveSurfer) {
+        this.waveSurfer.load(this.audioUrl); // Carregue o áudio no WaveSurfer
+      }
 
-  // Libere a URL anterior, se houver
-  if (this.audioUrl) {
-    URL.revokeObjectURL(this.audioUrl);
+      this.loadAudio(this.audioUrl); // Carregue o áudio para reprodução direta
+      this.transcribeAudio(audioBlob); // Inicie a transcrição do áudio
+
+      // Lembre-se de limpar/resetar os audioChunks para uma nova gravação
+      this.audioChunks = [];
+    };
+
+    // Adicione manuseio de erro conforme necessário
   }
 
-  // Crie uma nova URL para o Blob de áudio e carregue-o para reprodução e visualização
-  this.audioUrl = URL.createObjectURL(audioBlob);
-
-  this.loadAndVisualizeAudio(this.audioUrl);
-
-  // Reset dos chunks de áudio para a próxima gravação
-  this.audioChunks = [];
-}
- */
-
-private handleRecordingStopped(): void {
-  const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
-
-  // Libere a URL anterior, se houver
-  if (this.audioUrl) {
-    URL.revokeObjectURL(this.audioUrl);
+  transcribeCurrentAudio() {
+    if (this.audioChunks.length > 0) {
+      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+      this.transcribeAudio(audioBlob);
+    } else {
+      console.error('Nenhum áudio para transcrever');
+    }
   }
-
-  // Crie uma nova URL para o Blob de áudio e carregue-o para reprodução e visualização
-  this.audioUrl = URL.createObjectURL(audioBlob);
-  this.loadAndVisualizeAudio(this.audioUrl);
-
-  // Converter Blob para Base64 e enviar para a Google Cloud Speech-to-Text API
-  this.blobToBase64(audioBlob).then(base64Audio => {
-    const audioContent = base64Audio.split(',')[1]; // Remover prefixo da string base64
-    this.transcribeAudio(audioContent);
-  }).catch(error => console.error('Erro ao converter áudio para base64:', error));
-
-  // Reset dos chunks de áudio para a próxima gravação
-  this.audioChunks = [];
-}
-
-// Função para carregar e visualizar o áudio
-private loadAndVisualizeAudio(audioUrl: string): void {
-  if (this.waveSurfer) {
-    this.waveSurfer.load(audioUrl);
-  }
-
-  // Substitua loadAudio por qualquer lógica necessária para reproduzir o áudio
-  this.loadAudio(audioUrl);
-}
 
   loadAudio(url: string): void {
     this.audio = new Audio(url);
@@ -400,14 +347,14 @@ private loadAndVisualizeAudio(audioUrl: string): void {
         return;
       }
 
-      // Atualiza o HTML exibido com a palavra atual destacada
-      const highlightedText = this.words.slice(0, this.currentWordIndex + 1).join(' ');
-      this.updateDisplayedHtml(highlightedText);
+ // Atualiza o HTML exibido com a palavra atual destacada
+ const highlightedText = this.words.slice(0, this.currentWordIndex + 1).join(' ');
+ this.updateDisplayedHtml(highlightedText);
 
-      // Move para a próxima palavra
-      this.currentWordIndex++;
-    }, 400); // Intervalo de 1 segundo entre cada palavra (ajuste conforme necessário)
-  }
+ // Move para a próxima palavra
+ this.currentWordIndex++;
+}, 400); // Intervalo de 1 segundo entre cada palavra (ajuste conforme necessário)
+}
 
   pauseSound(): void {
     if (this.audio && !this.audio.paused) {
@@ -427,74 +374,12 @@ private loadAndVisualizeAudio(audioUrl: string): void {
   }
 
 
-  performAnalysis(): void {
-    // Atualiza textNLP com o valor de chatMessage
-    this.textNLP = this.chatMessage;
-    // Agora chama analyzeText para processar o texto
-    this.analyzeText();
-  }
-
-  public startTranscription(): void {
-    if (this.recognition) {
-      this.recognition.start();
-    } else {
-      console.log('SpeechRecognition não está disponível.');
-    }
-  }
-
-  stopTranscription() {
-    this.recognition.stop();
-  }
-
-  getTranscript() {
-    return this.transcript.asObservable();
-  }
-
-
-  private transcribeAudio(audioContent: string): void {
-    const url = 'https://speech.googleapis.com/v1p1beta1/speech:recognize?key=AIzaSyDNv17QRY5QWgDgwghDN2mBYG_owl5JVSo';
-    const body = {
-      config: {
-        encoding: 'LINEAR16',
-        sampleRateHertz: 16000,
-        languageCode: 'en-US',
-      },
-      audio: {
-        content: audioContent,
-      },
-    };
-
-    this.http.post<any>(url, body).subscribe(
-      response => {
-        console.log('Resposta da transcrição:', response);
-        // Processa a resposta para exibir a transcrição
-        if (response.results && response.results.length > 0 && response.results[0].alternatives && response.results[0].alternatives.length > 0) {
-          this.transcriptionResult = response.results[0].alternatives[0].transcript;
-        } else {
-          this.transcriptionResult = 'Não foi possível transcrever o áudio.';
-        }
-      },
-      error => {
-        console.error('Erro ao enviar áudio para a transcrição:', error);
-        if (error.error && error.error.message) {
-          console.error('Detalhe do Erro:', error.error.message);
-        }
-        this.transcriptionResult = 'Erro ao processar a transcrição.';
-      }
-    );
-  }
-
-  private blobToBase64(blob: Blob): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
-      reader.readAsDataURL(blob);
-    });
-  }
-
-
-
+performAnalysis(): void {
+  // Atualiza textNLP com o valor de chatMessage
+  this.textNLP = this.chatMessage;
+  // Agora chama analyzeText para processar o texto
+  this.analyzeText();
+}
 
   analyzeText() {
     const doc = nlp(this.chatMessage);
