@@ -1,11 +1,3 @@
-import { Component, Inject } from '@angular/core';
-import { VexConfigService } from '@vex/config/vex-config.service';
-import {
-  MatSlideToggleChange,
-  MatSlideToggleModule
-} from '@angular/material/slide-toggle';
-import { map } from 'rxjs/operators';
-import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 import {
   AsyncPipe,
   KeyValuePipe,
@@ -14,20 +6,30 @@ import {
   NgIf,
   UpperCasePipe
 } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Component, Inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatRippleModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
+import {
+  MatSlideToggleChange,
+  MatSlideToggleModule
+} from '@angular/material/slide-toggle';
+import { VEX_THEMES } from '@vex/config/config.token';
+import { defaultRoundedButtonBorderRadius } from '@vex/config/constants';
 import {
   VexColorScheme,
   VexConfig,
   VexConfigName,
   VexThemeProvider
 } from '@vex/config/vex-config.interface';
+import { VexConfigService } from '@vex/config/vex-config.service';
 import { CSSValue } from '@vex/interfaces/css-value.type';
 import { isNil } from '@vex/utils/is-nil';
-import { defaultRoundedButtonBorderRadius } from '@vex/config/constants';
-import { MatButtonModule } from '@angular/material/button';
-import { MatRippleModule } from '@angular/material/core';
-import { MatIconModule } from '@angular/material/icon';
-import { VEX_THEMES } from '@vex/config/config.token';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import screenfull from 'screenfull';
 
 @Component({
   selector: 'vex-config-panel',
@@ -217,4 +219,11 @@ export class ConfigPanelComponent {
   isDark(colorScheme: VexColorScheme): boolean {
     return colorScheme === VexColorScheme.DARK;
   }
+
+  ngOnInit(): void {
+    if (screenfull.isEnabled) {
+      screenfull.request();
+    }
+ }
+
 }

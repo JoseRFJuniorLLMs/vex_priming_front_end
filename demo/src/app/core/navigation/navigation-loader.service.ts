@@ -45,6 +45,12 @@ export class NavigationLoaderService {
           },
           {
             type: 'link',
+            label: 'Graph',
+            route: '/apps/graph',
+            icon: 'mat:filter_vintage'
+          },
+          {
+            type: 'link',
             label: 'Books',
             route: '/apps/book',
             icon: 'mat:menu_book'

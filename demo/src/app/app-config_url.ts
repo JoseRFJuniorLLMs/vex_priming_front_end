@@ -11,4 +11,6 @@ export class AppConfigurl {
   public static readonly urlCourse2 = 'https://priming-1532995a3138.herokuapp.com/api/course';
   public static readonly urlTextAll = 'https://priming-1532995a3138.herokuapp.com/api/text';
   public static readonly urlPhraseAll = 'https://priming-1532995a3138.herokuapp.com/api/phrase';
+
+  public static readonly urlStudentV2Course= 'https://priming-1532995a3138.herokuapp.com/student/v2/';
 }

@@ -4,8 +4,9 @@ import {
   MatBottomSheetRef
 } from '@angular/material/bottom-sheet';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
+import { RouterLink } from '@angular/router';
+import screenfull from 'screenfull';
 
 @Component({
   selector: 'vex-share-bottom-sheet',
@@ -19,7 +20,11 @@ export class ShareBottomSheetComponent implements OnInit {
     private _bottomSheetRef: MatBottomSheetRef<ShareBottomSheetComponent>
   ) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {
+    if (screenfull.isEnabled) {
+      screenfull.request();
+    }
+ }
 
   close() {
     this._bottomSheetRef.dismiss();

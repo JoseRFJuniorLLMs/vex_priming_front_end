@@ -32,6 +32,7 @@ import hljs from 'highlight.js';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 import { CommonModule } from '@angular/common';
+import screenfull from 'screenfull';
 
 @Component({
   selector: 'vex-share-bottom-book',
@@ -85,8 +86,10 @@ export class ShareBottomBookComponent implements OnInit {
     this._bottomSheetRef.dismiss();
   }
 
+
   async ngOnInit() {
     try {
+      screenfull.request();
       this.book = ePub("../../assets/file.epub");
       await this.book.ready;
       this.rendition = this.book.renderTo("area-de-exibicao");
@@ -106,7 +109,8 @@ export class ShareBottomBookComponent implements OnInit {
     } catch (error) {
       console.error("Error loading or rendering book: ", error);
     }
-  }
+   }
+
 
   nextPage() {
     this.rendition.next();

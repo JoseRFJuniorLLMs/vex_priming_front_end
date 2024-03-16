@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { first, of, tap } from 'rxjs';
+import { Observable, first, of, tap } from 'rxjs';
 
-import { AppConfig } from "../app-config_url";
+import { AppConfigurl } from "../app-config_url";
 import { Student } from '../model/student/student';
 import { StudentPage } from '../model/student/student-page';
 
@@ -10,11 +10,17 @@ import { StudentPage } from '../model/student/student-page';
   providedIn: 'root'
 })
 export class StudentService {
-  private readonly API = AppConfig.urlAlunoInfo2;
+  private readonly API = AppConfigurl.urlStudentV2Course;
 
   private cache: Student[] = [];
 
   constructor(private http: HttpClient) { }
+
+  getCoursesByStudentId(studentId: string): Observable<any> {
+    // Substitua `any` pelo tipo apropriado de retorno se você tiver um modelo definido para os cursos
+    const url = `https://priming-1532995a3138.herokuapp.com/student/v2/${studentId}/courses`;
+    return this.http.get<any>(url).pipe(first());
+  }
 
   list(page = 0, pageSize = 10) {
     return this.http.get<StudentPage>(this.API, { params: { page, pageSize } }).pipe(

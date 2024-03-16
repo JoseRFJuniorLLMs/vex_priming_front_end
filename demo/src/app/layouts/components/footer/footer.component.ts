@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ShareBottomSheetComponent } from './../../../pages/dashboards/components/share-bottom-sheet/share-bottom-sheet.component';
 
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -17,7 +16,12 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 
+import { RsvpreaderComponent } from 'src/app/pages/dashboards/components/rsvpreader/rsvpreader.component';
+import { ShareBottomBookComponent } from 'src/app/pages/dashboards/components/share-bottom-book/share-bottom-book.component';
+import { ShareBottomGpt4Component } from 'src/app/pages/dashboards/components/share-bottom-gpt4/share-bottom-gpt4.component';
 import { ShareBottomWimHofComponent } from '../../../../../src/app/pages/dashboards/components/share-bottom-wim-hof/share-bottom-wim-hof.component';
+import { ShareBottomSheetComponent } from './../../../pages/dashboards/components/share-bottom-sheet/share-bottom-sheet.component';
+
 
 @Component({
   selector: 'vex-footer',
@@ -41,23 +45,42 @@ import { ShareBottomWimHofComponent } from '../../../../../src/app/pages/dashboa
     ShareBottomWimHofComponent,
     ShareBottomSheetComponent,
     MatBottomSheetModule,
-
+    ShareBottomGpt4Component,
+    ShareBottomBookComponent,
+    RsvpreaderComponent
   ]
 })
 export class FooterComponent implements OnInit, OnDestroy {
 
-  constructor(private cdr: ChangeDetectorRef, private _bottomSheet: MatBottomSheet, private dialog: MatDialog) { }
+  //chatMessage: string = this.data.texto;
+
+  @Output() openConfig = new EventEmitter();
+  @Output() openBottomConfig = new EventEmitter();
+
+  showButton: boolean = false;
+  result?: string;
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private _bottomSheet: MatBottomSheet,
+    private dialog: MatDialog,
+    //@Inject(MAT_DIALOG_DATA) public data: { texto: string },
+    ) { }
 
   displayTime: string = '30:00';
+  displayTimeMin: string = '30';
   timer: any;
-  durationInSeconds: number = 30;
+  durationInSeconds: number = 1800;
 
   selected: string | null = null;
-  icon1: string = 'some-icon1'; // Replace with your actual icons
+  icon1: string = 'some-icon1';
   icon2: string = 'some-icon2';
+  icon3: string = 'some-icon3';
 
   icon60fps: string = 'mat:60fps';
   icon30fps: string = 'mat:30fps';
+  iconmilitarytech: string = 'mat:military_tech';
+
 
   paused: boolean = false;
   remainingSeconds: number = 0;
@@ -67,6 +90,7 @@ export class FooterComponent implements OnInit, OnDestroy {
 changeIcons(): void {
   this.icon60fps = 'mat:60fps_select';
   this.icon30fps = 'mat:30fps_select';
+  this.iconmilitarytech = 'mat:military_tech';
 }
 
 ngOnInit(): void {
@@ -102,37 +126,51 @@ onToggleChange(selection: string) {
   }
 }
 
-  startTimer(): void {
-    if (this.paused) {
-      // Se estiver pausado, continue de onde parou
-      this.timer = setInterval(() => {
-        const minutes = Math.floor(this.remainingSeconds / 60);
-        const seconds = this.remainingSeconds % 60;
-        this.displayTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        this.cdr.detectChanges();
+startTimer(): void {
+  if (this.paused) {
+    // Se estiver pausado, continue de onde parou
+    this.timer = setInterval(() => {
+      const hours = Math.floor(this.remainingSeconds / 3600); // Calcula as horas restantes
+      const minutes = Math.floor((this.remainingSeconds % 3600) / 60); // Calcula os minutos restantes
+      const seconds = this.remainingSeconds % 60; // Calcula os segundos restantes
 
-        if (this.remainingSeconds === 0) {
-          this.stopTimer();
-          //this.openDialog();
-          this.openBothConfigs();
-        } else {
-          this.remainingSeconds--;
-        }
-      }, 1000);
-    } else {
-      // Se não estiver pausado, inicie um novo timer
-      this.stopTimer(); // Certifique-se de parar o temporizador antes de iniciar um novo
-      this.remainingSeconds = this.durationInSeconds;  // Altere esta linha
+      // Formata a exibição da hora, minuto e segundo
+      this.displayTime = `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      this.displayTimeMin = `${hours * 60 + minutes}`; // Atualiza displayTimeMin com os minutos totais
+      this.cdr.detectChanges();
 
-      this.timer = setInterval(() => {
-        const minutes = Math.floor(this.remainingSeconds / 60);
-        const seconds = this.remainingSeconds % 60;
-        this.displayTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        this.cdr.detectChanges();
+      if (this.remainingSeconds === 0) {
+        this.stopTimer();
+        this.endTime(); // Dispara a função quando o tempo acaba
+      } else {
         this.remainingSeconds--;
-      }, 1000);
-    }
+      }
+    }, 1000);
+  } else {
+    // Se não estiver pausado, inicie um novo timer
+    this.stopTimer(); // Certifique-se de parar o temporizador antes de iniciar um novo
+    this.remainingSeconds = this.durationInSeconds;  // Altere esta linha
+
+    this.timer = setInterval(() => {
+      const minutes = Math.floor(this.remainingSeconds / 60);
+      const seconds = this.remainingSeconds % 60;
+      this.displayTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      this.displayTimeMin = `${minutes}`;
+      this.cdr.detectChanges();
+      if (this.remainingSeconds === 0) {
+        this.stopTimer();
+        this.endTime(); // Dispara a função quando o tempo acaba
+      } else {
+        this.remainingSeconds--;
+      }
+    }, 1000);
   }
+}
+
+endTime(): void {
+  this.openBothConfigs();
+}
+
 
 stopTimer(): void {
   clearInterval(this.timer);
@@ -155,7 +193,34 @@ stopProgressBar(): void {
   this.progress = 0;
 }
 
-openBothConfigs() {
+openBothConfigs() { //shared
+  this._bottomSheet.open(ShareBottomWimHofComponent);
+}
+
+openBothConfigsBook() { //boooks
+  this._bottomSheet.open(ShareBottomBookComponent);
+}
+
+openBothConfigsShadowing() { //shadowing
+  this._bottomSheet.open(ShareBottomWimHofComponent);
+}
+
+/* openBothConfigsRSVP() { // RSVP
+  this._bottomSheet.open(RsvpreaderComponent, {
+    data: { text: this.selected }
+  });
+  this._bottomSheet.open(RsvpreaderComponent);
+} */
+
+openBothConfigsWimHof() {//wim hof
+  this._bottomSheet.open(ShareBottomWimHofComponent);
+}
+
+openBothConfigsGpt() {//gpt
+  this._bottomSheet.open(ShareBottomGpt4Component);
+}
+
+openBothConfigsZettelkasten() {//zettelkasten
   this._bottomSheet.open(ShareBottomWimHofComponent);
 }
 

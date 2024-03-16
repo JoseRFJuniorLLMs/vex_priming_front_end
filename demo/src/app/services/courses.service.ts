@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { first, of, tap } from 'rxjs';
+import { Observable, first, of, tap } from 'rxjs';
 import { AppConfigurl } from 'src/app/app-config_url';
 
 import { Course } from '../model/course/course';
@@ -17,6 +17,12 @@ export class CoursesService {
 
   constructor(private http: HttpClient) { }
 
+  getCoursesByStudentId(): Observable<any> {
+    const url = `https://priming-1532995a3138.herokuapp.com/student/v2/65c6b529c2c6b863b27a3172/courses`;
+    console.log('Chamando API para obter cursos do estudante com ID:');
+    return this.http.get<any>(url).pipe(first());
+  }
+
   list(page = 0, pageSize = 10) {
     return this.http.get<CoursePage>(this.API, { params: { page, pageSize } }).pipe(
       first(),
@@ -25,16 +31,16 @@ export class CoursesService {
     );
   }
 
-  loadById(id: string) {
+  loadById(_id: string) {
     if (this.cache.length > 0) {
-      const record = this.cache.find(course => `${course._id}` === `${id}`);
-      return record != null ? of(record) : this.getById(id);
+      const record = this.cache.find(course => `${course._id}` === `${_id}`);
+      return record != null ? of(record) : this.getById(_id);
     }
-    return this.getById(id);
+    return this.getById(_id);
   }
 
-  private getById(id: string) {
-    return this.http.get<Course>(`${this.API}/${id}`).pipe(first());
+  private getById(_id: string) {
+    return this.http.get<Course>(`${this.API}/${_id}`).pipe(first());
   }
 
   save(record: Partial<Course>) {
@@ -52,7 +58,7 @@ export class CoursesService {
     return this.http.post<Course>(this.API, record).pipe(first());
   }
 
-  remove(id: string) {
-    return this.http.delete<Course>(`${this.API}/${id}`).pipe(first());
+  remove(_id: string) {
+    return this.http.delete<Course>(`${this.API}/${_id}`).pipe(first());
   }
 }

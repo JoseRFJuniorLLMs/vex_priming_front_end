@@ -76,16 +76,25 @@ export class SidenavComponent implements OnInit {
 
   collapseOpenSidenav() {
     this.layoutService.collapseOpenSidenav();
+    if (screenfull.isEnabled) {
+      screenfull.request();
+    }
   }
 
   collapseCloseSidenav() {
     this.layoutService.collapseCloseSidenav();
+    if (screenfull.isEnabled) {
+      screenfull.request();
+    }
   }
 
   toggleCollapse() {
     this.collapsed
       ? this.layoutService.expandSidenav()
       : this.layoutService.collapseSidenav();
+      if (screenfull.isEnabled) {
+        screenfull.request();
+      }
   }
 
   trackByRoute(index: number, item: NavigationItem): string {
@@ -119,6 +128,9 @@ export class SidenavComponent implements OnInit {
   }
 
   openSearch(): void {
+    if (screenfull.isEnabled) {
+      screenfull.request();
+    }
     this.dialog.open(SearchModalComponent, {
       panelClass: 'vex-dialog-glossy',
       width: '100%',

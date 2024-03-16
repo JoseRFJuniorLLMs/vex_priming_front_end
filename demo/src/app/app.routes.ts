@@ -100,6 +100,16 @@ export const appRoutes: VexRoutes = [
             }
           },
           {
+            path: 'graph',
+            loadComponent: () =>
+              import('./pages/apps/graph/graph.component').then(
+                (m) => m.GraphComponent
+              ),
+            data: {
+              toolbarShadowEnabled: false
+            }
+          },
+          {
             path: 'aio-table',
             loadComponent: () =>
               import('./pages/apps/aio-table/aio-table.component').then(
