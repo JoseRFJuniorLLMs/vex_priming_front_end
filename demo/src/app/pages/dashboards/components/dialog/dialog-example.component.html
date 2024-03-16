@@ -1,4 +1,6 @@
-
+<div>
+  <p>Resultado da Transcrição: {{transcriptionResult}}</p>
+</div>
 
 <mat-dialog-content>
 
@@ -62,15 +64,19 @@
       <mat-card class="example-card">
 
         <mat-dialog-actions>
-          <button mat-icon-button [color]="isRecording ? 'warn' : 'red'" type="button" matTooltip="Start Recording"
+
+          <button class="play-sound-button2" mat-icon-button [color]="isRecording ? 'warn' : 'red'"
+          type="button" matTooltip="Start Recording"
             (click)="startRecording()">
             <mat-icon svgIcon="mat:mic"></mat-icon>
           </button>
 
-          <button mat-icon-button [color]="isRecording ? 'red' : 'warn'" type="button" matTooltip="Stop Recording"
+          <button class="play-sound-button2" mat-icon-button [color]="isRecording ? 'red' : 'warn'"
+          type="button" matTooltip="Stop Recording"
             (click)="stopRecording()">
-            <mat-icon svgIcon="mat:mic_off"></mat-icon>
+            <mat-icon svgIcon="mat:stop"></mat-icon>
           </button>
+
         </mat-dialog-actions>
 
         <mat-card class="example-card">

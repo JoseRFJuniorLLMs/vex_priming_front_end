@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -12,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import ePub from 'epubjs';
 import WaveSurfer from 'wavesurfer.js';
 import gpt4 from '../../../../../gpt4.json';
+import { BucketService } from './bucket-service';
 
 // Interface para descrever a estrutura da resposta da API
 interface ResponseData {
@@ -25,7 +27,10 @@ interface ResponseData {
   styleUrls: ['book.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [MatBadgeModule, MatCardModule, MatIconModule, MatSelectModule, FormsModule, MatTooltipModule]
+  imports: [
+    MatBadgeModule, MatCardModule,
+    MatIconModule, MatSelectModule,
+    FormsModule, MatTooltipModule,CommonModule]
 
 })
 
@@ -39,8 +44,6 @@ export class BookComponent implements OnInit, AfterViewInit {
   private isGeneratingAudio: boolean = false;
   public isPlaying: boolean = false;
   public currentPageText: string = '';
-
-  //bookText: string = 'To Leon Werth I apologize to the children for dedicating this book to a grown-up. I have a good excuse: this grown-up is the best friend I have in the world. I have another good excuse: this grown-up can understand everything, even childrens books. I have a third good excuse: this grown-up lives in France where he is hungry and cold. He needs to be comforted. If all these excuses are not enough, I will then dedicate this book to the child who became that grown-up. All grown-ups were first children. (But few of them remember it.) So I correct my dedication:  To Leon Werth when he was a little boy.';
 
   book: any;
   rendition: any;
@@ -60,8 +63,13 @@ export class BookComponent implements OnInit, AfterViewInit {
   selectedLayoutOption = 'paginated';
 
   voices: string[] = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+  files: any[] = [];
 
-  constructor(private http: HttpClient, private _snackBar: MatSnackBar,) {}
+  constructor(
+    private http: HttpClient,
+    private _snackBar: MatSnackBar,
+    private bucketService: BucketService
+    ) {}
 
   ngOnInit() {
     this.initializeBook();
@@ -69,6 +77,14 @@ export class BookComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.generateAudio(this.currentPageText);
     }, 1000); // Ajuste o tempo conforme necessário
+
+    this.bucketService.listBucketFiles().subscribe(data => {
+      console.log(data);
+      if (data.items) {
+        this.files = data.items;
+      }
+    });
+
   }
 
   //initializeBook

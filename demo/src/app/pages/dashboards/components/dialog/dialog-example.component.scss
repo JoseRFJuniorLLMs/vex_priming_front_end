@@ -27,6 +27,19 @@
   width: 60px; // Ajuste a largura conforme necessário
 }
 
+.play-sound-button2 {
+  width: 90px; // Largura do botão (ajuste conforme necessário)
+  height: 90px; // Altura do botão (ajuste conforme necessário)
+  margin-right: 20px; // Espaçamento entre os botões (ajuste conforme necessário)
+}
+
+// Estilo para os ícones dentro dos botões de gravar e parar
+.play-sound-button2 mat-icon {
+  font-size: 60px; // Tamanho do ícone (ajuste conforme necessário)
+  height: 60px; // Altura do ícone (ajuste conforme necessário)
+  width: 60px; // Largura do ícone (ajuste conforme necessário)
+}
+
 // Definição da classe para o contêiner do WaveSurfer
 .waveform-container {
   cursor: pointer; // Define o cursor como ponteiro

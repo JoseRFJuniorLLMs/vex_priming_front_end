@@ -108,6 +108,7 @@ export class DialogExampleComponent implements OnInit {
   public transcript = new Subject<string>();
 
   displayedContent: string = "";
+  transcriptionResult: string = '';
 
   constructor(
     private http: HttpClient,
@@ -255,10 +256,10 @@ export class DialogExampleComponent implements OnInit {
     this.displayedHtml = htmlContent;
   }
 
-  toggleRecording(): void {
+/*   toggleRecording(): void {
     this.isRecording ? this.stopRecording() : this.activateMicrophone();
     this.isRecording = !this.isRecording;
-  }
+  } */
 
   activateMicrophone(): void {
     navigator.mediaDevices.getUserMedia({ audio: true })
@@ -277,14 +278,29 @@ export class DialogExampleComponent implements OnInit {
 
   startRecording(): void {
     if (!this.isRecording) {
+      // Lógica para iniciar a gravação
       this.activateMicrophone();
       this.isLoading = true;
-      this.isRecording = true; // Ensure the recording state is updated
+      this.isRecording = true;
+    }
+  }
+
+  stopRecording(): void {
+    if (this.isRecording) {
+      // Lógica para parar a gravação
+      if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+        this.mediaRecorder.stop();
+        // Handle stopping logic here, e.g., process the recorded audio
+      } else {
+        console.error('Tentativa de parar a gravação, mas o MediaRecorder não está definido ou já está inativo.');
+      }
+      this.isLoading = false;
+      this.isRecording = false;
     }
   }
 
   // ================= Stop Recording ================//
-  stopRecording(): void {
+/*   stopRecording(): void {
     this.isLoading = false;
     if (!this.mediaRecorder) {
       console.error('Tentativa de parar a gravação, mas o MediaRecorder não está definido.');
@@ -297,10 +313,10 @@ export class DialogExampleComponent implements OnInit {
     // Pare a gravação e atualize o estado de gravação
     this.mediaRecorder.stop();
     this.isRecording = false;
-  }
+  }*/
 
   // Nova função para lidar com a lógica após a gravação ser parada
-private handleRecordingStopped(): void {
+/* private handleRecordingStopped(): void {
   const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
 
   // Libere a URL anterior, se houver
@@ -312,6 +328,29 @@ private handleRecordingStopped(): void {
   this.audioUrl = URL.createObjectURL(audioBlob);
 
   this.loadAndVisualizeAudio(this.audioUrl);
+
+  // Reset dos chunks de áudio para a próxima gravação
+  this.audioChunks = [];
+}
+ */
+
+private handleRecordingStopped(): void {
+  const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+
+  // Libere a URL anterior, se houver
+  if (this.audioUrl) {
+    URL.revokeObjectURL(this.audioUrl);
+  }
+
+  // Crie uma nova URL para o Blob de áudio e carregue-o para reprodução e visualização
+  this.audioUrl = URL.createObjectURL(audioBlob);
+  this.loadAndVisualizeAudio(this.audioUrl);
+
+  // Converter Blob para Base64 e enviar para a Google Cloud Speech-to-Text API
+  this.blobToBase64(audioBlob).then(base64Audio => {
+    const audioContent = base64Audio.split(',')[1]; // Remover prefixo da string base64
+    this.transcribeAudio(audioContent);
+  }).catch(error => console.error('Erro ao converter áudio para base64:', error));
 
   // Reset dos chunks de áudio para a próxima gravação
   this.audioChunks = [];
@@ -410,6 +449,52 @@ private loadAndVisualizeAudio(audioUrl: string): void {
   getTranscript() {
     return this.transcript.asObservable();
   }
+
+
+  private transcribeAudio(audioContent: string): void {
+    const url = 'https://speech.googleapis.com/v1p1beta1/speech:recognize?key=AIzaSyDNv17QRY5QWgDgwghDN2mBYG_owl5JVSo';
+    const body = {
+      config: {
+        encoding: 'LINEAR16',
+        sampleRateHertz: 16000,
+        languageCode: 'en-US',
+      },
+      audio: {
+        content: audioContent,
+      },
+    };
+
+    this.http.post<any>(url, body).subscribe(
+      response => {
+        console.log('Resposta da transcrição:', response);
+        // Processa a resposta para exibir a transcrição
+        if (response.results && response.results.length > 0 && response.results[0].alternatives && response.results[0].alternatives.length > 0) {
+          this.transcriptionResult = response.results[0].alternatives[0].transcript;
+        } else {
+          this.transcriptionResult = 'Não foi possível transcrever o áudio.';
+        }
+      },
+      error => {
+        console.error('Erro ao enviar áudio para a transcrição:', error);
+        if (error.error && error.error.message) {
+          console.error('Detalhe do Erro:', error.error.message);
+        }
+        this.transcriptionResult = 'Erro ao processar a transcrição.';
+      }
+    );
+  }
+
+  private blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(blob);
+    });
+  }
+
+
+
 
   analyzeText() {
     const doc = nlp(this.chatMessage);
